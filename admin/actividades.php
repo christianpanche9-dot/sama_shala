@@ -102,8 +102,6 @@ $actividad = $resultado->fetch_assoc()
 </td>
 
 <td>
-
-<td>
 <?= escapar(
 texto_nivel($actividad['nivel'])
 ) ?>
