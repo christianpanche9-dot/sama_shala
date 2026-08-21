@@ -18,6 +18,7 @@ id_actividad,
 nombre,
 descripcion,
 categoria,
+tipo,
 nivel,
 duracion_minutos,
 imagen,
@@ -42,6 +43,11 @@ $categorias = [
 'Cultura',
 'Formación',
 'Ocio'
+];
+$tipos = [
+'clase' => 'Clase',
+'evento' => 'Evento',
+'terapia' => 'Terapia'
 ];
 $niveles = [
 'inicial' => 'Inicial',
@@ -133,6 +139,21 @@ value="<?= escapar($categoria) ?>"
 <?= $actividad['categoria'] === $categoria ? 'selected' : '' ?>
 >
 <?= escapar($categoria) ?>
+</option>
+<?php endforeach; ?>
+</select>
+</div>
+<div class="campo">
+<label for="tipo">
+Tipo
+</label>
+<select id="tipo" name="tipo" required>
+<?php foreach ($tipos as $valor => $etiqueta): ?>
+<option
+value="<?= escapar($valor) ?>"
+<?= $actividad['tipo'] === $valor ? 'selected' : '' ?>
+>
+<?= escapar($etiqueta) ?>
 </option>
 <?php endforeach; ?>
 </select>

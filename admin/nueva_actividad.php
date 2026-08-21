@@ -91,6 +91,22 @@ Ocio
 </select>
 </div>
 <div class="campo">
+<label for="tipo">
+Tipo
+</label>
+<select id="tipo" name="tipo" required>
+<option value="clase">
+Clase
+</option>
+<option value="evento">
+Evento
+</option>
+<option value="terapia">
+Terapia
+</option>
+</select>
+</div>
+<div class="campo">
 <label for="nivel">
 Nivel
 </label>

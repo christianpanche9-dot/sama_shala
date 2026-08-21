@@ -7,6 +7,7 @@ SELECT
 id_actividad,
 nombre,
 categoria,
+tipo,
 nivel,
 duracion_minutos,
 activa
@@ -82,6 +83,7 @@ Desactívala si no quieres que se siga ofreciendo.
 <tr>
 <th>Actividad</th>
 <th>Categoría</th>
+<th>Tipo</th>
 <th>Nivel</th>
 <th>Duración</th>
 <th>Estado</th>
@@ -99,6 +101,12 @@ $actividad = $resultado->fetch_assoc()
 
 <td>
     <?= escapar($actividad['categoria']) ?>
+</td>
+
+<td>
+<?= escapar(
+texto_tipo_actividad($actividad['tipo'])
+) ?>
 </td>
 
 <td>

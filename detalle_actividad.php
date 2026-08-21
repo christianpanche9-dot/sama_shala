@@ -16,6 +16,7 @@ id_actividad,
 nombre,
 descripcion,
 categoria,
+tipo,
 nivel,
 duracion_minutos,
 imagen
@@ -140,6 +141,13 @@ $actividad['nombre']
 <span class="insignia">
     <?= escapar(
 $actividad['categoria']
+) ?>
+</span>
+<span class="insignia insignia-clara">
+<?= escapar(
+texto_tipo_actividad(
+$actividad['tipo']
+)
 ) ?>
 </span>
 <span class="insignia insignia-clara">

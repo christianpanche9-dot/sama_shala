@@ -2,6 +2,7 @@
 require_once __DIR__ . '/conexion.php';
 require_once __DIR__ . '/funciones.php';
 $categoria = trim($_GET['categoria'] ?? '');
+$tipo_actividad = trim($_GET['tipo'] ?? '');
 $nivel = trim($_GET['nivel'] ?? '');
 $niveles_permitidos = [
 'todos',
@@ -9,11 +10,22 @@ $niveles_permitidos = [
 'intermedio',
 'avanzado'
 ];
+$tipos_permitidos = [
+'clase',
+'evento',
+'terapia'
+];
 if (
 $nivel !== '' &&
 !in_array($nivel, $niveles_permitidos, true)
 ) {
 $nivel = '';
+}
+if (
+$tipo_actividad !== '' &&
+!in_array($tipo_actividad, $tipos_permitidos, true)
+) {
+$tipo_actividad = '';
 }
 $sql_categorias = "
 SELECT DISTINCT categoria
@@ -33,6 +45,11 @@ $condiciones[] = 'a.categoria = ?';
 $tipos .= 's';
 $valores[] = $categoria;
 }
+if ($tipo_actividad !== '') {
+$condiciones[] = 'a.tipo = ?';
+$tipos .= 's';
+$valores[] = $tipo_actividad;
+}
 if ($nivel !== '') {
 $condiciones[] = 'a.nivel = ?';
 $tipos .= 's';
@@ -45,6 +62,7 @@ a.id_actividad,
 a.nombre,
 a.descripcion,
 a.categoria,
+a.tipo,
 a.nivel,
 a.duracion_minutos,
 a.imagen,
@@ -72,6 +90,7 @@ a.id_actividad,
 a.nombre,
 a.descripcion,
 a.categoria,
+a.tipo,
 a.nivel,
 a.duracion_minutos,
 a.imagen
@@ -153,6 +172,30 @@ $fila_categoria['categoria']
 </select>
 </div>
 <div class="campo">
+<label for="tipo">
+Tipo
+</label>
+<select id="tipo" name="tipo">
+<option value="">
+Cualquier tipo
+</option>
+<?php foreach (
+$tipos_permitidos as $valor_tipo
+): ?>
+<option
+value="<?= escapar($valor_tipo) ?>"
+<?= $tipo_actividad === $valor_tipo
+? 'selected'
+: '' ?>
+>
+<?= escapar(
+texto_tipo_actividad($valor_tipo)
+) ?>
+</option>
+<?php endforeach; ?>
+</select>
+</div>
+<div class="campo">
 <label for="nivel">
 Nivel
 </label>
@@ -219,6 +262,13 @@ Sin imagen
 <span class="insignia">
 <?= escapar(
 $actividad['categoria']
+) ?>
+</span>
+<span class="insignia insignia-clara">
+<?= escapar(
+texto_tipo_actividad(
+$actividad['tipo']
+)
 ) ?>
 </span>
 <span class="insignia insignia-clara">

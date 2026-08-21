@@ -67,6 +67,16 @@ $niveles = [
 return $niveles[$nivel] ?? ucfirst($nivel);
 }
 
+function texto_tipo_actividad(string $tipo): string
+{
+$tipos = [
+'clase' => 'Clase',
+'evento' => 'Evento',
+'terapia' => 'Terapia'
+];
+return $tipos[$tipo] ?? ucfirst($tipo);
+}
+
 function texto_estado_sesion(string $estado): string
 {
 $estados = [

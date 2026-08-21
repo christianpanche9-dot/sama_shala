@@ -8,6 +8,7 @@ exit;
 $nombre = trim($_POST['nombre'] ?? '');
 $descripcion = trim($_POST['descripcion'] ?? '');
 $categoria = trim($_POST['categoria'] ?? '');
+$tipo = trim($_POST['tipo'] ?? '');
 $nivel = trim($_POST['nivel'] ?? '');
 $duracion = $_POST['duracion_minutos'] ?? '';
 $imagen = trim($_POST['imagen'] ?? '');
@@ -25,6 +26,11 @@ $niveles_validos = [
 'avanzado',
 'todos'
 ];
+$tipos_validos = [
+'clase',
+'evento',
+'terapia'
+];
 $errores = [];
 if ($nombre === '') {
 $errores[] = 'El nombre es obligatorio.';
@@ -41,6 +47,13 @@ $categorias_validas,
 true
 )) {
 $errores[] = 'La categoría no es válida.';
+}
+if (!in_array(
+$tipo,
+$tipos_validos,
+true
+)) {
+$errores[] = 'El tipo no es válido.';
 }
 if (!in_array(
 $nivel,
@@ -76,19 +89,21 @@ INSERT INTO actividades (
 nombre,
 descripcion,
 categoria,
+tipo,
 nivel,
 duracion_minutos,
 imagen,
 activa
 )
-VALUES (?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 ";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param(
-'ssssisi',
+'sssssisi',
 $nombre,
 $descripcion,
 $categoria,
+$tipo,
 $nivel,
 $duracion,
 $imagen,
