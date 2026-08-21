@@ -102,6 +102,16 @@ return 'desconocido';
 return $estado;
 
 }
+function descuento_terapia_evento_paquete(int $numero_usos): int
+{
+$descuentos = [
+4 => 5,
+8 => 10,
+12 => 20
+];
+return $descuentos[$numero_usos] ?? 0;
+}
+
 function calcular_porcentaje_ocupacion(
 int $reservas,
 int $aforo
