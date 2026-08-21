@@ -101,12 +101,9 @@ Activo
 </p>
 <p class="codigo-reserva">
 Ref. pago: <?= escapar($paquete['referencia_pago']) ?> ·
-<?= number_format(
-(float) $paquete['precio_pagado'],
-2,
-',',
-'.'
-) ?> €
+<?= formatear_precio(
+(float) $paquete['precio_pagado']
+) ?>
 </p>
 </article>
 <?php endwhile; ?>

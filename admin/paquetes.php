@@ -96,12 +96,9 @@ seguir ofreciéndolo.
 : 'Sin caducidad' ?>
 </td>
 <td>
-<?= number_format(
-(float) $paquete['precio'],
-2,
-',',
-'.'
-) ?> €
+<?= formatear_precio(
+(float) $paquete['precio']
+) ?>
 </td>
 <td>
 <?php if ((int) $paquete['activo'] === 1): ?>

@@ -56,6 +56,11 @@ return substr($hora, 0, 5);
 return $objeto_hora->format('H:i');
 }
 
+function formatear_precio(float $precio): string
+{
+return '$' . number_format($precio, 2, '.', ',');
+}
+
 function texto_nivel(string $nivel): string
 {
 $niveles = [

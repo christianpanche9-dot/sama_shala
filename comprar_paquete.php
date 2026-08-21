@@ -74,12 +74,9 @@ content="width=device-width, initial-scale=1.0"
 <div class="dato">
 <span>Precio</span>
 <strong>
-<?= number_format(
-(float) $paquete['precio'],
-2,
-',',
-'.'
-) ?> €
+<?= formatear_precio(
+(float) $paquete['precio']
+) ?>
 </strong>
 </div>
 </div>
@@ -134,12 +131,9 @@ required
 </div>
 <button type="submit" class="boton boton-bloque">
 Confirmar compra de
-<?= number_format(
-(float) $paquete['precio'],
-2,
-',',
-'.'
-) ?> €
+<?= formatear_precio(
+(float) $paquete['precio']
+) ?>
 </button>
 </form>
 </aside>

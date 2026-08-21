@@ -51,7 +51,7 @@ Administración
 <p>
 Total ingresado (simulado):
 <strong>
-<?= number_format($total_ventas, 2, ',', '.') ?> €
+<?= formatear_precio($total_ventas) ?>
 </strong>
 </p>
 </div>
@@ -90,12 +90,9 @@ strtotime($pago['fecha_compra'])
 <?= escapar($pago['nombre_paquete']) ?>
 </td>
 <td>
-<?= number_format(
-(float) $pago['precio_pagado'],
-2,
-',',
-'.'
-) ?> €
+<?= formatear_precio(
+(float) $pago['precio_pagado']
+) ?>
 </td>
 <td>
 <?= escapar(ucfirst($pago['metodo_pago'])) ?>

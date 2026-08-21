@@ -71,12 +71,9 @@ Sin caducidad.
 <?php endif; ?>
 </p>
 <p class="numero-plazas">
-<?= number_format(
-(float) $paquete['precio'],
-2,
-',',
-'.'
-) ?> €
+<?= formatear_precio(
+(float) $paquete['precio']
+) ?>
 </p>
 <a
 class="boton"

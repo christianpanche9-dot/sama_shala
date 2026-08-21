@@ -104,7 +104,7 @@ required
 </div>
 <div class="campo">
 <label for="precio">
-Precio (€)
+Precio (USD)
 </label>
 <input
 type="number"
