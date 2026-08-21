@@ -18,19 +18,19 @@ exit;
 }
 $metodo_pago_enviado = trim($_POST["metodo_pago"] ?? "suelta");
 $tipo_pago = "suelta";
-$id_bono_cliente = null;
-if (str_starts_with($metodo_pago_enviado, "bono:")) {
-$tipo_pago = "bono";
-$id_bono_cliente = filter_var(
+$id_paquete_cliente = null;
+if (str_starts_with($metodo_pago_enviado, "paquete:")) {
+$tipo_pago = "paquete";
+$id_paquete_cliente = filter_var(
 substr($metodo_pago_enviado, 5),
 FILTER_VALIDATE_INT
 );
-if (!$id_bono_cliente) {
+if (!$id_paquete_cliente) {
 header(
 "Location: detalle_sesion.php?id=" .
 $id_sesion .
 "&error=" .
-urlencode("El bono seleccionado no es válido.")
+urlencode("El paquete seleccionado no es válido.")
 );
 exit;
 }
@@ -174,74 +174,74 @@ $stmt_contar->close();
 if ($plazas_ocupadas < (int) $sesion["aforo"]) {
 /*
 |--------------------------------------------------------------------------
-| 5b. Si se paga con bono, bloquear y consumir un uso
+| 5b. Si se paga con paquete, bloquear y consumir un uso
 |--------------------------------------------------------------------------
 */
 
-if ($tipo_pago === "bono") {
-$sql_bono = "
+if ($tipo_pago === "paquete") {
+$sql_paquete = "
 SELECT
-id_bono_cliente,
+id_paquete_cliente,
 usos_disponibles,
 estado,
 fecha_caducidad
-FROM bonos_clientes
-WHERE id_bono_cliente = ?
+FROM paquetes_clientes
+WHERE id_paquete_cliente = ?
 AND id_usuario = ?
 FOR UPDATE
 ";
-$stmt_bono = $conexion->prepare($sql_bono);
-$stmt_bono->bind_param(
+$stmt_paquete = $conexion->prepare($sql_paquete);
+$stmt_paquete->bind_param(
 "ii",
-$id_bono_cliente,
+$id_paquete_cliente,
 $id_usuario
 );
-$stmt_bono->execute();
-$bono_cliente =
-$stmt_bono->get_result()->fetch_assoc();
-$stmt_bono->close();
-if (!$bono_cliente) {
+$stmt_paquete->execute();
+$paquete_cliente =
+$stmt_paquete->get_result()->fetch_assoc();
+$stmt_paquete->close();
+if (!$paquete_cliente) {
 throw new Exception(
-"El bono seleccionado no existe."
+"El paquete seleccionado no existe."
 );
 }
-if ($bono_cliente["estado"] !== "activo") {
+if ($paquete_cliente["estado"] !== "activo") {
 throw new Exception(
-"El bono seleccionado no está activo."
+"El paquete seleccionado no está activo."
 );
 }
-if ((int) $bono_cliente["usos_disponibles"] <= 0) {
+if ((int) $paquete_cliente["usos_disponibles"] <= 0) {
 throw new Exception(
-"El bono seleccionado no tiene usos disponibles."
+"El paquete seleccionado no tiene usos disponibles."
 );
 }
 if (
-$bono_cliente["fecha_caducidad"] !== null &&
-strtotime($bono_cliente["fecha_caducidad"]) <
+$paquete_cliente["fecha_caducidad"] !== null &&
+strtotime($paquete_cliente["fecha_caducidad"]) <
 strtotime("today")
 ) {
 throw new Exception(
-"El bono seleccionado ha caducado."
+"El paquete seleccionado ha caducado."
 );
 }
 $usos_restantes =
-(int) $bono_cliente["usos_disponibles"] - 1;
-$estado_bono =
+(int) $paquete_cliente["usos_disponibles"] - 1;
+$estado_paquete =
 $usos_restantes <= 0 ? "agotado" : "activo";
 $sql_consumir = "
-UPDATE bonos_clientes
+UPDATE paquetes_clientes
 SET
 usos_disponibles = ?,
 estado = ?
-WHERE id_bono_cliente = ?
+WHERE id_paquete_cliente = ?
 ";
 $stmt_consumir =
 $conexion->prepare($sql_consumir);
 $stmt_consumir->bind_param(
 "isi",
 $usos_restantes,
-$estado_bono,
-$id_bono_cliente
+$estado_paquete,
+$id_paquete_cliente
 );
 $stmt_consumir->execute();
 $stmt_consumir->close();
@@ -257,7 +257,7 @@ estado = 'confirmada',
 asistencia = 'pendiente',
 fecha_reserva = NOW(),
 codigo_reserva = ?,
-id_bono_cliente = ?,
+id_paquete_cliente = ?,
 tipo_pago = ?
 WHERE id_reserva = ?
 ";
@@ -266,7 +266,7 @@ $conexion->prepare($sql_guardar);
 $stmt_guardar->bind_param(
 "sisi",
 $codigo_reserva,
-$id_bono_cliente,
+$id_paquete_cliente,
 $tipo_pago,
 $reserva_anterior["id_reserva"]
 );
@@ -275,7 +275,7 @@ $sql_guardar = "
 INSERT INTO reservas (
 id_sesion,
 id_usuario,
-id_bono_cliente,
+id_paquete_cliente,
 tipo_pago,
 estado,
 asistencia,
@@ -297,7 +297,7 @@ $stmt_guardar->bind_param(
 "iiiss",
 $id_sesion,
 $id_usuario,
-$id_bono_cliente,
+$id_paquete_cliente,
 $tipo_pago,
 $codigo_reserva
 );

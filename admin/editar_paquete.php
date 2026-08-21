@@ -2,35 +2,35 @@
 require_once "seguridad_admin.php";
 require_once __DIR__ . '/../conexion.php';
 
-$id_tipo_bono = filter_input(
+$id_tipo_paquete = filter_input(
 INPUT_GET,
-'id_tipo_bono',
+'id_tipo_paquete',
 FILTER_VALIDATE_INT
 );
-if (!$id_tipo_bono) {
-header('Location: bonos.php');
+if (!$id_tipo_paquete) {
+header('Location: paquetes.php');
 exit;
 }
 
 $sql = "
 SELECT
-id_tipo_bono,
+id_tipo_paquete,
 nombre,
 numero_usos,
 precio,
 dias_validez,
 activo
-FROM tipos_bono
-WHERE id_tipo_bono = ?
+FROM tipos_paquete
+WHERE id_tipo_paquete = ?
 ";
 $stmt = $conexion->prepare($sql);
-$stmt->bind_param('i', $id_tipo_bono);
+$stmt->bind_param('i', $id_tipo_paquete);
 $stmt->execute();
-$bono = $stmt->get_result()->fetch_assoc();
+$paquete = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-if (!$bono) {
-header('Location: bonos.php?error=no_encontrado');
+if (!$paquete) {
+header('Location: paquetes.php?error=no_encontrado');
 exit;
 }
 ?>
@@ -43,37 +43,37 @@ name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
 <title>
-Editar bono | Sama Shala
+Editar paquete | Sama Shala
 </title>
 <link rel="stylesheet" href="../estilos.css">
 </head>
 <body>
 <?php require_once __DIR__ . '/menu_admin.php'; ?>
 <main class="contenedor seccion">
-<a class="enlace-volver" href="bonos.php">
-← Volver a bonos
+<a class="enlace-volver" href="paquetes.php">
+← Volver a paquetes
 </a>
 <div class="encabezado-pagina">
 <p class="etiqueta">
-Bonos
+Paquetes
 </p>
-<h1>Editar bono</h1>
+<h1>Editar paquete</h1>
 </div>
 <?php if (isset($_GET['error'])): ?>
 <div class="mensaje mensaje-error">
-No se ha podido guardar el bono.
+No se ha podido guardar el paquete.
 Revisa los datos del formulario.
 </div>
 <?php endif; ?>
 <form
 class="formulario-admin"
-action="actualizar_bono.php"
+action="actualizar_paquete.php"
 method="post"
 >
 <input
 type="hidden"
-name="id_tipo_bono"
-value="<?= (int) $bono['id_tipo_bono'] ?>"
+name="id_tipo_paquete"
+value="<?= (int) $paquete['id_tipo_paquete'] ?>"
 >
 <div class="campo">
 <label for="nombre">
@@ -84,7 +84,7 @@ type="text"
 id="nombre"
 name="nombre"
 maxlength="100"
-value="<?= escapar($bono['nombre']) ?>"
+value="<?= escapar($paquete['nombre']) ?>"
 required
 >
 </div>
@@ -98,7 +98,7 @@ id="numero_usos"
 name="numero_usos"
 min="1"
 max="365"
-value="<?= (int) $bono['numero_usos'] ?>"
+value="<?= (int) $paquete['numero_usos'] ?>"
 required
 >
 </div>
@@ -112,7 +112,7 @@ id="precio"
 name="precio"
 min="0"
 step="0.01"
-value="<?= escapar((string) $bono['precio']) ?>"
+value="<?= escapar((string) $paquete['precio']) ?>"
 required
 >
 </div>
@@ -127,8 +127,8 @@ name="dias_validez"
 min="1"
 max="730"
 placeholder="Déjalo en blanco si no caduca"
-value="<?= $bono['dias_validez'] !== null
-? (int) $bono['dias_validez']
+value="<?= $paquete['dias_validez'] !== null
+? (int) $paquete['dias_validez']
 : '' ?>"
 >
 </div>
@@ -138,9 +138,9 @@ value="<?= $bono['dias_validez'] !== null
 type="checkbox"
 name="activo"
 value="1"
-<?= (int) $bono['activo'] === 1 ? 'checked' : '' ?>
+<?= (int) $paquete['activo'] === 1 ? 'checked' : '' ?>
 >
-Mostrar el bono en el catálogo
+Mostrar el paquete en el catálogo
 </label>
 </div>
 <div class="campo-completo">

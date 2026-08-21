@@ -11,31 +11,31 @@ name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
 <title>
-Nuevo bono | Sama Shala
+Nuevo paquete | Sama Shala
 </title>
 <link rel="stylesheet" href="../estilos.css">
 </head>
 <body>
 <?php require_once __DIR__ . '/menu_admin.php'; ?>
 <main class="contenedor seccion">
-<a class="enlace-volver" href="bonos.php">
-← Volver a bonos
+<a class="enlace-volver" href="paquetes.php">
+← Volver a paquetes
 </a>
 <div class="encabezado-pagina">
 <p class="etiqueta">
-Bonos
+Paquetes
 </p>
-<h1>Nuevo bono</h1>
+<h1>Nuevo paquete</h1>
 </div>
 <?php if (isset($_GET['error'])): ?>
 <div class="mensaje mensaje-error">
-No se ha podido guardar el bono.
+No se ha podido guardar el paquete.
 Revisa los datos del formulario.
 </div>
 <?php endif; ?>
 <form
 class="formulario-admin"
-action="guardar_bono.php"
+action="guardar_paquete.php"
 method="post"
 >
 <div class="campo">
@@ -98,12 +98,12 @@ name="activo"
 value="1"
 checked
 >
-Mostrar el bono en el catálogo
+Mostrar el paquete en el catálogo
 </label>
 </div>
 <div class="campo-completo">
 <button class="boton" type="submit">
-Guardar bono
+Guardar paquete
 </button>
 </div>
 </form>

@@ -21,13 +21,13 @@ FROM espacios
 WHERE activo = 1
 ORDER BY nombre
 ";
-$sql_monitores = "
+$sql_profesores = "
 SELECT
-id_monitor,
+id_profesor,
 nombre,
 apellidos,
 especialidad
-FROM monitores
+FROM profesores
 WHERE activo = 1
 ORDER BY apellidos, nombre
 ";
@@ -35,12 +35,12 @@ $actividades =
 $conexion->query($sql_actividades);
 $espacios =
 $conexion->query($sql_espacios);
-$monitores =
-$conexion->query($sql_monitores);
+$profesores =
+$conexion->query($sql_profesores);
 $puede_crearse =
 $actividades->num_rows > 0
 && $espacios->num_rows > 0
-&& $monitores->num_rows > 0;
+&& $profesores->num_rows > 0;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -69,7 +69,7 @@ Horarios
 <div class="mensaje mensaje-aviso">
 Para crear una sesión debe existir, como
 mínimo, una actividad activa, un espacio
-disponible y un monitor activo.
+disponible y un profesor activo.
 </div>
 <?php else: ?>
 <?php if (isset($_GET['error'])): ?>
@@ -150,37 +150,37 @@ $espacio['aforo_maximo'] ?>
 </select>
 </div>
 <div class="campo">
-<label for="id_monitor">
-Monitor
+<label for="id_profesor">
+Profesor
 </label>
 <select
-id="id_monitor"
-name="id_monitor"
+id="id_profesor"
+name="id_profesor"
 required
 >
 <option value="">
-Selecciona un monitor
+Selecciona un profesor
 </option>
 <?php while (
-$monitor =
-$monitores->fetch_assoc()
+$profesor =
+$profesores->fetch_assoc()
 ): ?>
 <option
 value="<?= (int)
-$monitor['id_monitor'] ?>"
+$profesor['id_profesor'] ?>"
 >
 <?= escapar(
-$monitor['nombre'] . ' ' .
-$monitor['apellidos']
+$profesor['nombre'] . ' ' .
+$profesor['apellidos']
 ) ?>
 <?php if (
 !empty(
-$monitor['especialidad']
+$profesor['especialidad']
 )
 ): ?>
 —
 <?= escapar(
-$monitor['especialidad']
+$profesor['especialidad']
 ) ?>
 <?php endif; ?>
 </option>
@@ -210,7 +210,7 @@ name="hora_inicio"
 required
 >
 <p class="ayuda">
-El sistema calculará automáticamente la hora final y comprobará que el espacio y el monitor estén disponibles.
+El sistema calculará automáticamente la hora final y comprobará que el espacio y el profesor estén disponibles.
 </p>
 <p>
 Hora final prevista:

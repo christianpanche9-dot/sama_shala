@@ -13,8 +13,8 @@ Actividades
 <a href="espacios.php">
 Espacios
 </a>
-<a href="monitores.php">
-Monitores
+<a href="profesores.php">
+Profesores
 </a>
 <a href="sesiones.php">
 Sesiones
@@ -22,8 +22,8 @@ Sesiones
 <a href="reservas.php">
 Reservas
 </a>
-<a href="bonos.php">
-Bonos
+<a href="paquetes.php">
+Paquetes
 </a>
 <a href="pagos.php">
 Pagos

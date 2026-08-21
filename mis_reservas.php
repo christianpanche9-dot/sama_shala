@@ -175,8 +175,8 @@ ucfirst($reserva["estado"])
 </p>
 <p>
 <strong>Pago:</strong>
-<?= $reserva["tipo_pago"] === "bono"
-? "Con bono"
+<?= $reserva["tipo_pago"] === "paquete"
+? "Con paquete"
 : "Clase suelta" ?>
 </p>
 <?php if (

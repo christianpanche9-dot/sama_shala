@@ -14,8 +14,8 @@ Actividades
 <a href="sesiones.php">
 Sesiones
 </a>
-<a href="bonos.php">
-Bonos
+<a href="paquetes.php">
+Paquetes
 </a>
 <?php if (!usuarioAutenticado()): ?>
 <a href="login.php">

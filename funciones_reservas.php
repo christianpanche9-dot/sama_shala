@@ -23,7 +23,7 @@ SELECT
 r.id_reserva,
 r.id_sesion,
 r.id_usuario,
-r.id_bono_cliente,
+r.id_paquete_cliente,
 r.estado,
 s.fecha,
 s.hora_inicio
@@ -121,58 +121,58 @@ $stmt_cancelar->execute();
 $stmt_cancelar->close();
 /*
 |--------------------------------------------------------------------------
-| 3b. Restaurar el uso del bono, si la reserva se pagó con uno
+| 3b. Restaurar el uso del paquete, si la reserva se pagó con uno
 |--------------------------------------------------------------------------
 */
 
-if ($reserva["id_bono_cliente"] !== null) {
-$sql_bloquear_bono = "
+if ($reserva["id_paquete_cliente"] !== null) {
+$sql_bloquear_paquete = "
 SELECT
-id_bono_cliente,
+id_paquete_cliente,
 usos_disponibles,
 estado,
 fecha_caducidad
-FROM bonos_clientes
-WHERE id_bono_cliente = ?
+FROM paquetes_clientes
+WHERE id_paquete_cliente = ?
 FOR UPDATE
 ";
-$stmt_bloquear_bono =
-$conexion->prepare($sql_bloquear_bono);
-$stmt_bloquear_bono->bind_param(
+$stmt_bloquear_paquete =
+$conexion->prepare($sql_bloquear_paquete);
+$stmt_bloquear_paquete->bind_param(
 "i",
-$reserva["id_bono_cliente"]
+$reserva["id_paquete_cliente"]
 );
-$stmt_bloquear_bono->execute();
-$bono_cliente = $stmt_bloquear_bono
+$stmt_bloquear_paquete->execute();
+$paquete_cliente = $stmt_bloquear_paquete
 ->get_result()
 ->fetch_assoc();
-$stmt_bloquear_bono->close();
-if ($bono_cliente && $bono_cliente["estado"] !== "cancelado") {
+$stmt_bloquear_paquete->close();
+if ($paquete_cliente && $paquete_cliente["estado"] !== "cancelado") {
 $sigue_vigente =
-$bono_cliente["fecha_caducidad"] === null ||
-strtotime($bono_cliente["fecha_caducidad"]) >=
+$paquete_cliente["fecha_caducidad"] === null ||
+strtotime($paquete_cliente["fecha_caducidad"]) >=
 strtotime("today");
 $usos_restaurados =
-(int) $bono_cliente["usos_disponibles"] + 1;
+(int) $paquete_cliente["usos_disponibles"] + 1;
 $estado_restaurado =
 $sigue_vigente ? "activo" : "caducado";
-$sql_restaurar_bono = "
-UPDATE bonos_clientes
+$sql_restaurar_paquete = "
+UPDATE paquetes_clientes
 SET
 usos_disponibles = ?,
 estado = ?
-WHERE id_bono_cliente = ?
+WHERE id_paquete_cliente = ?
 ";
-$stmt_restaurar_bono =
-$conexion->prepare($sql_restaurar_bono);
-$stmt_restaurar_bono->bind_param(
+$stmt_restaurar_paquete =
+$conexion->prepare($sql_restaurar_paquete);
+$stmt_restaurar_paquete->bind_param(
 "isi",
 $usos_restaurados,
 $estado_restaurado,
-$reserva["id_bono_cliente"]
+$reserva["id_paquete_cliente"]
 );
-$stmt_restaurar_bono->execute();
-$stmt_restaurar_bono->close();
+$stmt_restaurar_paquete->execute();
+$stmt_restaurar_paquete->close();
 }
 }
 /*

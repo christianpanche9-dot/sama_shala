@@ -5,7 +5,7 @@ require_once __DIR__ . '/../conexion.php';
 $totales = [
 'actividades' => 0,
 'espacios' => 0,
-'monitores' => 0,
+'profesores' => 0,
 'sesiones' => 0
 ];
 $consultas = [
@@ -17,9 +17,9 @@ FROM actividades
 SELECT COUNT(*) AS total
 FROM espacios
 ",
-'monitores' => "
+'profesores' => "
 SELECT COUNT(*) AS total
-FROM monitores
+FROM profesores
 ",
 'sesiones' => "
 SELECT COUNT(*) AS total
@@ -58,7 +58,7 @@ Panel de control
 </p>
 </div>
 Gestiona las actividades, los espacios,
-los monitores y los horarios del centro.
+los profesores y los horarios del centro.
 <div class="rejilla-resumen-admin">
 <a class="tarjeta-resumen" href="actividades.php">
 <span>Actividades</span>
@@ -72,10 +72,10 @@ los monitores y los horarios del centro.
 <?= $totales['espacios'] ?>
 </strong>
 </a>
-<a class="tarjeta-resumen" href="monitores.php">
-<span>Monitores</span>
+<a class="tarjeta-resumen" href="profesores.php">
+<span>Profesores</span>
 <strong>
-<?= $totales['monitores'] ?>
+<?= $totales['profesores'] ?>
 </strong>
 </a>
 <a class="tarjeta-resumen" href="sesiones.php">
@@ -92,8 +92,8 @@ Nueva actividad
 <a class="boton" href="nuevo_espacio.php">
 Nuevo espacio
 </a>
-<a class="boton" href="nuevo_monitor.php">
-Nuevo monitor
+<a class="boton" href="nuevo_profesor.php">
+Nuevo profesor
 </a>
 <a class="boton" href="nueva_sesion.php">
 Programar sesión

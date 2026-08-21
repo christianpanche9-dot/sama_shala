@@ -39,7 +39,7 @@ CONCAT(
 m.nombre,
 ' ',
 m.apellidos
-) AS monitor,
+) AS profesor,
 m.especialidad,
 COUNT(r.id_reserva)
 AS reservas_confirmadas,
@@ -52,8 +52,8 @@ INNER JOIN actividades AS a
 ON s.id_actividad = a.id_actividad
 INNER JOIN espacios AS e
 ON s.id_espacio = e.id_espacio
-INNER JOIN monitores AS m
-ON s.id_monitor = m.id_monitor
+INNER JOIN profesores AS m
+ON s.id_profesor = m.id_profesor
 LEFT JOIN reservas AS r
 ON r.id_sesion = s.id_sesion
 AND r.estado = 'confirmada'
@@ -223,10 +223,10 @@ $sesion['ubicacion']
 </strong>
 </div>
 <div class="dato">
-<span>Monitor</span>
+<span>Profesor</span>
 <strong>
 <?= escapar(
-$sesion['monitor']
+$sesion['profesor']
 ) ?>
 </strong>
 </div>
@@ -236,7 +236,7 @@ $sesion['monitor']
 ): ?>
 
 <p>
-<strong>Especialidad del monitor:</strong>
+<strong>Especialidad del profesor:</strong>
 <?= escapar(
 $sesion['especialidad']
 ) ?>

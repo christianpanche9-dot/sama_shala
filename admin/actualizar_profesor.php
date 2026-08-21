@@ -3,7 +3,17 @@ require_once "seguridad_admin.php";
 require_once __DIR__ . '/../conexion.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-header('Location: nuevo_monitor.php');
+header('Location: profesores.php');
+exit;
+}
+
+$id_profesor = filter_input(
+INPUT_POST,
+'id_profesor',
+FILTER_VALIDATE_INT
+);
+if (!$id_profesor) {
+header('Location: profesores.php?error=no_encontrado');
 exit;
 }
 
@@ -27,49 +37,51 @@ if ($especialidad === '') {
 $errores[] = 'La especialidad es obligatoria.';
 }
 if ($errores) {
-header('Location: nuevo_monitor.php?error=datos');
+header("Location: editar_profesor.php?id_profesor=$id_profesor&error=datos");
 exit;
 }
 $sql_comprobar = "
-SELECT id_monitor
-FROM monitores
+SELECT id_profesor
+FROM profesores
 WHERE email = ?
+AND id_profesor <> ?
 ";
 $stmt_comprobar =
 $conexion->prepare($sql_comprobar);
 $stmt_comprobar->bind_param(
-'s',
-$email
+'si',
+$email,
+$id_profesor
 );
 $stmt_comprobar->execute();
 $resultado_comprobar =
 $stmt_comprobar->get_result();
 if ($resultado_comprobar->num_rows > 0) {
-header('Location: nuevo_monitor.php?error=email');
+header("Location: editar_profesor.php?id_profesor=$id_profesor&error=email");
 exit;
 }
-$sql_insertar = "
-INSERT INTO monitores (
-nombre,
-apellidos,
-email,
-telefono,
-especialidad,
-activo
-)
-VALUES (?, ?, ?, ?, ?, ?)
+$sql = "
+UPDATE profesores SET
+nombre = ?,
+apellidos = ?,
+email = ?,
+telefono = ?,
+especialidad = ?,
+activo = ?
+WHERE id_profesor = ?
 ";
-$stmt_insertar =
-$conexion->prepare($sql_insertar);
-$stmt_insertar->bind_param(
-'sssssi',
+$stmt =
+$conexion->prepare($sql);
+$stmt->bind_param(
+'sssssii',
 $nombre,
 $apellidos,
 $email,
 $telefono,
 $especialidad,
-$activo
+$activo,
+$id_profesor
 );
-$stmt_insertar->execute();
-header('Location: monitores.php?mensaje=creado');
+$stmt->execute();
+header('Location: profesores.php?mensaje=actualizado');
 exit;

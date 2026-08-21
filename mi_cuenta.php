@@ -49,12 +49,12 @@ Ver mis reservas
 </a>
 </article>
 <article class="tarjeta">
-<h2>Mis bonos</h2>
+<h2>Mis paquetes</h2>
 <p>
-    Consulta tus bonos y los usos disponibles.
+    Consulta tus paquetes y los usos disponibles.
 </p>
-<a class="boton" href="mis_bonos.php">
-Ver mis bonos
+<a class="boton" href="mis_paquetes.php">
+Ver mis paquetes
 </a>
 </article>
 </section>

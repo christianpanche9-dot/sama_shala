@@ -3,7 +3,7 @@ require_once "seguridad_admin.php";
 require_once __DIR__ . '/../conexion.php';
 require_once __DIR__ . '/../funciones.php';
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-header('Location: nuevo_bono.php');
+header('Location: nuevo_paquete.php');
 exit;
 }
 $nombre = trim($_POST['nombre'] ?? '');
@@ -47,12 +47,12 @@ $errores[] = 'La validez en días no es válida.';
 $dias_validez = null;
 }
 if ($errores) {
-header('Location: nuevo_bono.php?error=1');
+header('Location: nuevo_paquete.php?error=1');
 exit;
 }
 $id_tenant = idTenantActual();
 $sql = "
-INSERT INTO tipos_bono (
+INSERT INTO tipos_paquete (
 id_tenant,
 nombre,
 numero_usos,
@@ -73,5 +73,5 @@ $dias_validez,
 $activo
 );
 $stmt->execute();
-header('Location: bonos.php?mensaje=creado');
+header('Location: paquetes.php?mensaje=creado');
 exit;

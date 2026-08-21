@@ -11,15 +11,15 @@ s.aforo,
 s.estado,
 a.nombre AS actividad,
 e.nombre AS espacio,
-m.nombre AS monitor_nombre,
-m.apellidos AS monitor_apellidos
+m.nombre AS profesor_nombre,
+m.apellidos AS profesor_apellidos
 FROM sesiones s
 INNER JOIN actividades a
 ON s.id_actividad = a.id_actividad
 INNER JOIN espacios e
 ON s.id_espacio = e.id_espacio
-INNER JOIN monitores m
-ON s.id_monitor = m.id_monitor
+INNER JOIN profesores m
+ON s.id_profesor = m.id_profesor
 ORDER BY
 s.fecha ASC,
 s.hora_inicio ASC
@@ -86,7 +86,7 @@ Programar una sesión
 <th>Horario</th>
 <th>Actividad</th>
 <th>Espacio</th>
-<th>Monitor</th>
+<th>Profesor</th>
 <th>Aforo</th>
 <th>Estado</th>
 <th>Acciones</th>
@@ -130,9 +130,9 @@ $sesion["espacio"]
 
 <td>
 <?= htmlspecialchars(
-$sesion["monitor_nombre"] .
+$sesion["profesor_nombre"] .
 " " .
-$sesion["monitor_apellidos"]
+$sesion["profesor_apellidos"]
 ) ?>
 </td>
 <td>

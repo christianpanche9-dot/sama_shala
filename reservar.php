@@ -21,8 +21,8 @@ s.aforo,
 s.estado,
 a.nombre AS actividad,
 e.nombre AS espacio,
-m.nombre AS monitor_nombre,
-m.apellidos AS monitor_apellidos,
+m.nombre AS profesor_nombre,
+m.apellidos AS profesor_apellidos,
 (
 SELECT COUNT(*)
 FROM reservas r
@@ -34,8 +34,8 @@ INNER JOIN actividades a
 ON s.id_actividad = a.id_actividad
 INNER JOIN espacios e
 ON s.id_espacio = e.id_espacio
-INNER JOIN monitores m
-ON s.id_monitor = m.id_monitor
+INNER JOIN profesores m
+ON s.id_profesor = m.id_profesor
 WHERE s.id_sesion = ?
 ";
 $stmt = $conexion->prepare($sql);
@@ -66,14 +66,14 @@ $plazas_disponibles = max(
 (int) $sesion["aforo"] -
 (int) $sesion["plazas_ocupadas"]
 );
-$sql_bonos = "
+$sql_paquetes = "
 SELECT
-bc.id_bono_cliente,
+bc.id_paquete_cliente,
 bc.usos_disponibles,
-tb.nombre AS nombre_bono
-FROM bonos_clientes bc
-INNER JOIN tipos_bono tb
-ON bc.id_tipo_bono = tb.id_tipo_bono
+tb.nombre AS nombre_paquete
+FROM paquetes_clientes bc
+INNER JOIN tipos_paquete tb
+ON bc.id_tipo_paquete = tb.id_tipo_paquete
 WHERE bc.id_usuario = ?
 AND bc.estado = 'activo'
 AND bc.usos_disponibles > 0
@@ -85,14 +85,14 @@ ORDER BY
 bc.fecha_caducidad IS NULL,
 bc.fecha_caducidad ASC
 ";
-$stmt_bonos = $conexion->prepare($sql_bonos);
+$stmt_paquetes = $conexion->prepare($sql_paquetes);
 $id_usuario_actual = idUsuarioActual();
-$stmt_bonos->bind_param("i", $id_usuario_actual);
-$stmt_bonos->execute();
-$bonos_disponibles = $stmt_bonos
+$stmt_paquetes->bind_param("i", $id_usuario_actual);
+$stmt_paquetes->execute();
+$paquetes_disponibles = $stmt_paquetes
 ->get_result()
 ->fetch_all(MYSQLI_ASSOC);
-$stmt_bonos->close();
+$stmt_paquetes->close();
 $conexion->close();
 ?>
 <!DOCTYPE html>
@@ -132,11 +132,11 @@ strtotime($sesion["fecha"])
 <?= escapar($sesion["espacio"]) ?>
 </p>
 <p>
-<strong>Monitor:</strong>
+<strong>Profesor:</strong>
 <?= escapar(
-    $sesion["monitor_nombre"] .
+    $sesion["profesor_nombre"] .
 " " .
-$sesion["monitor_apellidos"]
+$sesion["profesor_apellidos"]
 ) ?>
 </p>
 <?php if ($plazas_disponibles > 0): ?>
@@ -176,14 +176,14 @@ checked
 >
 Clase suelta
 </label>
-<?php foreach ($bonos_disponibles as $bono): ?>
+<?php foreach ($paquetes_disponibles as $paquete): ?>
 <label class="opcion-pago">
 <input
 type="radio"
 name="metodo_pago"
-value="bono:<?= (int) $bono["id_bono_cliente"] ?>"
+value="paquete:<?= (int) $paquete["id_paquete_cliente"] ?>"
 >
-<?= escapar($bono["nombre_bono"]) ?> (quedan <?= (int) $bono["usos_disponibles"] ?> usos)
+<?= escapar($paquete["nombre_paquete"]) ?> (quedan <?= (int) $paquete["usos_disponibles"] ?> usos)
 </label>
 <?php endforeach; ?>
 </fieldset>

@@ -35,7 +35,7 @@ CONCAT(
 m.nombre,
 ' ',
 m.apellidos
-) AS monitor,
+) AS profesor,
 COUNT(r.id_reserva)
 AS reservas_confirmadas,
 GREATEST(
@@ -47,8 +47,8 @@ INNER JOIN actividades AS a
 ON s.id_actividad = a.id_actividad
 INNER JOIN espacios AS e
 ON s.id_espacio = e.id_espacio
-INNER JOIN monitores AS m
-ON s.id_monitor = m.id_monitor
+INNER JOIN profesores AS m
+ON s.id_profesor = m.id_profesor
 LEFT JOIN reservas AS r
 ON r.id_sesion = s.id_sesion
 AND r.estado = 'confirmada'
@@ -199,9 +199,9 @@ $sesion['espacio']
 ) ?>
 </p>
 <p>
-<strong>Monitor:</strong>
+<strong>Profesor:</strong>
 <?= escapar(
-$sesion['monitor']
+$sesion['profesor']
 ) ?>
 </p>
 <p>

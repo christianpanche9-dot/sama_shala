@@ -21,15 +21,15 @@ s.aforo,
 s.estado,
 a.nombre AS actividad,
 e.nombre AS espacio,
-m.nombre AS monitor_nombre,
-m.apellidos AS monitor_apellidos
+m.nombre AS profesor_nombre,
+m.apellidos AS profesor_apellidos
 FROM sesiones s
 INNER JOIN actividades a
 ON s.id_actividad = a.id_actividad
 INNER JOIN espacios e
 ON s.id_espacio = e.id_espacio
-INNER JOIN monitores m
-ON s.id_monitor = m.id_monitor
+INNER JOIN profesores m
+ON s.id_profesor = m.id_profesor
 WHERE s.id_sesion = ?
 ";
 $stmt_sesion =
@@ -188,11 +188,11 @@ $sesion["hora_fin"],
 <?= escapar($sesion["espacio"]) ?>
 </p>
 <p>
-<strong>Monitor:</strong>
+<strong>Profesor:</strong>
 <?= escapar(
-$sesion["monitor_nombre"] .
+$sesion["profesor_nombre"] .
 " " .
-$sesion["monitor_apellidos"]
+$sesion["profesor_apellidos"]
 ) ?>
 </p>
 <p>

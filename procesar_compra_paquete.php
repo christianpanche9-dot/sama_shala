@@ -3,68 +3,68 @@ require_once __DIR__ . '/seguridad.php';
 require_once __DIR__ . '/conexion.php';
 require_once __DIR__ . '/funciones.php';
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-header('Location: bonos.php');
+header('Location: paquetes.php');
 exit;
 }
-$id_tipo_bono = filter_input(
+$id_tipo_paquete = filter_input(
 INPUT_POST,
-'id_tipo_bono',
+'id_tipo_paquete',
 FILTER_VALIDATE_INT
 );
 $titular = trim($_POST['titular'] ?? '');
 $tarjeta = trim($_POST['tarjeta'] ?? '');
 $id_usuario = idUsuarioActual();
 $id_tenant = idTenantActual();
-if (!$id_tipo_bono || $titular === '' || $tarjeta === '') {
+if (!$id_tipo_paquete || $titular === '' || $tarjeta === '') {
 header(
-'Location: comprar_bono.php?id=' .
-$id_tipo_bono .
+'Location: comprar_paquete.php?id=' .
+$id_tipo_paquete .
 '&error=pago'
 );
 exit;
 }
 try {
 $conexion->begin_transaction();
-$sql_bono = "
+$sql_paquete = "
 SELECT
-id_tipo_bono,
+id_tipo_paquete,
 numero_usos,
 precio,
 dias_validez
-FROM tipos_bono
-WHERE id_tipo_bono = ?
+FROM tipos_paquete
+WHERE id_tipo_paquete = ?
 AND activo = 1
 AND id_tenant = ?
 FOR UPDATE
 ";
-$stmt_bono = $conexion->prepare($sql_bono);
-$stmt_bono->bind_param(
+$stmt_paquete = $conexion->prepare($sql_paquete);
+$stmt_paquete->bind_param(
 'ii',
-$id_tipo_bono,
+$id_tipo_paquete,
 $id_tenant
 );
-$stmt_bono->execute();
-$tipo_bono = $stmt_bono->get_result()->fetch_assoc();
-$stmt_bono->close();
-if (!$tipo_bono) {
-throw new Exception('El bono seleccionado no existe.');
+$stmt_paquete->execute();
+$tipo_paquete = $stmt_paquete->get_result()->fetch_assoc();
+$stmt_paquete->close();
+if (!$tipo_paquete) {
+throw new Exception('El paquete seleccionado no existe.');
 }
 $referencia_pago = 'SIM-' . strtoupper(
 bin2hex(random_bytes(8))
 );
-$numero_usos = (int) $tipo_bono['numero_usos'];
-$fecha_caducidad = $tipo_bono['dias_validez'] !== null
+$numero_usos = (int) $tipo_paquete['numero_usos'];
+$fecha_caducidad = $tipo_paquete['dias_validez'] !== null
 ? date(
 'Y-m-d',
 strtotime(
-'+' . (int) $tipo_bono['dias_validez'] . ' days'
+'+' . (int) $tipo_paquete['dias_validez'] . ' days'
 )
 )
 : null;
 $sql_compra = "
-INSERT INTO bonos_clientes (
+INSERT INTO paquetes_clientes (
 id_usuario,
-id_tipo_bono,
+id_tipo_paquete,
 fecha_compra,
 fecha_caducidad,
 usos_iniciales,
@@ -91,25 +91,25 @@ $stmt_compra = $conexion->prepare($sql_compra);
 $stmt_compra->bind_param(
 'iisiids',
 $id_usuario,
-$id_tipo_bono,
+$id_tipo_paquete,
 $fecha_caducidad,
 $numero_usos,
 $numero_usos,
-$tipo_bono['precio'],
+$tipo_paquete['precio'],
 $referencia_pago
 );
 $stmt_compra->execute();
 $stmt_compra->close();
 $conexion->commit();
 header(
-'Location: mis_bonos.php?mensaje=comprado'
+'Location: mis_paquetes.php?mensaje=comprado'
 );
 exit;
 } catch (Throwable $error) {
 $conexion->rollback();
 header(
-'Location: comprar_bono.php?id=' .
-$id_tipo_bono .
+'Location: comprar_paquete.php?id=' .
+$id_tipo_paquete .
 '&error=pago'
 );
 exit;

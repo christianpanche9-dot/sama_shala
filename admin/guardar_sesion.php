@@ -12,9 +12,9 @@ INPUT_POST,
 "id_espacio",
 FILTER_VALIDATE_INT
 );
-$id_monitor = filter_input(
+$id_profesor = filter_input(
 INPUT_POST,
-"id_monitor",
+"id_profesor",
 FILTER_VALIDATE_INT
 );
 $fecha = trim($_POST["fecha"] ?? "");
@@ -43,8 +43,8 @@ $errores[] = "Debes seleccionar una actividad válida.";
 if (!$id_espacio) {
 $errores[] = "Debes seleccionar un espacio válido.";
 }
-if (!$id_monitor) {
-$errores[] = "Debes seleccionar un monitor válido.";
+if (!$id_profesor) {
+$errores[] = "Debes seleccionar un profesor válido.";
 }
 if ($fecha === "") {
     $errores[] = "Debes indicar una fecha.";
@@ -197,33 +197,33 @@ $stmt_espacio->close();
 }
 /*
 |--------------------------------------------------------------------------
-| 5. Comprobar el monitor
+| 5. Comprobar el profesor
 |--------------------------------------------------------------------------
 */
 
-if ($id_monitor) {
-    $sql_monitor = "
-SELECT id_monitor, nombre, apellidos
-FROM monitores
-WHERE id_monitor = ?
+if ($id_profesor) {
+    $sql_profesor = "
+SELECT id_profesor, nombre, apellidos
+FROM profesores
+WHERE id_profesor = ?
 AND activo = 1
 ";
-$stmt_monitor =
-$conexion->prepare($sql_monitor);
-$stmt_monitor->bind_param(
+$stmt_profesor =
+$conexion->prepare($sql_profesor);
+$stmt_profesor->bind_param(
 "i",
-$id_monitor
+$id_profesor
 );
-$stmt_monitor->execute();
-$resultado_monitor =
-$stmt_monitor->get_result();
-$monitor =
-$resultado_monitor->fetch_assoc();
-if (!$monitor) {
+$stmt_profesor->execute();
+$resultado_profesor =
+$stmt_profesor->get_result();
+$profesor =
+$resultado_profesor->fetch_assoc();
+if (!$profesor) {
 $errores[] =
-"El monitor seleccionado no existe o está inactivo.";
+"El profesor seleccionado no existe o está inactivo.";
 }
-$stmt_monitor->close();
+$stmt_profesor->close();
 }
 /*
 |--------------------------------------------------------------------------
@@ -280,11 +280,11 @@ substr($conflicto["hora_fin"], 0, 5) .
 $stmt_conflicto_espacio->close();
 /*
 |--------------------------------------------------------------------------
-| 6.2 Conflicto del monitor
+| 6.2 Conflicto del profesor
 |--------------------------------------------------------------------------
 */
 
-$sql_conflicto_monitor = "
+$sql_conflicto_profesor = "
 SELECT
 s.id_sesion,
 s.hora_inicio,
@@ -297,29 +297,29 @@ ON s.id_actividad = a.id_actividad
 INNER JOIN espacios e
 ON s.id_espacio = e.id_espacio
 WHERE s.fecha = ?
-AND s.id_monitor = ?
+AND s.id_profesor = ?
 AND s.estado <> 'cancelada'
 AND s.hora_inicio < ?
 AND s.hora_fin > ?
 LIMIT 1
 ";
-$stmt_conflicto_monitor =
-$conexion->prepare($sql_conflicto_monitor);
-$stmt_conflicto_monitor->bind_param(
+$stmt_conflicto_profesor =
+$conexion->prepare($sql_conflicto_profesor);
+$stmt_conflicto_profesor->bind_param(
 "siss",
 $fecha,
-$id_monitor,
+$id_profesor,
 $fin_comprobacion->format("H:i:s"),
 $inicio_comprobacion->format("H:i:s")
 );
-$stmt_conflicto_monitor->execute();
-$resultado_conflicto_monitor =
-$stmt_conflicto_monitor->get_result();
-if ($resultado_conflicto_monitor->num_rows > 0) {
+$stmt_conflicto_profesor->execute();
+$resultado_conflicto_profesor =
+$stmt_conflicto_profesor->get_result();
+if ($resultado_conflicto_profesor->num_rows > 0) {
 $conflicto =
-$resultado_conflicto_monitor->fetch_assoc();
+$resultado_conflicto_profesor->fetch_assoc();
 $errores[] =
-"El monitor ya tiene asignada la actividad \"" .
+"El profesor ya tiene asignada la actividad \"" .
 htmlspecialchars($conflicto["actividad"]) .
 "\" en " .
 htmlspecialchars($conflicto["espacio"]) .
@@ -329,7 +329,7 @@ substr($conflicto["hora_inicio"], 0, 5) .
 substr($conflicto["hora_fin"], 0, 5) .
 ".";
 }
-$stmt_conflicto_monitor->close();
+$stmt_conflicto_profesor->close();
 }
 /*
 |--------------------------------------------------------------------------
@@ -381,7 +381,7 @@ $sql_insertar = "
 INSERT INTO sesiones (
 id_actividad,
 id_espacio,
-id_monitor,
+id_profesor,
 fecha,
 hora_inicio,
 hora_fin,
@@ -397,7 +397,7 @@ $stmt_insertar->bind_param(
 "iiisssis",
 $id_actividad,
 $id_espacio,
-$id_monitor,
+$id_profesor,
 $fecha,
 $hora_inicio,
 $hora_fin,

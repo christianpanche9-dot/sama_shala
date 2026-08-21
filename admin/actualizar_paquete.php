@@ -3,17 +3,17 @@ require_once "seguridad_admin.php";
 require_once __DIR__ . '/../conexion.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-header('Location: bonos.php');
+header('Location: paquetes.php');
 exit;
 }
 
-$id_tipo_bono = filter_input(
+$id_tipo_paquete = filter_input(
 INPUT_POST,
-'id_tipo_bono',
+'id_tipo_paquete',
 FILTER_VALIDATE_INT
 );
-if (!$id_tipo_bono) {
-header('Location: bonos.php?error=no_encontrado');
+if (!$id_tipo_paquete) {
+header('Location: paquetes.php?error=no_encontrado');
 exit;
 }
 
@@ -58,17 +58,17 @@ $errores[] = 'La validez en días no es válida.';
 $dias_validez = null;
 }
 if ($errores) {
-header("Location: editar_bono.php?id_tipo_bono=$id_tipo_bono&error=1");
+header("Location: editar_paquete.php?id_tipo_paquete=$id_tipo_paquete&error=1");
 exit;
 }
 $sql = "
-UPDATE tipos_bono SET
+UPDATE tipos_paquete SET
 nombre = ?,
 numero_usos = ?,
 precio = ?,
 dias_validez = ?,
 activo = ?
-WHERE id_tipo_bono = ?
+WHERE id_tipo_paquete = ?
 ";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param(
@@ -78,8 +78,8 @@ $numero_usos,
 $precio,
 $dias_validez,
 $activo,
-$id_tipo_bono
+$id_tipo_paquete
 );
 $stmt->execute();
-header('Location: bonos.php?mensaje=actualizado');
+header('Location: paquetes.php?mensaje=actualizado');
 exit;

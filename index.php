@@ -70,7 +70,7 @@ nivel y duración habitual.
 <h3>Sesiones</h3>
 <p>
 Consulta cuándo se celebra cada actividad,
-en qué espacio y con qué monitor.
+en qué espacio y con qué profesor.
 </p>
 </article>
 <article class="tarjeta-informativa">

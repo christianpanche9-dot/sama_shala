@@ -3,12 +3,12 @@ require_once __DIR__ . '/conexion.php';
 require_once __DIR__ . '/funciones.php';
 $sql = "
 SELECT
-id_tipo_bono,
+id_tipo_paquete,
 nombre,
 numero_usos,
 precio,
 dias_validez
-FROM tipos_bono
+FROM tipos_paquete
 WHERE activo = 1
 AND id_tenant = ?
 ORDER BY precio
@@ -27,7 +27,7 @@ $resultado = $stmt->get_result();
 name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
-<title>Bonos | Sama Shala</title>
+<title>Paquetes | Sama Shala</title>
 <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
@@ -38,9 +38,9 @@ content="width=device-width, initial-scale=1.0"
 <p class="etiqueta">
 Precios
 </p>
-<h1>Bonos de clases</h1>
+<h1>Paquetes de clases</h1>
 <p>
-Compra un bono y utilízalo para reservar
+Compra un paquete y utilízalo para reservar
 las sesiones que quieras mientras tenga
 usos disponibles.
 </p>
@@ -48,31 +48,31 @@ usos disponibles.
 </div>
 <?php if ($resultado->num_rows === 0): ?>
 <div class="mensaje mensaje-aviso">
-No hay bonos disponibles en este momento.
+No hay paquetes disponibles en este momento.
 </div>
 <?php else: ?>
 <div class="rejilla-actividades">
 <?php while (
-$bono = $resultado->fetch_assoc()
+$paquete = $resultado->fetch_assoc()
 ): ?>
 <article class="tarjeta-actividad">
 <div class="contenido-tarjeta">
 <h2>
-<?= escapar($bono['nombre']) ?>
+<?= escapar($paquete['nombre']) ?>
 </h2>
 <p class="dato-destacado">
-<?= (int) $bono['numero_usos'] ?> clases
+<?= (int) $paquete['numero_usos'] ?> clases
 </p>
 <p>
-<?php if ($bono['dias_validez'] !== null): ?>
-Válido durante <?= (int) $bono['dias_validez'] ?> días desde la compra.
+<?php if ($paquete['dias_validez'] !== null): ?>
+Válido durante <?= (int) $paquete['dias_validez'] ?> días desde la compra.
 <?php else: ?>
 Sin caducidad.
 <?php endif; ?>
 </p>
 <p class="numero-plazas">
 <?= number_format(
-(float) $bono['precio'],
+(float) $paquete['precio'],
 2,
 ',',
 '.'
@@ -80,10 +80,10 @@ Sin caducidad.
 </p>
 <a
 class="boton"
-href="comprar_bono.php?id=<?= (int)
-$bono['id_tipo_bono'] ?>"
+href="comprar_paquete.php?id=<?= (int)
+$paquete['id_tipo_paquete'] ?>"
 >
-Comprar este bono
+Comprar este paquete
 </a>
 </div>
 </article>

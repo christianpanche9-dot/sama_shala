@@ -2,35 +2,35 @@
 require_once __DIR__ . '/seguridad.php';
 require_once __DIR__ . '/conexion.php';
 require_once __DIR__ . '/funciones.php';
-$id_tipo_bono = filter_input(
+$id_tipo_paquete = filter_input(
 INPUT_GET,
 'id',
 FILTER_VALIDATE_INT
 );
-if (!$id_tipo_bono) {
-header('Location: bonos.php');
+if (!$id_tipo_paquete) {
+header('Location: paquetes.php');
 exit;
 }
 $sql = "
 SELECT
-id_tipo_bono,
+id_tipo_paquete,
 nombre,
 numero_usos,
 precio,
 dias_validez
-FROM tipos_bono
-WHERE id_tipo_bono = ?
+FROM tipos_paquete
+WHERE id_tipo_paquete = ?
 AND activo = 1
 AND id_tenant = ?
 ";
 $stmt = $conexion->prepare($sql);
 $id_tenant = idTenantActual();
-$stmt->bind_param('ii', $id_tipo_bono, $id_tenant);
+$stmt->bind_param('ii', $id_tipo_paquete, $id_tenant);
 $stmt->execute();
-$bono = $stmt->get_result()->fetch_assoc();
-if (!$bono) {
+$paquete = $stmt->get_result()->fetch_assoc();
+if (!$paquete) {
 http_response_code(404);
-die('El bono solicitado no existe.');
+die('El paquete solicitado no existe.');
 }
 $error = $_GET['error'] ?? '';
 ?>
@@ -42,32 +42,32 @@ $error = $_GET['error'] ?? '';
 name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
-<title>Comprar bono | Sama Shala</title>
+<title>Comprar paquete | Sama Shala</title>
 <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
 <?php require_once __DIR__ . '/menu.php'; ?>
 <main class="contenedor seccion">
-<a class="enlace-volver" href="bonos.php">
-← Volver a bonos
+<a class="enlace-volver" href="paquetes.php">
+← Volver a paquetes
 </a>
 <div class="ficha-sesion">
 <section class="informacion-sesion">
 <h1>
-<?= escapar($bono['nombre']) ?>
+<?= escapar($paquete['nombre']) ?>
 </h1>
 <div class="rejilla-datos">
 <div class="dato">
 <span>Clases</span>
 <strong>
-<?= (int) $bono['numero_usos'] ?>
+<?= (int) $paquete['numero_usos'] ?>
 </strong>
 </div>
 <div class="dato">
 <span>Validez</span>
 <strong>
-<?= $bono['dias_validez'] !== null
-? (int) $bono['dias_validez'] . ' días'
+<?= $paquete['dias_validez'] !== null
+? (int) $paquete['dias_validez'] . ' días'
 : 'Sin caducidad' ?>
 </strong>
 </div>
@@ -75,7 +75,7 @@ content="width=device-width, initial-scale=1.0"
 <span>Precio</span>
 <strong>
 <?= number_format(
-(float) $bono['precio'],
+(float) $paquete['precio'],
 2,
 ',',
 '.'
@@ -98,14 +98,14 @@ al confirmar se registra la compra
 directamente como pagada.
 </p>
 <form
-action="procesar_compra_bono.php"
+action="procesar_compra_paquete.php"
 method="post"
 class="formulario"
 >
 <input
 type="hidden"
-name="id_tipo_bono"
-value="<?= (int) $bono['id_tipo_bono'] ?>"
+name="id_tipo_paquete"
+value="<?= (int) $paquete['id_tipo_paquete'] ?>"
 >
 <div class="campo">
 <label for="titular">
@@ -135,7 +135,7 @@ required
 <button type="submit" class="boton boton-bloque">
 Confirmar compra de
 <?= number_format(
-(float) $bono['precio'],
+(float) $paquete['precio'],
 2,
 ',',
 '.'

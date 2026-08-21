@@ -53,7 +53,7 @@ CONCAT(
 m.nombre,
 ' ',
 m.apellidos
-) AS monitor,
+) AS profesor,
 COUNT(r.id_reserva)
 AS reservas_confirmadas,
 GREATEST(
@@ -63,8 +63,8 @@ s.aforo - COUNT(r.id_reserva),
 FROM sesiones AS s
 INNER JOIN espacios AS e
 ON s.id_espacio = e.id_espacio
-INNER JOIN monitores AS m
-ON s.id_monitor = m.id_monitor
+INNER JOIN profesores AS m
+ON s.id_profesor = m.id_profesor
 LEFT JOIN reservas AS r
 ON r.id_sesion = s.id_sesion
 AND r.estado = 'confirmada'
@@ -244,9 +244,9 @@ $sesion['ubicacion']
 </p>
 <?php endif; ?>
 <p>
-<strong>Monitor:</strong>
+<strong>Profesor:</strong>
 <?= escapar(
-$sesion['monitor']
+$sesion['profesor']
 ) ?>
 </p>
 <p>

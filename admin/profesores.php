@@ -4,13 +4,13 @@ require_once __DIR__ . '/../conexion.php';
 require_once __DIR__ . '/../funciones.php';
 $sql = "
 SELECT
-id_monitor,
+id_profesor,
 nombre,
 apellidos,
 email,
 especialidad,
 activo
-FROM monitores
+FROM profesores
 ORDER BY apellidos, nombre
 ";
 $resultado = $conexion->query($sql);
@@ -23,7 +23,7 @@ $resultado = $conexion->query($sql);
 name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
-<title>Monitores | Administración</title>
+<title>Profesores | Administración</title>
 <link rel="stylesheet" href="../estilos.css">
 </head>
 <body>
@@ -31,9 +31,9 @@ content="width=device-width, initial-scale=1.0"
 
 <main class="contenedor seccion">
 <div class="encabezado-con-accion">
-<h1>Monitores</h1>
-<a class="boton" href="nuevo_monitor.php">
-Nuevo monitor
+<h1>Profesores</h1>
+<a class="boton" href="nuevo_profesor.php">
+Nuevo profesor
 </a>
 </div>
 
@@ -42,7 +42,7 @@ Nuevo monitor
 ): ?>
 
 <div class="mensaje mensaje-exito">
-El monitor se ha creado correctamente.
+El profesor se ha creado correctamente.
 </div>
 <?php endif; ?>
 <?php if (
@@ -50,7 +50,7 @@ El monitor se ha creado correctamente.
 ): ?>
 
 <div class="mensaje mensaje-exito">
-El monitor se ha actualizado correctamente.
+El profesor se ha actualizado correctamente.
 </div>
 <?php endif; ?>
 <?php if (
@@ -58,7 +58,7 @@ El monitor se ha actualizado correctamente.
 ): ?>
 
 <div class="mensaje mensaje-exito">
-El monitor se ha eliminado correctamente.
+El profesor se ha eliminado correctamente.
 </div>
 <?php endif; ?>
 <?php if (
@@ -66,7 +66,7 @@ El monitor se ha eliminado correctamente.
 ): ?>
 
 <div class="mensaje mensaje-error">
-No se puede eliminar el monitor porque tiene sesiones asociadas.
+No se puede eliminar el profesor porque tiene sesiones asociadas.
 Desactívalo si no quieres que se le asignen nuevas sesiones.
 </div>
 <?php endif; ?>
@@ -74,7 +74,7 @@ Desactívalo si no quieres que se le asignen nuevas sesiones.
 <table class="tabla-admin">
 <thead>
 <tr>
-<th>Monitor</th>
+<th>Profesor</th>
 <th>Correo</th>
 <th>Especialidad</th>
 <th>Estado</th>
@@ -83,47 +83,47 @@ Desactívalo si no quieres que se le asignen nuevas sesiones.
 </thead>
 <tbody>
 <?php while (
-$monitor = $resultado->fetch_assoc()
+$profesor = $resultado->fetch_assoc()
 ): ?>
 <tr>
 <td>
 <?= escapar(
-$monitor['nombre'] . ' ' .
-$monitor['apellidos']
+$profesor['nombre'] . ' ' .
+$profesor['apellidos']
 ) ?>
 </td>
 
 <td>
-    <?= escapar($monitor['email']) ?>
+    <?= escapar($profesor['email']) ?>
 </td>
 
 <td>
     <?= escapar(
-$monitor['especialidad']
+$profesor['especialidad']
 ) ?>
 </td>
 
 <td>
-<?= (int) $monitor['activo'] === 1
+<?= (int) $profesor['activo'] === 1
 ? 'Activo'
 : 'Inactivo' ?>
 </td>
 <td class="acciones-tabla">
 <a
 class="boton boton-secundario boton-pequeno"
-href="editar_monitor.php?id_monitor=<?= (int) $monitor['id_monitor'] ?>"
+href="editar_profesor.php?id_profesor=<?= (int) $profesor['id_profesor'] ?>"
 >
 Editar
 </a>
 <form
-action="eliminar_monitor.php"
+action="eliminar_profesor.php"
 method="post"
-onsubmit="return confirm('¿Seguro que quieres eliminar este monitor?');"
+onsubmit="return confirm('¿Seguro que quieres eliminar este profesor?');"
 >
 <input
 type="hidden"
-name="id_monitor"
-value="<?= (int) $monitor['id_monitor'] ?>"
+name="id_profesor"
+value="<?= (int) $profesor['id_profesor'] ?>"
 >
 <button class="boton peligro boton-pequeno" type="submit">
 Eliminar

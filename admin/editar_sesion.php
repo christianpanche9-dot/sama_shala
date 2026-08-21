@@ -18,7 +18,7 @@ SELECT
 id_sesion,
 id_actividad,
 id_espacio,
-id_monitor,
+id_profesor,
 fecha,
 hora_inicio,
 hora_fin,
@@ -73,21 +73,21 @@ $stmt_espacios->bind_param('i', $sesion['id_espacio']);
 $stmt_espacios->execute();
 $espacios = $stmt_espacios->get_result();
 
-$sql_monitores = "
+$sql_profesores = "
 SELECT
-id_monitor,
+id_profesor,
 nombre,
 apellidos,
 especialidad
-FROM monitores
+FROM profesores
 WHERE activo = 1
-OR id_monitor = ?
+OR id_profesor = ?
 ORDER BY apellidos, nombre
 ";
-$stmt_monitores = $conexion->prepare($sql_monitores);
-$stmt_monitores->bind_param('i', $sesion['id_monitor']);
-$stmt_monitores->execute();
-$monitores = $stmt_monitores->get_result();
+$stmt_profesores = $conexion->prepare($sql_profesores);
+$stmt_profesores->bind_param('i', $sesion['id_profesor']);
+$stmt_profesores->execute();
+$profesores = $stmt_profesores->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -195,37 +195,37 @@ $espacio['aforo_maximo'] ?>
 </select>
 </div>
 <div class="campo">
-<label for="id_monitor">
-Monitor
+<label for="id_profesor">
+Profesor
 </label>
 <select
-id="id_monitor"
-name="id_monitor"
+id="id_profesor"
+name="id_profesor"
 required
 >
 <?php while (
-$monitor =
-$monitores->fetch_assoc()
+$profesor =
+$profesores->fetch_assoc()
 ): ?>
 <option
 value="<?= (int)
-$monitor['id_monitor'] ?>"
-<?= (int) $monitor['id_monitor'] === (int) $sesion['id_monitor']
+$profesor['id_profesor'] ?>"
+<?= (int) $profesor['id_profesor'] === (int) $sesion['id_profesor']
 ? 'selected'
 : '' ?>
 >
 <?= escapar(
-$monitor['nombre'] . ' ' .
-$monitor['apellidos']
+$profesor['nombre'] . ' ' .
+$profesor['apellidos']
 ) ?>
 <?php if (
 !empty(
-$monitor['especialidad']
+$profesor['especialidad']
 )
 ): ?>
 —
 <?= escapar(
-$monitor['especialidad']
+$profesor['especialidad']
 ) ?>
 <?php endif; ?>
 </option>
@@ -256,7 +256,7 @@ value="<?= escapar(substr($sesion['hora_inicio'], 0, 5)) ?>"
 required
 >
 <p class="ayuda">
-El sistema calculará automáticamente la hora final y comprobará que el espacio y el monitor estén disponibles.
+El sistema calculará automáticamente la hora final y comprobará que el espacio y el profesor estén disponibles.
 </p>
 <p>
 Hora final prevista:

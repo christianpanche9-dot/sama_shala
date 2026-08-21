@@ -1,6 +1,39 @@
 <?php
 require_once "seguridad_admin.php";
-require_once "../conexion.php";
+require_once __DIR__ . '/../conexion.php';
+
+$id_profesor = filter_input(
+INPUT_GET,
+'id_profesor',
+FILTER_VALIDATE_INT
+);
+if (!$id_profesor) {
+header('Location: profesores.php');
+exit;
+}
+
+$sql = "
+SELECT
+id_profesor,
+nombre,
+apellidos,
+email,
+telefono,
+especialidad,
+activo
+FROM profesores
+WHERE id_profesor = ?
+";
+$stmt = $conexion->prepare($sql);
+$stmt->bind_param('i', $id_profesor);
+$stmt->execute();
+$profesor = $stmt->get_result()->fetch_assoc();
+$stmt->close();
+
+if (!$profesor) {
+header('Location: profesores.php?error=no_encontrado');
+exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -10,16 +43,16 @@ require_once "../conexion.php";
 name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
-<title>Nuevo monitor | Sama Shala</title>
+<title>Editar profesor | Sama Shala</title>
 <link rel="stylesheet" href="../estilos.css">
 </head>
 <body>
 <?php require_once __DIR__ . '/menu_admin.php'; ?>
 <main class="contenedor seccion">
-<a class="enlace-volver" href="monitores.php">
-← Volver a monitores
+<a class="enlace-volver" href="profesores.php">
+← Volver a profesores
 </a>
-<h1>Nuevo monitor</h1>
+<h1>Editar profesor</h1>
 <?php if (
     ($_GET['error'] ?? '') === 'datos'
 ): ?>
@@ -33,13 +66,18 @@ Revisa los datos del formulario.
 ): ?>
 
 <div class="mensaje mensaje-error">
-Ya existe un monitor con ese correo.
+Ya existe otro profesor con ese correo.
 </div>
 <?php endif; ?>
 <form
 class="formulario-admin"
-action="guardar_monitor.php"
+action="actualizar_profesor.php"
 method="post"
+>
+<input
+type="hidden"
+name="id_profesor"
+value="<?= (int) $profesor['id_profesor'] ?>"
 >
 <div class="campo">
 <label for="nombre">Nombre</label>
@@ -48,6 +86,7 @@ type="text"
 id="nombre"
 name="nombre"
 maxlength="80"
+value="<?= escapar($profesor['nombre']) ?>"
 required
 >
 </div>
@@ -58,6 +97,7 @@ type="text"
 id="apellidos"
 name="apellidos"
 maxlength="120"
+value="<?= escapar($profesor['apellidos']) ?>"
 required
 >
 </div>
@@ -68,6 +108,7 @@ type="email"
 id="email"
 name="email"
 maxlength="180"
+value="<?= escapar($profesor['email']) ?>"
 required
 >
 </div>
@@ -78,6 +119,7 @@ type="tel"
 id="telefono"
 name="telefono"
 maxlength="25"
+value="<?= escapar($profesor['telefono']) ?>"
 >
 </div>
 <div class="campo campo-completo">
@@ -89,6 +131,7 @@ type="text"
 id="especialidad"
 name="especialidad"
 maxlength="180"
+value="<?= escapar($profesor['especialidad']) ?>"
 required
 >
 </div>
@@ -98,14 +141,14 @@ required
 type="checkbox"
 name="activo"
 value="1"
-checked
+<?= (int) $profesor['activo'] === 1 ? 'checked' : '' ?>
 >
-Monitor activo
+Profesor activo
 </label>
 </div>
 <div class="campo-completo">
 <button class="boton" type="submit">
-Guardar monitor
+Guardar cambios
 </button>
 </div>
 </form>
