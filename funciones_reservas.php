@@ -69,6 +69,16 @@ throw new Exception(
 "La reserva no está confirmada."
 );
 }
+if ($id_usuario !== null) {
+$inicio_sesion = strtotime(
+$reserva["fecha"] . " " . $reserva["hora_inicio"]
+);
+if ($inicio_sesion - time() < 15 * 60) {
+throw new Exception(
+"Ya no se puede cancelar: faltan menos de 15 minutos para el inicio de la sesión."
+);
+}
+}
 $id_sesion =
 (int) $reserva["id_sesion"];
 /*

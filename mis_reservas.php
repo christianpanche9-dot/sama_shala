@@ -130,7 +130,7 @@ $reserva["hora_inicio"]
 $puede_cancelar =
 $reserva["estado"] === "confirmada" &&
 $reserva["estado_sesion"] !== "cancelada" &&
-$inicio > new DateTime();
+$inicio > (new DateTime())->modify("+15 minutes");
 ?>
 <article class="tarjeta-reserva">
 <h3>
