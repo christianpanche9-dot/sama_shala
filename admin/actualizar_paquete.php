@@ -20,7 +20,6 @@ exit;
 $nombre = trim($_POST['nombre'] ?? '');
 $numero_usos = $_POST['numero_usos'] ?? '';
 $precio = $_POST['precio'] ?? '';
-$dias_validez = trim($_POST['dias_validez'] ?? '');
 $activo = isset($_POST['activo']) ? 1 : 0;
 $errores = [];
 if ($nombre === '') {
@@ -45,18 +44,6 @@ FILTER_VALIDATE_FLOAT,
 if ($precio === false) {
 $errores[] = 'El precio no es válido.';
 }
-if ($dias_validez !== '') {
-$dias_validez = filter_var(
-$dias_validez,
-FILTER_VALIDATE_INT,
-['options' => ['min_range' => 1, 'max_range' => 730]]
-);
-if ($dias_validez === false) {
-$errores[] = 'La validez en días no es válida.';
-}
-} else {
-$dias_validez = null;
-}
 if ($errores) {
 header("Location: editar_paquete.php?id_tipo_paquete=$id_tipo_paquete&error=1");
 exit;
@@ -66,17 +53,15 @@ UPDATE tipos_paquete SET
 nombre = ?,
 numero_usos = ?,
 precio = ?,
-dias_validez = ?,
 activo = ?
 WHERE id_tipo_paquete = ?
 ";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param(
-'sidiii',
+'sidii',
 $nombre,
 $numero_usos,
 $precio,
-$dias_validez,
 $activo,
 $id_tipo_paquete
 );

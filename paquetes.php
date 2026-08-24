@@ -6,8 +6,7 @@ SELECT
 id_tipo_paquete,
 nombre,
 numero_usos,
-precio,
-dias_validez
+precio
 FROM tipos_paquete
 WHERE activo = 1
 AND id_tenant = ?
@@ -64,11 +63,7 @@ $paquete = $resultado->fetch_assoc()
 <?= (int) $paquete['numero_usos'] ?> clases
 </p>
 <p>
-<?php if ($paquete['dias_validez'] !== null): ?>
-Válido durante <?= (int) $paquete['dias_validez'] ?> días desde la compra.
-<?php else: ?>
-Sin caducidad.
-<?php endif; ?>
+Válido durante 1 mes desde la compra.
 </p>
 <p class="numero-plazas">
 <?= formatear_precio(

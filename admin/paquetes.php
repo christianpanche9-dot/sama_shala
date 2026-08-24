@@ -9,7 +9,6 @@ id_tipo_paquete,
 nombre,
 numero_usos,
 precio,
-dias_validez,
 activo
 FROM tipos_paquete
 WHERE id_tenant = ?
@@ -91,9 +90,7 @@ seguir ofreciéndolo.
 <?= (int) $paquete['numero_usos'] ?>
 </td>
 <td>
-<?= $paquete['dias_validez'] !== null
-? (int) $paquete['dias_validez'] . ' días'
-: 'Sin caducidad' ?>
+1 mes
 </td>
 <td>
 <?= formatear_precio(

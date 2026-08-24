@@ -77,18 +77,11 @@ step="0.01"
 required
 >
 </div>
-<div class="campo">
-<label for="dias_validez">
-Validez en días
+<div class="campo campo-completo">
+<label>
+Validez
 </label>
-<input
-type="number"
-id="dias_validez"
-name="dias_validez"
-min="1"
-max="730"
-placeholder="Déjalo en blanco si no caduca"
->
+<p>Todos los paquetes duran 1 mes desde la fecha de compra.</p>
 </div>
 <div class="campo-checkbox campo-completo">
 <label>

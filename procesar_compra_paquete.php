@@ -29,8 +29,7 @@ $sql_paquete = "
 SELECT
 id_tipo_paquete,
 numero_usos,
-precio,
-dias_validez
+precio
 FROM tipos_paquete
 WHERE id_tipo_paquete = ?
 AND activo = 1
@@ -53,14 +52,7 @@ $referencia_pago = 'SIM-' . strtoupper(
 bin2hex(random_bytes(8))
 );
 $numero_usos = (int) $tipo_paquete['numero_usos'];
-$fecha_caducidad = $tipo_paquete['dias_validez'] !== null
-? date(
-'Y-m-d',
-strtotime(
-'+' . (int) $tipo_paquete['dias_validez'] . ' days'
-)
-)
-: null;
+$fecha_caducidad = date('Y-m-d', strtotime('+1 month'));
 $sql_compra = "
 INSERT INTO paquetes_clientes (
 id_usuario,

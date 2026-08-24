@@ -16,8 +16,7 @@ SELECT
 id_tipo_paquete,
 nombre,
 numero_usos,
-precio,
-dias_validez
+precio
 FROM tipos_paquete
 WHERE id_tipo_paquete = ?
 AND activo = 1
@@ -65,11 +64,7 @@ content="width=device-width, initial-scale=1.0"
 </div>
 <div class="dato">
 <span>Validez</span>
-<strong>
-<?= $paquete['dias_validez'] !== null
-? (int) $paquete['dias_validez'] . ' días'
-: 'Sin caducidad' ?>
-</strong>
+<strong>1 mes</strong>
 </div>
 <div class="dato">
 <span>Precio</span>
