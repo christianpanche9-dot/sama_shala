@@ -23,13 +23,7 @@ content="width=device-width, initial-scale=1.0"
 <main>
 <section class="hero">
 <div class="hero-video-fondo">
-<iframe
-id="video-fondo-hero"
-src="https://www.youtube.com/embed/3Lh9xC0dhfs?autoplay=1&mute=1&loop=1&playlist=3Lh9xC0dhfs&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&playsinline=1&fs=0&cc_load_policy=0"
-title=""
-frameborder="0"
-allow="autoplay; encrypted-media"
-></iframe>
+<div id="video-fondo-hero"></div>
 </div>
 <div class="hero-video-cargando" id="hero-video-cargando"></div>
 <div class="hero-video-superposicion"></div>
@@ -61,14 +55,21 @@ href="sesiones.php"
 </div>
 </div>
 </section>
+<script src="https://www.youtube.com/iframe_api"></script>
 <script>
 (function () {
 const contenedor = document.querySelector(".hero-video-fondo");
-const iframe = document.querySelector("#video-fondo-hero");
+const cargando = document.querySelector("#hero-video-cargando");
+let reproductor = null;
+
+function ajustarTamano() {
+if (!reproductor || typeof reproductor.getIframe !== "function") {
+return;
+}
+const iframe = reproductor.getIframe();
 if (!contenedor || !iframe) {
 return;
 }
-function ajustarTamano() {
 const ancho = contenedor.offsetWidth;
 const alto = contenedor.offsetHeight;
 const proporcion = 16 / 9;
@@ -80,14 +81,42 @@ iframe.style.height = "100%";
 iframe.style.width = (alto * proporcion) + "px";
 }
 }
-window.addEventListener("resize", ajustarTamano);
+
+window.onYouTubeIframeAPIReady = function () {
+reproductor = new YT.Player("video-fondo-hero", {
+videoId: "3Lh9xC0dhfs",
+playerVars: {
+autoplay: 1,
+mute: 1,
+controls: 0,
+disablekb: 1,
+fs: 0,
+iv_load_policy: 3,
+modestbranding: 1,
+playsinline: 1,
+rel: 0,
+cc_load_policy: 0
+},
+events: {
+onReady: function (evento) {
+evento.target.mute();
+evento.target.playVideo();
 ajustarTamano();
-const cargando = document.querySelector("#hero-video-cargando");
-if (cargando) {
-setTimeout(function () {
+},
+onStateChange: function (evento) {
+if (evento.data === YT.PlayerState.PLAYING && cargando) {
 cargando.classList.add("oculto");
-}, 1800);
 }
+if (evento.data === YT.PlayerState.ENDED) {
+evento.target.seekTo(0);
+evento.target.playVideo();
+}
+}
+}
+});
+};
+
+window.addEventListener("resize", ajustarTamano);
 })();
 </script>
 <section class="contenedor seccion">
