@@ -67,7 +67,7 @@ nivel y duración habitual.
 </p>
 </article>
 <article class="tarjeta-informativa">
-<h3>Sesiones</h3>
+<h3>Calendario</h3>
 <p>
 Consulta cuándo se celebra cada actividad,
 en qué espacio y con qué profesor.

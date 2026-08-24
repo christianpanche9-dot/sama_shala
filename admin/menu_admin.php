@@ -17,7 +17,7 @@ Espacios
 Profesores
 </a>
 <a href="sesiones.php">
-Sesiones
+Calendario
 </a>
 <a href="reservas.php">
 Reservas

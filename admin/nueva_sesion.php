@@ -59,7 +59,7 @@ Programar sesión | Sama Shala
 <?php require_once __DIR__ . '/menu_admin.php'; ?>
 <main class="contenedor seccion">
 <a class="enlace-volver" href="sesiones.php">
-← Volver a sesiones
+← Volver al calendario
 </a>
 <p class="etiqueta">
 Horarios

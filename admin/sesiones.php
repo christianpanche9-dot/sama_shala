@@ -34,14 +34,14 @@ $resultado = $conexion->query($sql);
 name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
-<title>Sesiones programadas</title>
+<title>Calendario</title>
 <link rel="stylesheet" href="../estilos.css">
 </head>
 
 <body>
 <?php require_once "menu_admin.php"; ?>
 <main class="contenedor">
-<h1>Sesiones programadas</h1>
+<h1>Calendario</h1>
 <?php if (
 
 ($_GET["mensaje"] ?? "") === "sesion_creada"

@@ -12,7 +12,7 @@ Sama Shala
 Actividades
 </a>
 <a href="sesiones.php">
-Sesiones
+Calendario
 </a>
 <a href="paquetes.php">
 Paquetes
