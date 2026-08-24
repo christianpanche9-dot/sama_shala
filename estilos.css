@@ -104,7 +104,7 @@ font-family: var(--fuente-titulares);
 font-weight: 400;
 }
 .contenedor {
-width: min(1180px, 92%);
+width: min(1100px, 86%);
 margin: 0 auto;
 }
 .seccion {
