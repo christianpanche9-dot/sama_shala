@@ -38,14 +38,7 @@ Sama Shala
 <a href="paquetes.php">
 <?= t('Paquetes') ?>
 </a>
-<?php if (!usuarioAutenticado()): ?>
-<a href="login.php">
-<?= t('Iniciar sesión') ?>
-</a>
-<a href="registro.php">
-<?= t('Registrarse') ?>
-</a>
-<?php else: ?>
+<?php if (usuarioAutenticado()): ?>
 <?php if (usuarioEsAdmin()): ?>
 <a href="admin/index.php">
 <?= t('Administración') ?>

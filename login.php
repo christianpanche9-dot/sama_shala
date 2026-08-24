@@ -69,14 +69,15 @@ name="password"
 required
 >
 </div>
+<div class="grupo-botones">
 <button type="submit" class="boton">
 <?= t("Entrar") ?>
 </button>
+<a class="boton boton-secundario" href="registro.php">
+<?= t("Registrarse") ?>
+</a>
+</div>
 </form>
-<p>
-<?= t("¿Todavía no tienes cuenta?") ?>
-<a href="registro.php"><?= t("Regístrate") ?></a>.
-</p>
 </main>
 </body>
 </html>
