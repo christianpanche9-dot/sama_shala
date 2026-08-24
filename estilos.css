@@ -172,9 +172,7 @@ gap: 30px;
 }
 .menu-principal {
 display: flex;
-flex: 1;
 align-items: center;
-justify-content: center;
 flex-wrap: wrap;
 gap: 32px;
 }
