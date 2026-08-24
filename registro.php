@@ -20,31 +20,31 @@ unset($_SESSION["datos_registro"]);
 name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
-<title>Crear una cuenta</title>
+<title><?= t("Crear una cuenta") ?></title>
 <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
 <?php require "menu.php"; ?>
 <main class="contenedor">
-<h1>Crear una cuenta</h1>
+<h1><?= t("Crear una cuenta") ?></h1>
 <p>
+<?= t("Regístrate para reservar plazas en las actividades.") ?>
 </p>
-Regístrate para reservar plazas en las actividades.
 <?php if ($error === "datos"): ?>
 <div class="mensaje error">
-Revisa los datos introducidos.
+<?= t("Revisa los datos introducidos.") ?>
 </div>
 <?php elseif ($error === "email"): ?>
 <div class="mensaje error">
-Ya existe una cuenta con ese correo electrónico.
+<?= t("Ya existe una cuenta con ese correo electrónico.") ?>
 </div>
 <?php elseif ($error === "password"): ?>
 <div class="mensaje error">
-Las contraseñas no coinciden.
+<?= t("Las contraseñas no coinciden.") ?>
 </div>
 <?php elseif ($error === "guardar"): ?>
 <div class="mensaje error">
-No se ha podido crear la cuenta.
+<?= t("No se ha podido crear la cuenta.") ?>
 </div>
 <?php endif; ?>
 <form
@@ -53,7 +53,7 @@ method="post"
 class="formulario"
 >
 <div class="campo">
-    <label for="nombre">Nombre</label>
+    <label for="nombre"><?= t("Nombre") ?></label>
 <input
 type="text"
 id="nombre"
@@ -64,7 +64,7 @@ required
 >
 </div>
 <div class="campo">
-<label for="apellidos">Apellidos</label>
+<label for="apellidos"><?= t("Apellidos") ?></label>
 <input
 type="text"
 id="apellidos"
@@ -75,7 +75,7 @@ required
 >
 </div>
 <div class="campo">
-<label for="email">Correo electrónico</label>
+<label for="email"><?= t("Correo electrónico") ?></label>
 <input
 type="email"
 id="email"
@@ -86,7 +86,7 @@ required
 >
 </div>
 <div class="campo">
-<label for="telefono">Teléfono</label>
+<label for="telefono"><?= t("Teléfono") ?></label>
 <input
 type="tel"
 id="telefono"
@@ -96,7 +96,7 @@ value="<?= escapar($telefono) ?>"
 >
 </div>
 <div class="campo">
-<label for="password">Contraseña</label>
+<label for="password"><?= t("Contraseña") ?></label>
 <input
 type="password"
 id="password"
@@ -105,12 +105,12 @@ minlength="8"
 required
 >
 <p class="ayuda">
-Debe contener al menos ocho caracteres.
+<?= t("Debe contener al menos ocho caracteres.") ?>
 </p>
 </div>
 <div class="campo">
 <label for="repetir_password">
-Repetir contraseña
+<?= t("Repetir contraseña") ?>
 </label>
 <input
 type="password"
@@ -121,13 +121,13 @@ required
 >
 </div>
 <button type="submit" class="boton">
-Crear mi cuenta
+<?= t("Crear mi cuenta") ?>
 </button>
 </form>
 <p>
+<?= t("¿Ya tienes una cuenta?") ?>
+<a href="login.php"><?= t("Inicia sesión") ?></a>.
 </p>
-¿Ya tienes una cuenta?
-<a href="login.php">Inicia sesión</a>.
 </main>
 </body>
 </html>

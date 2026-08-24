@@ -8,7 +8,7 @@ FILTER_VALIDATE_INT
 );
 if (!$id_actividad || $id_actividad < 1) {
 http_response_code(400);
-die('El identificador no es válido.');
+die(t('El identificador no es válido.'));
 }
 $sql_actividad = "
 SELECT
@@ -37,7 +37,7 @@ $actividad =
 $resultado_actividad->fetch_assoc();
 if (!$actividad) {
 http_response_code(404);
-die('La actividad no existe o no está disponible.');
+die(t('La actividad no existe o no está disponible.'));
 }
 $sql_sesiones = "
 SELECT
@@ -114,7 +114,7 @@ content="width=device-width, initial-scale=1.0"
 >
 <title>
 <?= escapar($actividad['nombre']) ?>
-| Sama Shala
+<?= t('| Sama Shala') ?>
 </title>
 <link rel="stylesheet" href="estilos.css">
 </head>
@@ -159,37 +159,36 @@ $actividad['nivel']
 </span>
 </div>
 <h1>
-</h1>
 <?= escapar($actividad['nombre']) ?>
+</h1>
 <p class="descripcion-destacada">
 <?= escapar(
 $actividad['descripcion']
 ) ?>
 </p>
 <p>
-<strong>Duración habitual:</strong>
+<strong><?= t('Duración habitual:') ?></strong>
 <?= (int)
 $actividad['duracion_minutos'] ?>
-minutos
+<?= t('minutos') ?>
 </p>
 <a
 class="enlace-volver"
 href="actividades.php"
 >
-← Volver a las actividades
+<?= t('← Volver a las actividades') ?>
 </a>
 </div>
 </div>
 </section>
 <section class="contenedor seccion">
-<h2>Próximas sesiones</h2>
+<h2><?= t('Próximas sesiones') ?></h2>
 <?php if (
     $resultado_sesiones->num_rows === 0
 ): ?>
 
 <div class="mensaje mensaje-aviso">
-Esta actividad todavía no tiene
-próximas sesiones disponibles.
+<?= t('Esta actividad todavía no tiene próximas sesiones disponibles.') ?>
 </div>
 <?php else: ?>
 <div class="lista-sesiones">
@@ -235,7 +234,7 @@ $sesion['hora_fin']
 </div>
 <div class="datos-sesion">
 <p>
-<strong>Espacio:</strong>
+<strong><?= t('Espacio:') ?></strong>
 <?= escapar(
 $sesion['espacio']
 ) ?>
@@ -245,23 +244,23 @@ $sesion['espacio']
 ): ?>
 
 <p>
-<strong>Ubicación:</strong>
+<strong><?= t('Ubicación:') ?></strong>
 <?= escapar(
 $sesion['ubicacion']
 ) ?>
 </p>
 <?php endif; ?>
 <p>
-<strong>Profesor:</strong>
+<strong><?= t('Profesor:') ?></strong>
 <?= escapar(
 $sesion['profesor']
 ) ?>
 </p>
 <p>
-</p>
-<strong>Aforo:</strong>
+<strong><?= t('Aforo:') ?></strong>
 <?= $aforo ?>
-persona
+<?= t('persona') ?>
+</p>
 <div class="barra-ocupacion">
 <div
 class="barra-ocupacion-interior"
@@ -271,20 +270,20 @@ style="width:
 </div>
 <small>
 <?= $reservas ?>
-de
+<?= t('de') ?>
 <?= $aforo ?>
-plazas ocupadas
+<?= t('plazas ocupadas') ?>
 </small>
 </div>
 <div class="acciones-sesion">
 <?php if ($plazas > 0): ?>
 <span class="plazas-disponibles">
 <?= $plazas ?>
-plazas disponibles
+<?= t('plazas disponibles') ?>
 </span>
 <?php else: ?>
 <span class="sesion-completa">
-Sesión completa
+<?= t('Sesión completa') ?>
 </span>
 <?php endif; ?>
 <a
@@ -292,7 +291,7 @@ class="boton"
 href="detalle_sesion.php?id=<?= (int)
 $sesion['id_sesion'] ?>"
 >
-Ver sesión
+<?= t('Ver sesión') ?>
 </a>
 </div>
 </article>

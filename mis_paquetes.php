@@ -34,26 +34,25 @@ $mensaje = $_GET['mensaje'] ?? '';
 name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
-<title>Mis paquetes | Sama Shala</title>
+<title><?= t('Mis paquetes | Sama Shala') ?></title>
 <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
 <?php require_once __DIR__ . '/menu.php'; ?>
 <main class="contenedor">
-<h1>Mis paquetes</h1>
+<h1><?= t('Mis paquetes') ?></h1>
 <?php if ($mensaje === 'comprado'): ?>
 <div class="mensaje mensaje-exito">
-Paquete comprado correctamente. Ya puedes
-usarlo al reservar una sesión.
+<?= t('Paquete comprado correctamente. Ya puedes usarlo al reservar una sesión.') ?>
 </div>
 <?php endif; ?>
 <p>
 <a class="boton boton-secundario" href="paquetes.php">
-Comprar un nuevo paquete
+<?= t('Comprar un nuevo paquete') ?>
 </a>
 </p>
 <?php if ($paquetes->num_rows === 0): ?>
-<p>Todavía no tienes ningún paquete.</p>
+<p><?= t('Todavía no tienes ningún paquete.') ?></p>
 <?php else: ?>
 <div class="rejilla-reservas">
 <?php while ($paquete = $paquetes->fetch_assoc()): ?>
@@ -68,39 +67,39 @@ $agotado = (int) $paquete['usos_disponibles'] <= 0;
 <?= escapar($paquete['nombre_paquete']) ?>
 </h3>
 <p>
-<strong>Usos disponibles:</strong>
-<?= (int) $paquete['usos_disponibles'] ?> de <?= (int) $paquete['usos_iniciales'] ?>
+<strong><?= t('Usos disponibles:') ?></strong>
+<?= (int) $paquete['usos_disponibles'] ?> <?= t('de') ?> <?= (int) $paquete['usos_iniciales'] ?>
 </p>
 <p>
-<strong>Comprado:</strong>
+<strong><?= t('Comprado:') ?></strong>
 <?= date(
 'd/m/Y',
 strtotime($paquete['fecha_compra'])
 ) ?>
 </p>
 <p>
-<strong>Caduca:</strong>
+<strong><?= t('Caduca:') ?></strong>
 <?= $paquete['fecha_caducidad'] !== null
 ? date(
 'd/m/Y',
 strtotime($paquete['fecha_caducidad'])
 )
-: 'Sin caducidad' ?>
+: t('Sin caducidad') ?>
 </p>
 <p>
-<strong>Estado:</strong>
+<strong><?= t('Estado:') ?></strong>
 <?php if ($paquete['estado'] === 'cancelado'): ?>
-Cancelado
+<?= t('Cancelado') ?>
 <?php elseif ($caducado): ?>
-Caducado
+<?= t('Caducado') ?>
 <?php elseif ($agotado): ?>
-Agotado
+<?= t('Agotado') ?>
 <?php else: ?>
-Activo
+<?= t('Activo') ?>
 <?php endif; ?>
 </p>
 <p class="codigo-reserva">
-Ref. pago: <?= escapar($paquete['referencia_pago']) ?> ·
+<?= t('Ref. pago:') ?> <?= escapar($paquete['referencia_pago']) ?> ·
 <?= formatear_precio(
 (float) $paquete['precio_pagado']
 ) ?>

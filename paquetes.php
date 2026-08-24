@@ -26,7 +26,7 @@ $resultado = $stmt->get_result();
 name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
-<title>Paquetes | Sama Shala</title>
+<title><?= t('Paquetes | Sama Shala') ?></title>
 <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
@@ -35,19 +35,17 @@ content="width=device-width, initial-scale=1.0"
 <div class="encabezado-pagina">
 <div>
 <p class="etiqueta">
-Precios
+<?= t('Precios') ?>
 </p>
-<h1>Paquetes de clases</h1>
+<h1><?= t('Paquetes de clases') ?></h1>
 <p>
-Compra un paquete y utilízalo para reservar
-las sesiones que quieras mientras tenga
-usos disponibles.
+<?= t('Compra un paquete y utilízalo para reservar las sesiones que quieras mientras tenga usos disponibles.') ?>
 </p>
 </div>
 </div>
 <?php if ($resultado->num_rows === 0): ?>
 <div class="mensaje mensaje-aviso">
-No hay paquetes disponibles en este momento.
+<?= t('No hay paquetes disponibles en este momento.') ?>
 </div>
 <?php else: ?>
 <div class="rejilla-actividades">
@@ -60,10 +58,10 @@ $paquete = $resultado->fetch_assoc()
 <?= escapar($paquete['nombre']) ?>
 </h2>
 <p class="dato-destacado">
-<?= (int) $paquete['numero_usos'] ?> clases
+<?= (int) $paquete['numero_usos'] ?> <?= t('clases') ?>
 </p>
 <p>
-Válido durante 1 mes desde la compra.
+<?= t('Válido durante 1 mes desde la compra.') ?>
 </p>
 <p class="numero-plazas">
 <?= formatear_precio(
@@ -75,7 +73,7 @@ class="boton"
 href="comprar_paquete.php?id=<?= (int)
 $paquete['id_tipo_paquete'] ?>"
 >
-Comprar este paquete
+<?= t('Comprar este paquete') ?>
 </a>
 </div>
 </article>

@@ -91,31 +91,30 @@ $mensaje = $_GET["mensaje"] ?? "";
 name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
-<title>Mis reservas</title>
+<title><?= t('Mis reservas') ?></title>
 <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
 <?php require "menu.php"; ?>
 <main class="contenedor">
-<h1>Mis reservas</h1>
+<h1><?= t('Mis reservas') ?></h1>
 <?php if ($mensaje === "confirmada"): ?>
 <div class="mensaje mensaje-exito">
-La reserva se ha confirmado correctamente.
+<?= t('La reserva se ha confirmado correctamente.') ?>
 </div>
 <?php elseif ($mensaje === "espera"): ?>
 <div class="mensaje mensaje-aviso">
-La sesión está completa.
-Te hemos añadido a la lista de espera.
+<?= t('La sesión está completa. Te hemos añadido a la lista de espera.') ?>
 </div>
 <?php elseif ($mensaje === "cancelada"): ?>
 <div class="mensaje mensaje-exito">
-La reserva se ha cancelado.
+<?= t('La reserva se ha cancelado.') ?>
 </div>
 <?php endif; ?>
 <section>
-<h2>Reservas</h2>
+<h2><?= t('Reservas') ?></h2>
 <?php if ($reservas->num_rows === 0): ?>
-    <p>Todavía no tienes reservas.</p>
+    <p><?= t('Todavía no tienes reservas.') ?></p>
 <?php else: ?>
 <div class="rejilla-reservas">
 <?php while (
@@ -141,14 +140,14 @@ $inicio > (new DateTime())->modify("+15 minutes");
 
 
 <p>
-<strong>Fecha:</strong>
+<strong><?= t('Fecha:') ?></strong>
 <?= date(
     "d/m/Y",
 strtotime($reserva["fecha"])
 ) ?>
 </p>
 <p>
-<strong>Horario:</strong>
+<strong><?= t('Horario:') ?></strong>
 <?= substr(
 $reserva["hora_inicio"],
 0,
@@ -162,28 +161,28 @@ $reserva["hora_fin"],
 ) ?>
 </p>
 <p>
-<strong>Espacio:</strong>
+<strong><?= t('Espacio:') ?></strong>
 <?= escapar(
 $reserva["espacio"]
 ) ?>
 </p>
 <p>
-<strong>Estado:</strong>
+<strong><?= t('Estado:') ?></strong>
 <?= escapar(
-ucfirst($reserva["estado"])
+t(ucfirst($reserva["estado"]))
 ) ?>
 </p>
 <p>
-<strong>Pago:</strong>
+<strong><?= t('Pago:') ?></strong>
 <?= $reserva["tipo_pago"] === "paquete"
-? "Con paquete"
-: "Clase suelta" ?>
+? t("Con paquete")
+: t("Clase suelta") ?>
 </p>
 <?php if (
     $reserva["estado"] === "confirmada"
 ): ?>
 <p class="codigo-reserva">
-Código:
+<?= t('Código:') ?>
 <?= escapar(
 $reserva["codigo_reserva"]
 ) ?>
@@ -205,7 +204,7 @@ $reserva["id_reserva"]
 type="submit"
 class="boton peligro"
 >
-Cancelar reserva
+<?= t('Cancelar reserva') ?>
 </button>
 </form>
 <?php endif; ?>
@@ -216,10 +215,10 @@ Cancelar reserva
 </section>
 
 <section>
-<h2>Lista de espera</h2>
+<h2><?= t('Lista de espera') ?></h2>
 <?php if ($lista_espera->num_rows === 0): ?>
 <p>
-No estás esperando plaza en ninguna sesión.
+<?= t('No estás esperando plaza en ninguna sesión.') ?>
 </p>
 <?php else: ?>
 <div class="rejilla-reservas">
@@ -246,7 +245,7 @@ $espera["hora_inicio"],
 ) ?>
 </p>
 <p>
-<strong>Posición:</strong>
+<strong><?= t('Posición:') ?></strong>
 <?= (int) $espera["posicion"] ?>
 </p>
 </article>

@@ -51,7 +51,7 @@ $esperas = $stmt->get_result();
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Lista de espera</title>
+    <title><?= t('Lista de espera') ?></title>
     <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
@@ -60,11 +60,11 @@ $esperas = $stmt->get_result();
 
 <main class="contenedor">
 
-<h1>Mi lista de espera</h1>
+<h1><?= t('Mi lista de espera') ?></h1>
 
 <?php if ($esperas->num_rows == 0): ?>
 
-<p>No estás en lista de espera de ninguna actividad.</p>
+<p><?= t('No estás en lista de espera de ninguna actividad.') ?></p>
 
 <?php else: ?>
 
@@ -77,29 +77,29 @@ $esperas = $stmt->get_result();
 <h3><?= escapar($fila["actividad"]) ?></h3>
 
 <p>
-<strong>Fecha:</strong>
+<strong><?= t('Fecha:') ?></strong>
 <?= date("d/m/Y", strtotime($fila["fecha"])) ?>
 </p>
 
 <p>
-<strong>Horario:</strong>
+<strong><?= t('Horario:') ?></strong>
 <?= substr($fila["hora_inicio"],0,5) ?>
  -
 <?= substr($fila["hora_fin"],0,5) ?>
 </p>
 
 <p>
-<strong>Espacio:</strong>
+<strong><?= t('Espacio:') ?></strong>
 <?= escapar($fila["espacio"]) ?>
 </p>
 
 <p>
-<strong>Estado:</strong>
-<?= ucfirst($fila["estado"]) ?>
+<strong><?= t('Estado:') ?></strong>
+<?= t(ucfirst($fila["estado"])) ?>
 </p>
 
 <p class="codigo-reserva">
-<strong>Posición:</strong>
+<strong><?= t('Posición:') ?></strong>
 <?= $fila["posicion"] ?>
 </p>
 

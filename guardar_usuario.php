@@ -4,6 +4,7 @@ header("Location: registro.php");
 exit;
 }
 require_once "conexion.php";
+require_once "funciones.php";
 $nombre = trim($_POST["nombre"] ?? "");
 $apellidos = trim($_POST["apellidos"] ?? "");
 $email = trim($_POST["email"] ?? "");
@@ -13,30 +14,30 @@ $password = $_POST["password"] ?? "";
 $repetir_password = $_POST["repetir_password"] ?? "";
 $errores = [];
 if ($nombre === "") {
-$errores[] = "El nombre es obligatorio.";
+$errores[] = t("El nombre es obligatorio.");
 }
 if ($apellidos === "") {
-$errores[] = "Los apellidos son obligatorios.";
+$errores[] = t("Los apellidos son obligatorios.");
 }
 if ($email === "") {
-$errores[] = "El correo electrónico es obligatorio.";
+$errores[] = t("El correo electrónico es obligatorio.");
 } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-$errores[] = "El correo electrónico no es válido.";
+$errores[] = t("El correo electrónico no es válido.");
 }
 if (strlen($password) < 8) {
-$errores[] = "La contraseña debe tener al menos 8 caracteres.";
+$errores[] = t("La contraseña debe tener al menos 8 caracteres.");
 }
 if ($password !== $repetir_password) {
-$errores[] = "Las contraseñas no coinciden.";
+$errores[] = t("Las contraseñas no coinciden.");
 }
 if (!empty($errores)) {
-echo "<h1>No se ha podido crear la cuenta</h1>";
+echo "<h1>" . t("No se ha podido crear la cuenta") . "</h1>";
 echo "<ul>";
 foreach ($errores as $error) {
 echo "<li>" . htmlspecialchars($error) . "</li>";
 }
 echo "</ul>";
-echo '<a href="registro.php">Volver</a>';
+echo '<a href="registro.php">' . t("Volver") . '</a>';
 exit;
 }
 $sql = "SELECT id_usuario
@@ -47,8 +48,8 @@ $stmt->bind_param("s", $email);
 $stmt->execute();
 $resultado = $stmt->get_result();
 if ($resultado->num_rows > 0) {
-echo "<h1>El correo ya está registrado</h1>";
-echo '<a href="login.php">Iniciar sesión</a>';
+echo "<h1>" . t("El correo ya está registrado") . "</h1>";
+echo '<a href="login.php">' . t("Iniciar sesión") . '</a>';
 exit;
 }
 $password_hash = password_hash(
@@ -71,9 +72,9 @@ $direccion
 );
 $stmt->execute();
 if ($stmt->affected_rows === 1) {
-echo "<h1>Cuenta creada correctamente</h1>";
-echo "<p>Ya puedes iniciar sesión.</p>";
-echo '<a href="login.php">Iniciar sesión</a>';
+echo "<h1>" . t("Cuenta creada correctamente") . "</h1>";
+echo "<p>" . t("Ya puedes iniciar sesión.") . "</p>";
+echo '<a href="login.php">' . t("Iniciar sesión") . '</a>';
 } else {
-echo "<h1>No se ha podido crear la cuenta</h1>";
+echo "<h1>" . t("No se ha podido crear la cuenta") . "</h1>";
 }

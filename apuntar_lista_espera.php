@@ -12,7 +12,7 @@ $id_sesion = filter_input(
 );
 
 if (!$id_sesion) {
-    die("Sesión no válida.");
+    die(t("Sesión no válida."));
 }
 
 /* Comprobar que no esté ya apuntado */

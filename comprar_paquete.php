@@ -29,7 +29,7 @@ $stmt->execute();
 $paquete = $stmt->get_result()->fetch_assoc();
 if (!$paquete) {
 http_response_code(404);
-die('El paquete solicitado no existe.');
+die(t('El paquete solicitado no existe.'));
 }
 $error = $_GET['error'] ?? '';
 ?>
@@ -41,14 +41,14 @@ $error = $_GET['error'] ?? '';
 name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
-<title>Comprar paquete | Sama Shala</title>
+<title><?= t('Comprar paquete | Sama Shala') ?></title>
 <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
 <?php require_once __DIR__ . '/menu.php'; ?>
 <main class="contenedor seccion">
 <a class="enlace-volver" href="paquetes.php">
-← Volver a paquetes
+← <?= t('Volver a paquetes') ?>
 </a>
 <div class="ficha-sesion">
 <section class="informacion-sesion">
@@ -57,17 +57,17 @@ content="width=device-width, initial-scale=1.0"
 </h1>
 <div class="rejilla-datos">
 <div class="dato">
-<span>Clases</span>
+<span><?= t('Clases') ?></span>
 <strong>
 <?= (int) $paquete['numero_usos'] ?>
 </strong>
 </div>
 <div class="dato">
-<span>Validez</span>
-<strong>1 mes</strong>
+<span><?= t('Validez') ?></span>
+<strong><?= t('1 mes') ?></strong>
 </div>
 <div class="dato">
-<span>Precio</span>
+<span><?= t('Precio') ?></span>
 <strong>
 <?= formatear_precio(
 (float) $paquete['precio']
@@ -77,17 +77,14 @@ content="width=device-width, initial-scale=1.0"
 </div>
 <?php if ($error === 'pago'): ?>
 <div class="mensaje mensaje-error">
-No se ha podido procesar el pago simulado.
-Inténtalo de nuevo.
+<?= t('No se ha podido procesar el pago simulado. Inténtalo de nuevo.') ?>
 </div>
 <?php endif; ?>
 </section>
 <aside class="panel-reserva">
-<h2>Pago simulado</h2>
+<h2><?= t('Pago simulado') ?></h2>
 <p>
-Este proyecto no cobra dinero real:
-al confirmar se registra la compra
-directamente como pagada.
+<?= t('Este proyecto no cobra dinero real: al confirmar se registra la compra directamente como pagada.') ?>
 </p>
 <form
 action="procesar_compra_paquete.php"
@@ -101,7 +98,7 @@ value="<?= (int) $paquete['id_tipo_paquete'] ?>"
 >
 <div class="campo">
 <label for="titular">
-Nombre del titular
+<?= t('Nombre del titular') ?>
 </label>
 <input
 type="text"
@@ -113,7 +110,7 @@ required
 </div>
 <div class="campo">
 <label for="tarjeta">
-Número de tarjeta (simulado)
+<?= t('Número de tarjeta (simulado)') ?>
 </label>
 <input
 type="text"
@@ -125,7 +122,7 @@ required
 >
 </div>
 <button type="submit" class="boton boton-bloque">
-Confirmar compra de
+<?= t('Confirmar compra de') ?>
 <?= formatear_precio(
 (float) $paquete['precio']
 ) ?>

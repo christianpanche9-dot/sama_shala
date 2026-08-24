@@ -61,7 +61,7 @@ $resultado_sesion = $stmt_sesion->get_result();
 $sesion = $resultado_sesion->fetch_assoc();
 $stmt_sesion->close();
 if (!$sesion) {
-throw new Exception("La sesión no existe.");
+throw new Exception(t("La sesión no existe."));
 }
 if (
 !in_array(
@@ -71,7 +71,7 @@ true
 )
 ) {
 throw new Exception(
-"La sesión no admite reservas."
+t("La sesión no admite reservas.")
 );
 }
 $inicio = new DateTime(
@@ -81,7 +81,7 @@ $sesion["hora_inicio"]
 );
 if ($inicio <= new DateTime()) {
 throw new Exception(
-"La sesión ya ha comenzado."
+t("La sesión ya ha comenzado.")
 );
 }
 /*
@@ -112,7 +112,7 @@ $reserva_anterior &&
 $reserva_anterior["estado"] === "confirmada"
 ) {
 throw new Exception(
-"Ya tienes una reserva confirmada."
+t("Ya tienes una reserva confirmada.")
 );
 }
 /*
@@ -143,7 +143,7 @@ $lista_anterior &&
 $lista_anterior["estado"] === "esperando"
 ) {
 throw new Exception(
-"Ya estás en la lista de espera."
+t("Ya estás en la lista de espera.")
 );
 }
 /*
@@ -202,17 +202,17 @@ $stmt_paquete->get_result()->fetch_assoc();
 $stmt_paquete->close();
 if (!$paquete_cliente) {
 throw new Exception(
-"El paquete seleccionado no existe."
+t("El paquete seleccionado no existe.")
 );
 }
 if ($paquete_cliente["estado"] !== "activo") {
 throw new Exception(
-"El paquete seleccionado no está activo."
+t("El paquete seleccionado no está activo.")
 );
 }
 if ((int) $paquete_cliente["usos_disponibles"] <= 0) {
 throw new Exception(
-"El paquete seleccionado no tiene usos disponibles."
+t("El paquete seleccionado no tiene usos disponibles.")
 );
 }
 if (
@@ -221,7 +221,7 @@ strtotime($paquete_cliente["fecha_caducidad"]) <
 strtotime("today")
 ) {
 throw new Exception(
-"El paquete seleccionado ha caducado."
+t("El paquete seleccionado ha caducado.")
 );
 }
 $usos_restantes =

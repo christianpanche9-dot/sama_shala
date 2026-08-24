@@ -8,7 +8,7 @@ FILTER_VALIDATE_INT
 );
 if (!$id_sesion || $id_sesion < 1) {
 http_response_code(400);
-die('El identificador de la sesión no es válido.');
+die(t('El identificador de la sesión no es válido.'));
 }
 $sql = "
 SELECT
@@ -92,7 +92,7 @@ $resultado = $stmt->get_result();
 $sesion = $resultado->fetch_assoc();
 if (!$sesion) {
 http_response_code(404);
-die('La sesión solicitada no existe.');
+die(t('La sesión solicitada no existe.'));
 }
 $plazas =
 (int) $sesion['plazas_disponibles'];
@@ -132,7 +132,7 @@ content="width=device-width, initial-scale=1.0"
 >
 <title>
 <?= escapar($sesion['actividad']) ?>
-| Sama Shala
+<?= t('| Sama Shala') ?>
 </title>
 <link rel="stylesheet" href="estilos.css">
 </head>
@@ -144,7 +144,7 @@ class="enlace-volver"
 href="detalle_actividad.php?id=<?= (int)
 $sesion['id_actividad'] ?>"
 >
-← Volver a la actividad
+<?= t('← Volver a la actividad') ?>
 </a>
 <div class="ficha-sesion">
 <section class="informacion-sesion">
@@ -173,7 +173,7 @@ $sesion['descripcion']
 </p>
 <div class="rejilla-datos">
     <div class="dato">
-<span>Fecha</span>
+<span><?= t('Fecha') ?></span>
 <strong>
 <?= escapar(
 formatear_fecha(
@@ -183,7 +183,7 @@ $sesion['fecha']
 </strong>
 </div>
 <div class="dato">
-<span>Horario</span>
+<span><?= t('Horario') ?></span>
 <strong>
 <?= escapar(
 formatear_hora(
@@ -199,15 +199,15 @@ $sesion['hora_fin']
 </strong>
 </div>
 <div class="dato">
-<span>Duración</span>
+<span><?= t('Duración') ?></span>
 <strong>
 <?= (int)
 $sesion['duracion_real'] ?>
-minutos
+<?= t('minutos') ?>
 </strong>
 </div>
 <div class="dato">
-<span>Espacio</span>
+<span><?= t('Espacio') ?></span>
 <strong>
 <?= escapar(
 $sesion['espacio']
@@ -215,7 +215,7 @@ $sesion['espacio']
 </strong>
 </div>
 <div class="dato">
-<span>Ubicación</span>
+<span><?= t('Ubicación') ?></span>
 <strong>
 <?= escapar(
 $sesion['ubicacion']
@@ -223,7 +223,7 @@ $sesion['ubicacion']
 </strong>
 </div>
 <div class="dato">
-<span>Profesor</span>
+<span><?= t('Profesor') ?></span>
 <strong>
 <?= escapar(
 $sesion['profesor']
@@ -236,7 +236,7 @@ $sesion['profesor']
 ): ?>
 
 <p>
-<strong>Especialidad del profesor:</strong>
+<strong><?= t('Especialidad del profesor:') ?></strong>
 <?= escapar(
 $sesion['especialidad']
 ) ?>
@@ -247,7 +247,7 @@ $sesion['especialidad']
 ): ?>
 
 <div class="mensaje mensaje-aviso">
-<strong>Observaciones:</strong>
+<strong><?= t('Observaciones:') ?></strong>
 <?= escapar(
 $sesion['observaciones']
 ) ?>
@@ -268,12 +268,12 @@ texto_estado_sesion(
 )
 ) ?>
 </span>
-<h2>Disponibilidad</h2>
+<h2><?= t('Disponibilidad') ?></h2>
 <p class="numero-plazas">
 <?= $plazas ?>
 </p>
 <p>
-    plazas disponibles de <?= $aforo ?>
+    <?= t('plazas disponibles de') ?> <?= $aforo ?>
 </p>
 
 <div class="barra-ocupacion">
@@ -285,18 +285,18 @@ style="width:
 </div>
 <p>
     <?= $reservas ?>
- reservas confirmadas
+ <?= t('reservas confirmadas') ?>
 </p>
 <?php if ($sesion_terminada): ?>
 
     <div class="mensaje mensaje-aviso">
-        Esta sesión ya ha finalizado.
+        <?= t('Esta sesión ya ha finalizado.') ?>
     </div>
 
 <?php elseif ($sesion['estado'] === 'cancelada'): ?>
 
     <div class="mensaje mensaje-error">
-        Esta sesión ha sido cancelada.
+        <?= t('Esta sesión ha sido cancelada.') ?>
     </div>
 
 <?php elseif ($plazas > 0): ?>
@@ -307,7 +307,7 @@ style="width:
             class="boton boton-bloque"
             href="reservar.php?id=<?= (int)$sesion['id_sesion'] ?>"
         >
-            Reservar una plaza
+            <?= t('Reservar una plaza') ?>
         </a>
 
     <?php else: ?>
@@ -316,7 +316,7 @@ style="width:
             class="boton boton-espera boton-bloque"
             href="login.php?error=acceso&volver=<?= urlencode('/detalle_sesion.php?id=' . $sesion['id_sesion']) ?>"
         >
-            Inicia sesión para reservar
+            <?= t('Inicia sesión para reservar') ?>
         </a>
 
     <?php endif; ?>
@@ -327,7 +327,7 @@ style="width:
         class="boton secundario"
         href="apuntar_lista_espera.php?id=<?= (int)$sesion['id_sesion'] ?>"
     >
-        Apuntarme a la lista de espera
+        <?= t('Apuntarme a la lista de espera') ?>
     </a>
 
 <?php endif; ?>

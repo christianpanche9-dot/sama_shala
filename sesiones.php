@@ -90,7 +90,7 @@ name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
 <title>
-    Próximas sesiones | Sama Shala
+    <?= t('Próximas sesiones | Sama Shala') ?>
 </title>
 <link rel="stylesheet" href="estilos.css">
 </head>
@@ -101,15 +101,14 @@ content="width=device-width, initial-scale=1.0"
 <div class="encabezado-pagina">
 <div>
 <p class="etiqueta">
-Calendario
+<?= t('Calendario') ?>
 </p>
-<h1>Próximas sesiones</h1>
+<h1><?= t('Próximas sesiones') ?></h1>
 <p>
+<?= t('Consulta las actividades que se celebrarán próximamente.') ?>
 </p>
 </div>
 </div>
-Consulta las actividades que se celebrarán
-próximamente.
 <form
 class="formulario-filtros"
 action="sesiones.php"
@@ -117,7 +116,7 @@ method="get"
 >
 <div class="campo">
 <label for="fecha">
-Buscar por fecha
+<?= t('Buscar por fecha') ?>
 </label>
 <input
 type="date"
@@ -128,20 +127,19 @@ value="<?= escapar($fecha) ?>"
 </div>
 <div class="acciones-filtro">
 <button class="boton" type="submit">
-Buscar
+<?= t('Buscar') ?>
 </button>
 <a
 class="boton boton-secundario"
 href="sesiones.php"
 >
-Mostrar todas
+<?= t('Mostrar todas') ?>
 </a>
 </div>
 </form>
 <?php if ($resultado->num_rows === 0): ?>
 <div class="mensaje mensaje-aviso">
-No hay sesiones disponibles
-para la fecha seleccionada.
+<?= t('No hay sesiones disponibles para la fecha seleccionada.') ?>
 </div>
 <?php else: ?>
 <div class="lista-sesiones">
@@ -193,33 +191,33 @@ $sesion['actividad']
 </h2>
 
 <p>
-<strong>Espacio:</strong>
+<strong><?= t('Espacio:') ?></strong>
 <?= escapar(
 $sesion['espacio']
 ) ?>
 </p>
 <p>
-<strong>Profesor:</strong>
+<strong><?= t('Profesor:') ?></strong>
 <?= escapar(
 $sesion['profesor']
 ) ?>
 </p>
 <p>
 <?= $reservas ?>
-de
+<?= t('de') ?>
 <?= $aforo ?>
-plazas ocupadas
+<?= t('plazas ocupadas') ?>
 </p>
 </div>
 <div class="acciones-sesion">
 <?php if ($plazas > 0): ?>
 <span class="plazas-disponibles">
 <?= $plazas ?>
-plazas disponibles
+<?= t('plazas disponibles') ?>
 </span>
 <?php else: ?>
 <span class="sesion-completa">
-Lista de espera disponible
+<?= t('Lista de espera disponible') ?>
 </span>
 <?php endif; ?>
 <a
@@ -227,7 +225,7 @@ class="boton"
 href="detalle_sesion.php?id=<?= (int)
 $sesion['id_sesion'] ?>"
 >
-Ver detalles
+<?= t('Ver detalles') ?>
 </a>
 </div>
 </article>

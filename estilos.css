@@ -111,6 +111,28 @@ margin: 0 auto;
 padding-top: 50px;
 padding-bottom: 60px;
 }
+.barra-utilidad {
+color: #e7ede7;
+background-color: var(--color-verde-oscuro-hover);
+font-size: 0.85rem;
+}
+.barra-utilidad-interior {
+display: flex;
+justify-content: flex-start;
+gap: 18px;
+padding: 6px 0;
+}
+.barra-utilidad-interior a {
+color: inherit;
+text-decoration: none;
+}
+.barra-utilidad-interior a:hover {
+text-decoration: underline;
+}
+.barra-utilidad-interior a.activo {
+color: white;
+font-weight: 700;
+}
 .cabecera {
 color: white;
 background-color: var(--color-verde-oscuro);

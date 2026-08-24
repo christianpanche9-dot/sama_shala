@@ -1,6 +1,27 @@
 <?php
 require_once __DIR__ . "/funciones.php";
 ?>
+<div class="barra-utilidad">
+<div class="contenedor barra-utilidad-interior">
+<a
+class="<?= idiomaActual() === 'es' ? 'activo' : '' ?>"
+href="cambiar_idioma.php?idioma=es"
+>
+Español
+</a>
+<a
+class="<?= idiomaActual() === 'en' ? 'activo' : '' ?>"
+href="cambiar_idioma.php?idioma=en"
+>
+English
+</a>
+<?php if (!usuarioAutenticado()): ?>
+<a href="login.php">
+<?= t('Iniciar sesión') ?>
+</a>
+<?php endif; ?>
+</div>
+</div>
 <header class="cabecera">
 <div class="contenedor cabecera-interior">
 <nav class="menu">
@@ -9,32 +30,32 @@ Sama Shala
 </a>
 <div class="menu-principal">
     <a href="actividades.php">
-Actividades
+<?= t('Actividades') ?>
 </a>
 <a href="sesiones.php">
-Calendario
+<?= t('Calendario') ?>
 </a>
 <a href="paquetes.php">
-Paquetes
+<?= t('Paquetes') ?>
 </a>
 <?php if (!usuarioAutenticado()): ?>
 <a href="login.php">
-Iniciar sesión
+<?= t('Iniciar sesión') ?>
 </a>
 <a href="registro.php">
-Registrarse
+<?= t('Registrarse') ?>
 </a>
 <?php else: ?>
 <?php if (usuarioEsAdmin()): ?>
 <a href="admin/index.php">
-Administración
+<?= t('Administración') ?>
 </a>
 <?php else: ?>
 <a href="mi_cuenta.php">
-Mi cuenta
+<?= t('Mi cuenta') ?>
 </a>
 <a href="mis_reservas.php">
-Mis reservas
+<?= t('Mis reservas') ?>
 </a>
 <?php endif; ?>
 <span class="usuario-menu">
@@ -43,7 +64,7 @@ Mis reservas
 ) ?>
 </span>
 <a href="logout.php">
-Salir
+<?= t('Salir') ?>
 </a>
 <?php endif; ?>
 </div>

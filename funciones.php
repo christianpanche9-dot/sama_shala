@@ -11,6 +11,22 @@ ENT_QUOTES,
 "UTF-8"
 );
 }
+function idiomaActual(): string
+{
+$idioma = $_SESSION["idioma"] ?? "es";
+return $idioma === "en" ? "en" : "es";
+}
+function t(string $texto): string
+{
+static $traducciones = null;
+if (idiomaActual() !== "en") {
+return $texto;
+}
+if ($traducciones === null) {
+$traducciones = require __DIR__ . "/idiomas/en.php";
+}
+return $traducciones[$texto] ?? $texto;
+}
 function usuarioAutenticado(): bool
 {
 return isset($_SESSION["usuario"]);
@@ -41,7 +57,8 @@ $fecha
 if (!$objeto_fecha) {
 return $fecha;
 }
-return $objeto_fecha->format('d/m/Y');
+$formato = idiomaActual() === 'en' ? 'm/d/Y' : 'd/m/Y';
+return $objeto_fecha->format($formato);
 }
 
 function formatear_hora(string $hora): string
@@ -69,7 +86,7 @@ $niveles = [
 'intermedio' => 'Nivel intermedio',
 'avanzado' => 'Nivel avanzado'
 ];
-return $niveles[$nivel] ?? ucfirst($nivel);
+return t($niveles[$nivel] ?? ucfirst($nivel));
 }
 
 function texto_tipo_actividad(string $tipo): string
@@ -79,7 +96,7 @@ $tipos = [
 'evento' => 'Evento',
 'terapia' => 'Terapia'
 ];
-return $tipos[$tipo] ?? ucfirst($tipo);
+return t($tipos[$tipo] ?? ucfirst($tipo));
 }
 
 function texto_estado_sesion(string $estado): string
@@ -90,7 +107,7 @@ $estados = [
 'cancelada' => 'Cancelada',
 'finalizada' => 'Finalizada'
 ];
-return $estados[$estado] ?? ucfirst($estado);
+return t($estados[$estado] ?? ucfirst($estado));
 }
 
 function clase_estado_sesion(string $estado): string

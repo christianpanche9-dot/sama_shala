@@ -9,20 +9,20 @@ require_once "seguridad.php";
 name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
-<title>Mi cuenta</title>
+<title><?= t("Mi cuenta") ?></title>
 <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
 <?php require "menu.php"; ?>
 <main class="contenedor">
 <h1>
-Hola,
+<?= t("Hola,") ?>
 <?= escapar($_SESSION["usuario"]["nombre"]) ?>
 </h1>
 <section class="panel-cuenta">
-<h2>Mis datos</h2>
+<h2><?= t("Mis datos") ?></h2>
 <dl>
-<dt>Nombre</dt>
+<dt><?= t("Nombre") ?></dt>
 <dd>
 <?= escapar(
 $_SESSION["usuario"]["nombre"] .
@@ -30,7 +30,7 @@ $_SESSION["usuario"]["nombre"] .
 $_SESSION["usuario"]["apellidos"]
 ) ?>
 </dd>
-<dt>Correo electrónico</dt>
+<dt><?= t("Correo electrónico") ?></dt>
 <dd>
     <?= escapar(
 $_SESSION["usuario"]["email"]
@@ -40,21 +40,21 @@ $_SESSION["usuario"]["email"]
 </section>
 <section class="opciones-cuenta">
 <article class="tarjeta">
-<h2>Mis reservas</h2>
+<h2><?= t("Mis reservas") ?></h2>
 <p>
-    Consulta tus próximas actividades y tu historial.
+    <?= t("Consulta tus próximas actividades y tu historial.") ?>
 </p>
 <a class="boton" href="mis_reservas.php">
-Ver mis reservas
+<?= t("Ver mis reservas") ?>
 </a>
 </article>
 <article class="tarjeta">
-<h2>Mis paquetes</h2>
+<h2><?= t("Mis paquetes") ?></h2>
 <p>
-    Consulta tus paquetes y los usos disponibles.
+    <?= t("Consulta tus paquetes y los usos disponibles.") ?>
 </p>
 <a class="boton" href="mis_paquetes.php">
-Ver mis paquetes
+<?= t("Ver mis paquetes") ?>
 </a>
 </article>
 </section>

@@ -9,7 +9,7 @@ FILTER_VALIDATE_INT
 );
 if (!$id_sesion) {
 http_response_code(400);
-exit("Identificador de sesión no válido.");
+exit(t("Identificador de sesión no válido."));
 }
 $sql = "
 SELECT
@@ -46,7 +46,7 @@ $sesion = $resultado->fetch_assoc();
 $stmt->close();
 if (!$sesion) {
 http_response_code(404);
-exit("La sesión no existe.");
+exit(t("La sesión no existe."));
 }
 $inicio = new DateTime(
 $sesion["fecha"] . " " . $sesion["hora_inicio"]
@@ -59,7 +59,7 @@ true
 ) ||
 $inicio <= new DateTime()
 ) {
-exit("Esta sesión ya no admite reservas.");
+exit(t("Esta sesión ya no admite reservas."));
 }
 $plazas_disponibles = max(
 0,
@@ -103,36 +103,33 @@ $conexion->close();
 name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
-<title>Confirmar reserva</title>
+<title><?= t("Confirmar reserva") ?></title>
 <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
     <?php require "menu.php"; ?>
 <main class="contenedor">
-<h1>Confirmar solicitud</h1>
+<h1><?= t("Confirmar solicitud") ?></h1>
 <section class="resumen-reserva">
 <h2>
 <?= escapar($sesion["actividad"]) ?>
 </h2>
 <p>
-<strong>Fecha:</strong>
-<?= date(
-"d/m/Y",
-strtotime($sesion["fecha"])
-) ?>
+<strong><?= t("Fecha:") ?></strong>
+<?= formatear_fecha($sesion["fecha"]) ?>
 </p>
 <p>
-<strong>Horario:</strong>
+<strong><?= t("Horario:") ?></strong>
 <?= substr($sesion["hora_inicio"], 0, 5) ?>
 –
 <?= substr($sesion["hora_fin"], 0, 5) ?>
 </p>
 <p>
-<strong>Espacio:</strong>
+<strong><?= t("Espacio:") ?></strong>
 <?= escapar($sesion["espacio"]) ?>
 </p>
 <p>
-<strong>Profesor:</strong>
+<strong><?= t("Profesor:") ?></strong>
 <?= escapar(
     $sesion["profesor_nombre"] .
 " " .
@@ -141,19 +138,17 @@ $sesion["profesor_apellidos"]
 </p>
 <?php if ($plazas_disponibles > 0): ?>
 <div class="mensaje exito">
-Quedan
-<?= $plazas_disponibles ?>
-plazas disponibles.
+<?= sprintf(t("Quedan %d plazas disponibles."), $plazas_disponibles) ?>
 </div>
 <p>
-Al confirmar se creará una reserva.
+<?= t("Al confirmar se creará una reserva.") ?>
 </p>
 <?php else: ?>
 <div class="mensaje aviso">
-La sesión está completa.
+<?= t("La sesión está completa.") ?>
 </div>
 <p>
-Al confirmar entrarás en la lista de espera.
+<?= t("Al confirmar entrarás en la lista de espera.") ?>
 </p>
 <?php endif; ?>
 <form
@@ -166,7 +161,7 @@ name="id_sesion"
 value="<?= $sesion["id_sesion"] ?>"
 >
 <fieldset class="campo-completo">
-<legend>¿Cómo quieres pagar esta clase?</legend>
+<legend><?= t("¿Cómo quieres pagar esta clase?") ?></legend>
 <label class="opcion-pago">
 <input
 type="radio"
@@ -174,7 +169,7 @@ name="metodo_pago"
 value="suelta"
 checked
 >
-Clase suelta
+<?= t("Clase suelta") ?>
 </label>
 <?php foreach ($paquetes_disponibles as $paquete): ?>
 <label class="opcion-pago">
@@ -183,12 +178,12 @@ type="radio"
 name="metodo_pago"
 value="paquete:<?= (int) $paquete["id_paquete_cliente"] ?>"
 >
-<?= escapar($paquete["nombre_paquete"]) ?> (quedan <?= (int) $paquete["usos_disponibles"] ?> usos)
+<?= escapar($paquete["nombre_paquete"]) ?> <?= sprintf(t("(quedan %d usos)"), (int) $paquete["usos_disponibles"]) ?>
 </label>
 <?php endforeach; ?>
 </fieldset>
 <button type="submit" class="boton">
-Confirmar solicitud
+<?= t("Confirmar solicitud") ?>
 </button>
 </form>
 </section>

@@ -117,7 +117,7 @@ $resultado = $stmt->get_result();
 name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
-<title>Actividades | Sama Shala</title>
+<title><?= t('Actividades | Sama Shala') ?></title>
 <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
@@ -126,12 +126,11 @@ content="width=device-width, initial-scale=1.0"
 <div class="encabezado-pagina">
 <div>
 <p class="etiqueta">
-Catálogo
+<?= t('Catálogo') ?>
 </p>
-<h1>Actividades</h1>
+<h1><?= t('Actividades') ?></h1>
 <p>
-Consulta las actividades del centro y descubre
-sus próximas sesiones.
+<?= t('Consulta las actividades del centro y descubre sus próximas sesiones.') ?>
 </p>
 </div>
 </div>
@@ -142,14 +141,14 @@ method="get"
 >
 <div class="campo">
 <label for="categoria">
-Categoría
+<?= t('Categoría') ?>
 </label>
 <select
 id="categoria"
 name="categoria"
 >
 <option value="">
-Todas las categorías
+<?= t('Todas las categorías') ?>
 </option>
 <?php while (
 $fila_categoria =
@@ -173,11 +172,11 @@ $fila_categoria['categoria']
 </div>
 <div class="campo">
 <label for="tipo">
-Tipo
+<?= t('Tipo') ?>
 </label>
 <select id="tipo" name="tipo">
 <option value="">
-Cualquier tipo
+<?= t('Cualquier tipo') ?>
 </option>
 <?php foreach (
 $tipos_permitidos as $valor_tipo
@@ -197,11 +196,11 @@ texto_tipo_actividad($valor_tipo)
 </div>
 <div class="campo">
 <label for="nivel">
-Nivel
+<?= t('Nivel') ?>
 </label>
 <select id="nivel" name="nivel">
 <option value="">
-Cualquier nivel
+<?= t('Cualquier nivel') ?>
 </option>
 <?php foreach (
 $niveles_permitidos as $valor_nivel
@@ -221,20 +220,19 @@ texto_nivel($valor_nivel)
 </div>
 <div class="acciones-filtro">
 <button class="boton" type="submit">
-Filtrar
+<?= t('Filtrar') ?>
 </button>
 <a
 class="boton boton-secundario"
 href="actividades.php"
 >
-Limpiar
+<?= t('Limpiar') ?>
 </a>
 </div>
 </form>
 <?php if ($resultado->num_rows === 0): ?>
 <div class="mensaje mensaje-aviso">
-No se han encontrado actividades
-con los filtros seleccionados.
+<?= t('No se han encontrado actividades con los filtros seleccionados.') ?>
 </div>
 <?php else: ?>
 <div class="rejilla-actividades">
@@ -254,7 +252,7 @@ $actividad['nombre']
 >
 <?php else: ?>
 <div class="imagen-sin-contenido">
-Sin imagen
+<?= t('Sin imagen') ?>
 </div>
 <?php endif; ?>
 <div class="contenido-tarjeta">
@@ -290,10 +288,10 @@ $actividad['descripcion']
 </h2>
 </p>
 <p class="dato-destacado">
-Duración habitual:
+<?= t('Duración habitual:') ?>
 <?= (int)
 $actividad['duracion_minutos'] ?>
-minutos
+<?= t('minutos') ?>
 </p>
 <?php if (
     (int) $actividad['proximas_sesiones'] > 0
@@ -301,10 +299,10 @@ minutos
 <p class="proxima-sesion">
 <?= (int)
 $actividad['proximas_sesiones'] ?>
-próximas sesiones
+<?= t('próximas sesiones') ?>
 </p>
 <p>
-Próxima:
+<?= t('Próxima:') ?>
 <?= escapar(
     date(
 'd/m/Y H:i',
@@ -316,7 +314,7 @@ $actividad['proxima_fecha']
 </p>
 <?php else: ?>
 <p class="sin-sesiones">
-Próximamente anunciaremos nuevas fechas.
+<?= t('Próximamente anunciaremos nuevas fechas.') ?>
 </p>
 <?php endif; ?>
 <a
@@ -324,7 +322,7 @@ class="boton"
 href="detalle_actividad.php?id=<?= (int)
 $actividad['id_actividad'] ?>"
 >
-Ver actividad
+<?= t('Ver actividad') ?>
 </a>
 </div>
 </article>
