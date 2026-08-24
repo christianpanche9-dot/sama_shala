@@ -22,6 +22,16 @@ content="width=device-width, initial-scale=1.0"
 <?php require_once __DIR__ . '/menu.php'; ?>
 <main>
 <section class="hero">
+<div class="hero-video-fondo">
+<iframe
+id="video-fondo-hero"
+src="https://www.youtube.com/embed/3Lh9xC0dhfs?autoplay=1&mute=1&loop=1&playlist=3Lh9xC0dhfs&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&playsinline=1"
+title=""
+frameborder="0"
+allow="autoplay; encrypted-media"
+></iframe>
+</div>
+<div class="hero-video-superposicion"></div>
 <div class="contenedor hero-interior">
 <div>
 <p class="etiqueta">
@@ -48,17 +58,31 @@ href="sesiones.php"
 </a>
 </div>
 </div>
-<div class="hero-resumen">
-<h2><?= t('¿Cómo funciona?') ?></h2>
-<ol>
-<li><?= t('Elige una actividad.') ?></li>
-<li><?= t('Consulta sus próximas sesiones.') ?></li>
-<li><?= t('Comprueba fecha, horario y plazas.') ?></li>
-<li><?= t('Reserva la sesión que te interese.') ?></li>
-</ol>
-</div>
 </div>
 </section>
+<script>
+(function () {
+const contenedor = document.querySelector(".hero-video-fondo");
+const iframe = document.querySelector("#video-fondo-hero");
+if (!contenedor || !iframe) {
+return;
+}
+function ajustarTamano() {
+const ancho = contenedor.offsetWidth;
+const alto = contenedor.offsetHeight;
+const proporcion = 16 / 9;
+if (ancho / alto > proporcion) {
+iframe.style.width = "100%";
+iframe.style.height = (ancho / proporcion) + "px";
+} else {
+iframe.style.height = "100%";
+iframe.style.width = (alto * proporcion) + "px";
+}
+}
+window.addEventListener("resize", ajustarTamano);
+ajustarTamano();
+})();
+</script>
 <section class="contenedor seccion">
 <h2><?= t('Un proyecto basado en la disponibilidad') ?></h2>
 <div class="rejilla-ventajas">

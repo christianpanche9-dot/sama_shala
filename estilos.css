@@ -192,20 +192,39 @@ color: var(--color-azul);
 background-color: rgba(255, 255, 255, 0.12);
 }
 .hero {
+position: relative;
+min-height: 560px;
 padding: 70px 0;
 color: white;
-background:
-linear-gradient(
-135deg,
-var(--color-verde-oscuro),
-var(--color-marron-oscuro)
-);
+background-color: var(--color-verde-oscuro);
+overflow: hidden;
+display: flex;
+align-items: center;
+}
+.hero-video-fondo {
+position: absolute;
+inset: 0;
+z-index: 0;
+overflow: hidden;
+pointer-events: none;
+}
+.hero-video-fondo iframe {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+border: none;
+}
+.hero-video-superposicion {
+position: absolute;
+inset: 0;
+z-index: 1;
+background-color: rgba(23, 32, 27, 0.45);
 }
 .hero-interior {
-display: grid;
-grid-template-columns: 1.4fr 0.8fr;
-gap: 50px;
-align-items: center;
+position: relative;
+z-index: 2;
+width: 100%;
 }
 .hero h1 {
 max-width: 700px;
@@ -216,14 +235,6 @@ line-height: 1.05;
 .hero-texto {
 max-width: 680px;
 font-size: 1.2rem;
-}
-.hero-resumen {
-padding: 28px;
-color: var(--color-texto);
-background-color: white;
-border-radius: 16px;
-box-shadow: 0 16px 35px
-rgba(0, 0, 0, 0.18);
 }
 .etiqueta {
 color: var(--color-verde-oscuro);
@@ -510,7 +521,6 @@ color: var(--color-verde-oscuro);
 font-weight: 700;
 }
 @media (max-width: 850px) {
-.hero-interior,
 .detalle-cabecera,
 .ficha-sesion {
 grid-template-columns: 1fr;
