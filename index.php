@@ -25,12 +25,13 @@ content="width=device-width, initial-scale=1.0"
 <div class="hero-video-fondo">
 <iframe
 id="video-fondo-hero"
-src="https://www.youtube.com/embed/3Lh9xC0dhfs?autoplay=1&mute=1&loop=1&playlist=3Lh9xC0dhfs&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&playsinline=1"
+src="https://www.youtube.com/embed/3Lh9xC0dhfs?autoplay=1&mute=1&loop=1&playlist=3Lh9xC0dhfs&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&disablekb=1&playsinline=1&fs=0&cc_load_policy=0"
 title=""
 frameborder="0"
 allow="autoplay; encrypted-media"
 ></iframe>
 </div>
+<div class="hero-video-cargando" id="hero-video-cargando"></div>
 <div class="hero-video-superposicion"></div>
 <div class="contenedor hero-interior">
 <div>
@@ -81,6 +82,12 @@ iframe.style.width = (alto * proporcion) + "px";
 }
 window.addEventListener("resize", ajustarTamano);
 ajustarTamano();
+const cargando = document.querySelector("#hero-video-cargando");
+if (cargando) {
+setTimeout(function () {
+cargando.classList.add("oculto");
+}, 1800);
+}
 })();
 </script>
 <section class="contenedor seccion">

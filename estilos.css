@@ -215,15 +215,27 @@ left: 50%;
 transform: translate(-50%, -50%);
 border: none;
 }
-.hero-video-superposicion {
+.hero-video-cargando {
 position: absolute;
 inset: 0;
 z-index: 1;
+background-color: var(--color-verde-oscuro);
+opacity: 1;
+pointer-events: none;
+transition: opacity 1s ease;
+}
+.hero-video-cargando.oculto {
+opacity: 0;
+}
+.hero-video-superposicion {
+position: absolute;
+inset: 0;
+z-index: 2;
 background-color: rgba(23, 32, 27, 0.45);
 }
 .hero-interior {
 position: relative;
-z-index: 2;
+z-index: 3;
 width: 100%;
 }
 .hero h1 {
