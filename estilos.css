@@ -164,11 +164,19 @@ font-size: 1rem;
 font-weight: 700;
 opacity: 0.85;
 }
-.menu-principal {
+.menu {
 display: flex;
 align-items: center;
+width: 100%;
+gap: 30px;
+}
+.menu-principal {
+display: flex;
+flex: 1;
+align-items: center;
+justify-content: center;
 flex-wrap: wrap;
-gap: 22px;
+gap: 32px;
 }
 .menu-principal a {
 color: white;
