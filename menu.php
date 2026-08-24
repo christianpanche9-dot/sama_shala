@@ -28,7 +28,19 @@ English
 <a class="logo" href="index.php">
 <img src="imagenes/logo-blanco.png" alt="Sama Shala">
 </a>
-<div class="menu-principal">
+<button
+type="button"
+class="boton-menu-movil"
+id="boton-menu-movil"
+aria-expanded="false"
+aria-controls="menu-principal-publico"
+aria-label="Abrir menú"
+>
+<span></span>
+<span></span>
+<span></span>
+</button>
+<div class="menu-principal" id="menu-principal-publico">
     <a href="actividades.php">
 <?= t('Actividades') ?>
 </a>
@@ -64,3 +76,17 @@ English
 </div>
 </nav>
 </header>
+<script>
+(function () {
+const boton = document.querySelector("#boton-menu-movil");
+const menu = document.querySelector("#menu-principal-publico");
+if (!boton || !menu) {
+return;
+}
+boton.addEventListener("click", function () {
+const abierto = menu.classList.toggle("abierto");
+boton.classList.toggle("abierto", abierto);
+boton.setAttribute("aria-expanded", abierto ? "true" : "false");
+});
+})();
+</script>

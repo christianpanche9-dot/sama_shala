@@ -4,7 +4,19 @@
 <img src="../imagenes/logo-blanco.png" alt="Sama Shala">
 <span>· Administración</span>
 </a>
-<nav class="menu-principal">
+<button
+type="button"
+class="boton-menu-movil"
+id="boton-menu-movil-admin"
+aria-expanded="false"
+aria-controls="menu-principal-admin"
+aria-label="Abrir menú"
+>
+<span></span>
+<span></span>
+<span></span>
+</button>
+<nav class="menu-principal" id="menu-principal-admin">
 <a href="index.php">
 Inicio
 </a>
@@ -38,3 +50,17 @@ Ver web pública
 </nav>
 </div>
 </header>
+<script>
+(function () {
+const boton = document.querySelector("#boton-menu-movil-admin");
+const menu = document.querySelector("#menu-principal-admin");
+if (!boton || !menu) {
+return;
+}
+boton.addEventListener("click", function () {
+const abierto = menu.classList.toggle("abierto");
+boton.classList.toggle("abierto", abierto);
+boton.setAttribute("aria-expanded", abierto ? "true" : "false");
+});
+})();
+</script>
