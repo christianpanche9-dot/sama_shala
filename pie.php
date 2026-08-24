@@ -59,14 +59,23 @@ English
 </div>
 <div class="pie-contacto">
 <p>
+<svg class="pie-icono-dato" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8">
+<path d="M6.6 10.8c1.4 2.8 3.8 5.2 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.9 21 3 13.1 3 3.5c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8Z"/>
+</svg>
 +593 99 980 6435 · +593 98 760 6615
 </p>
 <p>
-<a href="https://maps.google.com/?q=Los+%C3%81lamos+y+Ordo%C3%B1ez+Lasso%2C+Cuenca%2C+Ecuador" target="_blank" rel="noopener">
+<svg class="pie-icono-dato" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8">
+<path d="M12 22s7-7.4 7-12.6A7 7 0 0 0 5 9.4C5 14.6 12 22 12 22Z"/>
+<circle cx="12" cy="9.4" r="2.6"/>
+</svg>
 Los Álamos y Ordoñez Lasso, Cuenca – Ecuador
-</a>
 </p>
 <p>
+<svg class="pie-icono-dato" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8">
+<rect x="3" y="5" width="18" height="14" rx="2"/>
+<path d="m4 6.5 8 6 8-6"/>
+</svg>
 <a href="mailto:samashalaec@gmail.com">samashalaec@gmail.com</a>
 </p>
 </div>

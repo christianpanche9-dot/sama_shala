@@ -1053,15 +1053,27 @@ color: white;
 .pie-contacto {
 display: flex;
 flex-direction: column;
-gap: 4px;
+align-items: center;
+gap: 6px;
 color: rgba(255, 255, 255, 0.85);
 }
 .pie-contacto p {
+display: flex;
+align-items: center;
+gap: 8px;
 margin: 0;
+}
+.pie-icono-dato {
+flex-shrink: 0;
+color: var(--color-azul);
 }
 .pie-contacto a {
 color: inherit;
-text-decoration: underline;
+text-decoration: none;
+transition: color 0.2s ease;
+}
+.pie-contacto a:hover {
+color: var(--color-azul);
 }
 .pie-enlaces {
 display: flex;
@@ -1074,11 +1086,14 @@ width: 100%;
 max-width: 480px;
 }
 .pie-enlaces a {
+padding: 6px 14px;
 color: white;
+border-radius: 999px;
 text-decoration: none;
+transition: background-color 0.2s ease;
 }
 .pie-enlaces a:hover {
-text-decoration: underline;
+background-color: rgba(255, 255, 255, 0.12);
 }
 .pie-copyright {
 margin: 6px 0 0;
