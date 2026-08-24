@@ -119,15 +119,19 @@ font-size: 0.85rem;
 .barra-utilidad-interior {
 display: flex;
 justify-content: flex-end;
-gap: 18px;
-padding: 6px 0;
+gap: 4px;
+padding: 2px 0;
 }
 .barra-utilidad-interior a {
+padding: 4px 10px;
 color: inherit;
+border-radius: 999px;
 text-decoration: none;
+transition: color 0.2s ease, background-color 0.2s ease;
 }
 .barra-utilidad-interior a:hover {
-text-decoration: underline;
+color: var(--color-azul);
+background-color: rgba(255, 255, 255, 0.12);
 }
 .barra-utilidad-interior a.activo {
 color: white;
