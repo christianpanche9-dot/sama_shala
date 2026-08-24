@@ -174,14 +174,18 @@ gap: 30px;
 display: flex;
 align-items: center;
 flex-wrap: wrap;
-gap: 32px;
+gap: 6px;
 }
 .menu-principal a {
+padding: 8px 14px;
 color: white;
+border-radius: 999px;
 text-decoration: none;
+transition: color 0.2s ease, background-color 0.2s ease;
 }
 .menu-principal a:hover {
-text-decoration: underline;
+color: var(--color-azul);
+background-color: rgba(255, 255, 255, 0.12);
 }
 .hero {
 padding: 70px 0;
