@@ -192,5 +192,6 @@ value="paquete:<?= (int) $paquete["id_paquete_cliente"] ?>"
 </form>
 </section>
 </main>
+<?php require_once __DIR__ . '/pie.php'; ?>
 </body>
 </html>

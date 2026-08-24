@@ -113,5 +113,6 @@ strtotime($paquete['fecha_caducidad'])
 </div>
 <?php endif; ?>
 </main>
+<?php require_once __DIR__ . '/pie.php'; ?>
 </body>
 </html>

@@ -10,7 +10,7 @@ name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
 <title>
-<?= t('Sama Shala | Reserva actividades y espacios') ?>
+<?= t('Sama Shala') ?>
 </title>
 <link rel="stylesheet" href="estilos.css">
 <link rel="icon" type="image/png" sizes="32x32" href="imagenes/favicon-32x32.png">
@@ -127,33 +127,42 @@ window.addEventListener("resize", ajustarTamano);
 <p>
 <?= t('Sama Shala nació del profundo camino de bienestar holístico que William y Ángeles emprendieron juntos. Descubrieron el poder transformador del yoga, la Ayurveda y la sonoterapia, prácticas que les brindaron serenidad y equilibrio, y observaron sus efectos en las personas cercanas. Inspirados por estos descubrimientos y el deseo de ofrecer un espacio para el equilibrio, paz y bienestar, crearon Sama Shala como un lugar donde las personas pueden encontrar armonía y renovación.') ?>
 </p>
-<p>
-<?= t('Ángeles es profesora de yoga con formación en Ayurveda, Reiki, y otras terapias. William, músico académico, pedagógo musical y terapéuta de sonido que combina su amor por la música con terapias de sonido que promueven la transformación personal.') ?>
-</p>
 </section>
-<section class="contenedor seccion">
-<h2><?= t('Un proyecto basado en la disponibilidad') ?></h2>
-<div class="rejilla-ventajas">
-<article class="tarjeta-informativa">
-<h3><?= t('Actividades') ?></h3>
+<section class="franja-horarios-paquetes">
+<div class="panel-horario-paquete">
+<img
+class="panel-imagen"
+src="imagenes/actividades/yoga.jpg"
+alt=""
+>
+<div class="panel-texto">
+<h3><?= t('Horarios') ?></h3>
 <p>
-<?= t('Descubre qué puedes hacer, su categoría, nivel y duración habitual.') ?>
+<?= t('Consulta el horario de nuestras próximas actividades.') ?>
 </p>
-</article>
-<article class="tarjeta-informativa">
-<h3><?= t('Calendario') ?></h3>
+<a class="boton" href="sesiones.php">
+<?= t('Ver horario') ?>
+</a>
+</div>
+</div>
+<div class="panel-horario-paquete">
+<img
+class="panel-imagen"
+src="imagenes/actividades/funcional.jpg"
+alt=""
+>
+<div class="panel-texto">
+<h3><?= t('Paquetes') ?></h3>
 <p>
-<?= t('Consulta cuándo se celebra cada actividad, en qué espacio y con qué profesor.') ?>
+<?= t('Compra tu paquete y empieza a practicar con nosotros.') ?>
 </p>
-</article>
-<article class="tarjeta-informativa">
-<h3><?= t('Plazas') ?></h3>
-<p>
-<?= t('Comprueba el aforo y las plazas disponibles antes de realizar la reserva.') ?>
-</p>
-</article>
+<a class="boton" href="paquetes.php">
+<?= t('Ver paquetes') ?>
+</a>
+</div>
 </div>
 </section>
 </main>
+<?php require_once __DIR__ . '/pie.php'; ?>
 </body>
 </html>

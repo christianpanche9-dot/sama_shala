@@ -258,6 +258,7 @@ $espera["hora_inicio"],
 <?php endif; ?>
 </section>
 </main>
+<?php require_once __DIR__ . '/pie.php'; ?>
 </body>
 </html>
 <?php

@@ -338,5 +338,6 @@ style="width:
 </aside>
 </div>
 </main>
+<?php require_once __DIR__ . '/pie.php'; ?>
 </body>
 </html>

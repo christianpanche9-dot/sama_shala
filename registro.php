@@ -133,5 +133,6 @@ required
 <a href="login.php"><?= t("Inicia sesión") ?></a>.
 </p>
 </main>
+<?php require_once __DIR__ . '/pie.php'; ?>
 </body>
 </html>

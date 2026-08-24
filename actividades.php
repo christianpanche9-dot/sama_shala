@@ -334,5 +334,6 @@ $actividad['id_actividad'] ?>"
 </div>
 <?php endif; ?>
 </main>
+<?php require_once __DIR__ . '/pie.php'; ?>
 </body>
 </html>

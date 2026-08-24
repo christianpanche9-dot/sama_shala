@@ -11,25 +11,26 @@ return [
 'Mis reservas' => 'My bookings',
 'Salir' => 'Log out',
 
+// pie.php
+'Síguenos' => 'Follow us',
+
 // index.php
-'Sama Shala | Reserva actividades y espacios' => 'Sama Shala | Book activities and spaces',
 'Clases, Terapias y Eventos' => 'Classes, Therapies and Events',
 'Un espacio para tu Bienestar' => 'A space for your Wellbeing',
 'Consulta nuestras próximas actividades y encuentra tu equilibrio interior.' => 'Check out our upcoming activities and find your inner balance.',
 'Ver actividades' => 'View activities',
 'Sama Shala es un espacio dedicado a promover el equilibrio, la paz y el bienestar integral. Creemos en el poder de las prácticas ancestrales para guiar a cada persona hacia una vida más saludable, tanto física como espiritualmente. Ofrecemos una combinación única de Ayurveda, yoga, sonoterapia y musicoterapia, con el objetivo de apoyarte en tu proceso de transformación personal y bienestar en un entorno de tranquilidad y amor.' => 'Sama Shala is a space dedicated to promoting balance, peace and holistic wellbeing. We believe in the power of ancestral practices to guide every person toward a healthier life, both physically and spiritually. We offer a unique combination of Ayurveda, yoga, sound therapy and music therapy, aiming to support you on your journey of personal transformation and wellbeing in an environment of tranquility and love.',
 'Sama Shala nació del profundo camino de bienestar holístico que William y Ángeles emprendieron juntos. Descubrieron el poder transformador del yoga, la Ayurveda y la sonoterapia, prácticas que les brindaron serenidad y equilibrio, y observaron sus efectos en las personas cercanas. Inspirados por estos descubrimientos y el deseo de ofrecer un espacio para el equilibrio, paz y bienestar, crearon Sama Shala como un lugar donde las personas pueden encontrar armonía y renovación.' => 'Sama Shala was born from the profound path of holistic wellbeing that William and Ángeles embarked on together. They discovered the transformative power of yoga, Ayurveda and sound therapy — practices that brought them serenity and balance — and witnessed their effects on the people close to them. Inspired by these discoveries and the desire to offer a space for balance, peace and wellbeing, they created Sama Shala as a place where people can find harmony and renewal.',
-'Ángeles es profesora de yoga con formación en Ayurveda, Reiki, y otras terapias. William, músico académico, pedagógo musical y terapéuta de sonido que combina su amor por la música con terapias de sonido que promueven la transformación personal.' => 'Ángeles is a yoga teacher trained in Ayurveda, Reiki and other therapies. William is an academic musician, music educator and sound therapist who combines his love of music with sound therapies that promote personal transformation.',
 '¿Cómo funciona?' => 'How does it work?',
 'Elige una actividad.' => 'Choose an activity.',
 'Consulta sus próximas sesiones.' => 'Check its upcoming sessions.',
 'Comprueba fecha, horario y plazas.' => 'Check the date, time and spots.',
 'Reserva la sesión que te interese.' => 'Book the session you like.',
-'Un proyecto basado en la disponibilidad' => 'A project based on availability',
-'Descubre qué puedes hacer, su categoría, nivel y duración habitual.' => 'Discover what you can do, its category, level and usual duration.',
-'Consulta cuándo se celebra cada actividad, en qué espacio y con qué profesor.' => 'Check when each activity takes place, in which space and with which teacher.',
-'Plazas' => 'Spots',
-'Comprueba el aforo y las plazas disponibles antes de realizar la reserva.' => 'Check the capacity and available spots before booking.',
+'Horarios' => 'Schedule',
+'Consulta el horario de nuestras próximas actividades.' => 'Check the schedule of our upcoming activities.',
+'Ver horario' => 'View schedule',
+'Compra tu paquete y empieza a practicar con nosotros.' => 'Buy your package and start practicing with us.',
+'Ver paquetes' => 'View packages',
 
 'Todos los niveles' => 'All levels',
 'Nivel inicial' => 'Beginner level',

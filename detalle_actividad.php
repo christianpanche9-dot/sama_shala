@@ -304,5 +304,6 @@ $sesion['id_sesion'] ?>"
 <?php endif; ?>
 </section>
 </main>
+<?php require_once __DIR__ . '/pie.php'; ?>
 </body>
 </html>
