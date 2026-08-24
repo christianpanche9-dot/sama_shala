@@ -1,4 +1,67 @@
+@font-face {
+font-family: "Archivo";
+src: url("fuentes/Archivo/Archivo-Regular.ttf") format("truetype");
+font-weight: 400;
+font-style: normal;
+font-display: swap;
+}
+@font-face {
+font-family: "Archivo";
+src: url("fuentes/Archivo/Archivo-Medium.ttf") format("truetype");
+font-weight: 500;
+font-style: normal;
+font-display: swap;
+}
+@font-face {
+font-family: "Archivo";
+src: url("fuentes/Archivo/Archivo-SemiBold.ttf") format("truetype");
+font-weight: 600;
+font-style: normal;
+font-display: swap;
+}
+@font-face {
+font-family: "Archivo";
+src: url("fuentes/Archivo/Archivo-Bold.ttf") format("truetype");
+font-weight: 700;
+font-style: normal;
+font-display: swap;
+}
+@font-face {
+font-family: "Archivo";
+src: url("fuentes/Archivo/Archivo-ExtraBold.ttf") format("truetype");
+font-weight: 800;
+font-style: normal;
+font-display: swap;
+}
+@font-face {
+font-family: "CS Boris";
+src: url("fuentes/CS-Boris/CSBoris-Regular.otf") format("opentype");
+font-weight: 400;
+font-style: normal;
+font-display: swap;
+}
+@font-face {
+font-family: "CS Boris";
+src: url("fuentes/CS-Boris/CSBoris-Italic.otf") format("opentype");
+font-weight: 400;
+font-style: italic;
+font-display: swap;
+}
+@font-face {
+font-family: "Fine Art Sans Vector";
+src: url("fuentes/Fine-Art-Sans-Vector/FineArtSansVectorRegular.otf") format("opentype");
+font-weight: 400;
+font-style: normal;
+font-display: swap;
+}
 :root {
+--fuente-titulares: "CS Boris", Georgia, serif;
+--fuente-etiquetas: "Fine Art Sans Vector", Arial, sans-serif;
+--fuente-cuerpo:
+Archivo,
+Arial,
+Helvetica,
+sans-serif;
 --color-azul: #bdcbe4;
 --color-azul-claro: #e7ecf5;
 --color-blanco-hueso: #ebebeb;
@@ -24,10 +87,7 @@ body {
 margin: 0;
 color: var(--color-texto);
 background-color: var(--color-fondo);
-font-family:
-Arial,
-Helvetica,
-sans-serif;
+font-family: var(--fuente-cuerpo);
 line-height: 1.6;
 }
 a {
@@ -36,6 +96,12 @@ color: inherit;
 img {
 display: block;
 max-width: 100%;
+}
+h1,
+h2,
+h3 {
+font-family: var(--fuente-titulares);
+font-weight: 400;
 }
 .contenedor {
 width: min(1180px, 92%);
@@ -58,8 +124,9 @@ gap: 30px;
 }
 .logo {
 color: white;
-font-size: 1.4rem;
-font-weight: 800;
+font-family: var(--fuente-titulares);
+font-size: 1.6rem;
+font-weight: 400;
 text-decoration: none;
 }
 .menu-principal {
@@ -111,6 +178,7 @@ rgba(0, 0, 0, 0.18);
 }
 .etiqueta {
 color: var(--color-verde-oscuro);
+font-family: var(--fuente-etiquetas);
 font-weight: 800;
 letter-spacing: 0.08em;
 text-transform: uppercase;
