@@ -13,11 +13,10 @@ return [
 
 // index.php
 'Sama Shala | Reserva actividades y espacios' => 'Sama Shala | Book activities and spaces',
-'Actividades, talleres y espacios' => 'Activities, workshops and spaces',
-'Cada reserva tiene su lugar' => 'Every booking has its place',
-'Consulta las próximas actividades del centro, comprueba sus horarios y encuentra una plaza.' => 'Check the center\'s upcoming activities, see their schedules and find a spot.',
+'Clases, Terapias y Eventos' => 'Classes, Therapies and Events',
+'Un espacio para tu Bienestar' => 'A space for your Wellbeing',
+'Consulta nuestras próximas actividades y encuentra tu equilibrio interior.' => 'Check out our upcoming activities and find your inner balance.',
 'Ver actividades' => 'View activities',
-'Próximas sesiones' => 'Upcoming sessions',
 '¿Cómo funciona?' => 'How does it work?',
 'Elige una actividad.' => 'Choose an activity.',
 'Consulta sus próximas sesiones.' => 'Check its upcoming sessions.',

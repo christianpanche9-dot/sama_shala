@@ -30,13 +30,13 @@ content="width=device-width, initial-scale=1.0"
 <div class="contenedor hero-interior">
 <div>
 <p class="etiqueta">
-<?= t('Actividades, talleres y espacios') ?>
+<?= t('Clases, Terapias y Eventos') ?>
 </p>
 <h1>
-<?= t('Cada reserva tiene su lugar') ?>
+<?= t('Un espacio para tu Bienestar') ?>
 </h1>
 <p class="hero-texto">
-<?= t('Consulta las próximas actividades del centro, comprueba sus horarios y encuentra una plaza.') ?>
+<?= t('Consulta nuestras próximas actividades y encuentra tu equilibrio interior.') ?>
 </p>
 <div class="grupo-botones">
 <a
@@ -49,7 +49,7 @@ href="actividades.php"
 class="boton boton-secundario"
 href="sesiones.php"
 >
-<?= t('Próximas sesiones') ?>
+<?= t('Calendario') ?>
 </a>
 </div>
 </div>
