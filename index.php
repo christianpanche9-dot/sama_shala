@@ -119,6 +119,18 @@ evento.target.playVideo();
 window.addEventListener("resize", ajustarTamano);
 })();
 </script>
+<section class="contenedor seccion seccion-nosotros">
+<h2><?= t('Sama Shala') ?></h2>
+<p>
+<?= t('Sama Shala es un espacio dedicado a promover el equilibrio, la paz y el bienestar integral. Creemos en el poder de las prácticas ancestrales para guiar a cada persona hacia una vida más saludable, tanto física como espiritualmente. Ofrecemos una combinación única de Ayurveda, yoga, sonoterapia y musicoterapia, con el objetivo de apoyarte en tu proceso de transformación personal y bienestar en un entorno de tranquilidad y amor.') ?>
+</p>
+<p>
+<?= t('Sama Shala nació del profundo camino de bienestar holístico que William y Ángeles emprendieron juntos. Descubrieron el poder transformador del yoga, la Ayurveda y la sonoterapia, prácticas que les brindaron serenidad y equilibrio, y observaron sus efectos en las personas cercanas. Inspirados por estos descubrimientos y el deseo de ofrecer un espacio para el equilibrio, paz y bienestar, crearon Sama Shala como un lugar donde las personas pueden encontrar armonía y renovación.') ?>
+</p>
+<p>
+<?= t('Ángeles es profesora de yoga con formación en Ayurveda, Reiki, y otras terapias. William, músico académico, pedagógo musical y terapéuta de sonido que combina su amor por la música con terapias de sonido que promueven la transformación personal.') ?>
+</p>
+</section>
 <section class="contenedor seccion">
 <h2><?= t('Un proyecto basado en la disponibilidad') ?></h2>
 <div class="rejilla-ventajas">

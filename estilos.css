@@ -277,6 +277,19 @@ line-height: 1.05;
 max-width: 680px;
 font-size: 1.2rem;
 }
+.seccion-nosotros h2 {
+margin-bottom: 20px;
+font-size: clamp(2.2rem, 4vw, 3.2rem);
+text-align: center;
+}
+.seccion-nosotros p {
+max-width: 800px;
+margin-left: auto;
+margin-right: auto;
+font-size: 1.1rem;
+line-height: 1.75;
+text-align: justify;
+}
 .etiqueta {
 color: var(--color-verde-oscuro);
 font-family: var(--fuente-etiquetas);
@@ -317,6 +330,9 @@ opacity: 0.75;
 .boton-secundario {
 color: var(--color-verde-oscuro);
 background-color: white;
+}
+.boton-secundario:hover {
+color: white;
 }
 .boton-bloque {
 width: 100%;
