@@ -135,6 +135,10 @@ content="width=device-width, initial-scale=1.0"
 <?= t('| Sama Shala') ?>
 </title>
 <link rel="stylesheet" href="estilos.css">
+<link rel="icon" type="image/png" sizes="32x32" href="imagenes/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="imagenes/favicon-16x16.png">
+<link rel="apple-touch-icon" href="imagenes/apple-touch-icon.png">
+<link rel="shortcut icon" href="imagenes/favicon.ico">
 </head>
 <body>
 <?php require_once __DIR__ . '/menu.php'; ?>

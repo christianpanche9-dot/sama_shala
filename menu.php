@@ -26,7 +26,7 @@ English
 <div class="contenedor cabecera-interior">
 <nav class="menu">
 <a class="logo" href="index.php">
-Sama Shala
+<img src="imagenes/logo-blanco.png" alt="Sama Shala">
 </a>
 <div class="menu-principal">
     <a href="actividades.php">

@@ -1,7 +1,8 @@
 <header class="cabecera cabecera-admin">
 <div class="contenedor cabecera-interior">
 <a class="logo" href="index.php">
-Sama Shala · Administración
+<img src="../imagenes/logo-blanco.png" alt="Sama Shala">
+<span>· Administración</span>
 </a>
 <nav class="menu-principal">
 <a href="index.php">

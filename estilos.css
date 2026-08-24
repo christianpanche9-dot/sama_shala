@@ -145,11 +145,24 @@ justify-content: space-between;
 gap: 30px;
 }
 .logo {
+display: flex;
+align-items: center;
+gap: 10px;
 color: white;
 font-family: var(--fuente-titulares);
 font-size: 1.6rem;
 font-weight: 400;
 text-decoration: none;
+}
+.logo img {
+height: 42px;
+width: auto;
+}
+.logo span {
+font-family: var(--fuente-cuerpo);
+font-size: 1rem;
+font-weight: 700;
+opacity: 0.85;
 }
 .menu-principal {
 display: flex;
