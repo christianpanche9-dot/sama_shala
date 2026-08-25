@@ -150,6 +150,28 @@ $resultado_semana = $stmt_semana->get_result();
 while ($fila_semana = $resultado_semana->fetch_assoc()) {
 $sesiones_por_dia[$fila_semana['fecha']][] = $fila_semana;
 }
+
+$sql_top = "
+SELECT id_actividad, nombre, imagen, imagen_banner_top, posicion_top
+FROM actividades
+WHERE activa = 1
+AND es_top = 1
+AND posicion_top IS NOT NULL
+ORDER BY posicion_top ASC
+LIMIT 3
+";
+$resultado_top = $conexion->query($sql_top);
+$actividades_top = [];
+$actividad_banner_top = null;
+while ($fila_top = $resultado_top->fetch_assoc()) {
+$actividades_top[] = $fila_top;
+if (
+(int) $fila_top['posicion_top'] === 1 &&
+!empty($fila_top['imagen_banner_top'])
+) {
+$actividad_banner_top = $fila_top;
+}
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -300,6 +322,25 @@ boton.setAttribute("aria-expanded", abierto ? "true" : "false");
 });
 })();
 </script>
+<?php if ($actividad_banner_top !== null): ?>
+<a
+class="banner-top"
+href="detalle_actividad.php?id=<?= (int) $actividad_banner_top['id_actividad'] ?>"
+>
+<img
+src="imagenes/actividades/<?= escapar($actividad_banner_top['imagen_banner_top']) ?>"
+alt="<?= escapar($actividad_banner_top['nombre']) ?>"
+>
+<span class="banner-top-contenido">
+<span class="banner-top-etiqueta">
+<?= t('Actividad destacada del mes') ?>
+</span>
+<span class="banner-top-nombre">
+<?= escapar($actividad_banner_top['nombre']) ?>
+</span>
+</span>
+</a>
+<?php endif; ?>
 <h2 class="titulo-calendario-semana">
 <?= t('Calendario semanal') ?>
 </h2>
@@ -385,6 +426,36 @@ panel.getAttribute("data-fecha") === fecha
 <h2 class="titulo-todas-actividades">
 <?= t('Conoce todas nuestras actividades') ?>
 </h2>
+<?php if (!empty($actividades_top)): ?>
+<section class="seccion-top-actividades">
+<h3><?= t('Top 3 del mes') ?></h3>
+<div class="rejilla-top-actividades">
+<?php foreach ($actividades_top as $actividad_top): ?>
+<a
+class="tarjeta-top-actividad"
+href="detalle_actividad.php?id=<?= (int) $actividad_top['id_actividad'] ?>"
+>
+<span class="numero-top">
+#<?= (int) $actividad_top['posicion_top'] ?>
+</span>
+<?php if (!empty($actividad_top['imagen'])): ?>
+<img
+src="imagenes/actividades/<?= escapar($actividad_top['imagen']) ?>"
+alt="<?= escapar($actividad_top['nombre']) ?>"
+>
+<?php else: ?>
+<div class="imagen-sin-contenido">
+<?= t('Sin imagen') ?>
+</div>
+<?php endif; ?>
+<span class="tarjeta-top-nombre">
+<?= escapar($actividad_top['nombre']) ?>
+</span>
+</a>
+<?php endforeach; ?>
+</div>
+</section>
+<?php endif; ?>
 <?php
 $actividades_por_tipo = [
 'clase' => [],

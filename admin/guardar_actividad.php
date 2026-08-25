@@ -12,6 +12,8 @@ $tipo = trim($_POST['tipo'] ?? '');
 $nivel = trim($_POST['nivel'] ?? '');
 $duracion = $_POST['duracion_minutos'] ?? '';
 $activa = isset($_POST['activa']) ? 1 : 0;
+$es_top = isset($_POST['es_top']) ? 1 : 0;
+$posicion_top = null;
 $categorias_validas = [
 'Deporte',
 'Bienestar',
@@ -75,6 +77,23 @@ if ($duracion === false) {
 $errores[] =
 'La duración debe estar entre 15 y 480 minutos.';
 }
+if ($es_top) {
+$posicion_top = filter_var(
+$_POST['posicion_top'] ?? '',
+FILTER_VALIDATE_INT,
+[
+'options' => [
+'min_range' => 1,
+'max_range' => 3
+]
+]
+);
+if ($posicion_top === false) {
+$errores[] =
+'La posición en el top 3 debe ser 1, 2 o 3.';
+$posicion_top = null;
+}
+}
 if ($errores) {
 header('Location: nueva_actividad.php?error=1');
 exit;
@@ -89,6 +108,57 @@ header('Location: nueva_actividad.php?error=1');
 exit;
 }
 $imagen = $resultado_imagen['archivo'] ?? '';
+$imagen_banner_top = null;
+if ($posicion_top === 1) {
+$resultado_banner = procesar_imagen_subida(
+'imagen_banner_top',
+__DIR__ . '/../imagenes/actividades',
+'banner',
+1920
+);
+if (!$resultado_banner['ok']) {
+header('Location: nueva_actividad.php?error=1');
+exit;
+}
+$imagen_banner_top = $resultado_banner['archivo'];
+}
+if ($posicion_top !== null) {
+$sql_anterior = "
+SELECT id_actividad, imagen_banner_top
+FROM actividades
+WHERE posicion_top = ?
+";
+$stmt_anterior = $conexion->prepare($sql_anterior);
+$stmt_anterior->bind_param('i', $posicion_top);
+$stmt_anterior->execute();
+$anterior = $stmt_anterior->get_result()->fetch_assoc();
+$stmt_anterior->close();
+if ($anterior) {
+if (
+!empty($anterior['imagen_banner_top']) &&
+file_exists(
+__DIR__ . '/../imagenes/actividades/' .
+$anterior['imagen_banner_top']
+)
+) {
+unlink(
+__DIR__ . '/../imagenes/actividades/' .
+$anterior['imagen_banner_top']
+);
+}
+$sql_liberar = "
+UPDATE actividades SET
+es_top = 0,
+posicion_top = NULL,
+imagen_banner_top = NULL
+WHERE id_actividad = ?
+";
+$stmt_liberar = $conexion->prepare($sql_liberar);
+$stmt_liberar->bind_param('i', $anterior['id_actividad']);
+$stmt_liberar->execute();
+$stmt_liberar->close();
+}
+}
 $sql = "
 INSERT INTO actividades (
 nombre,
@@ -98,13 +168,16 @@ tipo,
 nivel,
 duracion_minutos,
 imagen,
-activa
+activa,
+es_top,
+posicion_top,
+imagen_banner_top
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param(
-'sssssisi',
+'sssssisiiis',
 $nombre,
 $descripcion,
 $categoria,
@@ -112,7 +185,10 @@ $tipo,
 $nivel,
 $duracion,
 $imagen,
-$activa
+$activa,
+$es_top,
+$posicion_top,
+$imagen_banner_top
 );
 $stmt->execute();
 $id_actividad = $conexion->insert_id;

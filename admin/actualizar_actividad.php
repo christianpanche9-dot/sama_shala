@@ -17,7 +17,11 @@ header('Location: actividades.php?error=no_encontrada');
 exit;
 }
 
-$sql_actual = "SELECT imagen FROM actividades WHERE id_actividad = ?";
+$sql_actual = "
+SELECT imagen, imagen_banner_top
+FROM actividades
+WHERE id_actividad = ?
+";
 $stmt_actual = $conexion->prepare($sql_actual);
 $stmt_actual->bind_param('i', $id_actividad);
 $stmt_actual->execute();
@@ -28,6 +32,7 @@ header('Location: actividades.php?error=no_encontrada');
 exit;
 }
 $imagen_actual = $actividad_actual['imagen'];
+$banner_actual = $actividad_actual['imagen_banner_top'];
 
 $nombre = trim($_POST['nombre'] ?? '');
 $descripcion = trim($_POST['descripcion'] ?? '');
@@ -36,6 +41,8 @@ $tipo = trim($_POST['tipo'] ?? '');
 $nivel = trim($_POST['nivel'] ?? '');
 $duracion = $_POST['duracion_minutos'] ?? '';
 $activa = isset($_POST['activa']) ? 1 : 0;
+$es_top = isset($_POST['es_top']) ? 1 : 0;
+$posicion_top = null;
 $categorias_validas = [
 'Deporte',
 'Bienestar',
@@ -99,6 +106,23 @@ if ($duracion === false) {
 $errores[] =
 'La duración debe estar entre 15 y 480 minutos.';
 }
+if ($es_top) {
+$posicion_top = filter_var(
+$_POST['posicion_top'] ?? '',
+FILTER_VALIDATE_INT,
+[
+'options' => [
+'min_range' => 1,
+'max_range' => 3
+]
+]
+);
+if ($posicion_top === false) {
+$errores[] =
+'La posición en el top 3 debe ser 1, 2 o 3.';
+$posicion_top = null;
+}
+}
 if ($errores) {
 header("Location: editar_actividad.php?id_actividad=$id_actividad&error=1");
 exit;
@@ -123,6 +147,66 @@ $imagen = $resultado_imagen['archivo'];
 } else {
 $imagen = $imagen_actual;
 }
+
+function eliminar_banner_top(?string $archivo): void
+{
+if (
+!empty($archivo) &&
+file_exists(__DIR__ . '/../imagenes/actividades/' . $archivo)
+) {
+unlink(__DIR__ . '/../imagenes/actividades/' . $archivo);
+}
+}
+
+if ($posicion_top === 1) {
+$resultado_banner = procesar_imagen_subida(
+'imagen_banner_top',
+__DIR__ . '/../imagenes/actividades',
+'banner',
+1920
+);
+if (!$resultado_banner['ok']) {
+header("Location: editar_actividad.php?id_actividad=$id_actividad&error=1");
+exit;
+}
+if ($resultado_banner['archivo'] !== null) {
+eliminar_banner_top($banner_actual);
+$imagen_banner_top = $resultado_banner['archivo'];
+} else {
+$imagen_banner_top = $banner_actual;
+}
+} else {
+eliminar_banner_top($banner_actual);
+$imagen_banner_top = null;
+}
+
+if ($posicion_top !== null) {
+$sql_anterior = "
+SELECT id_actividad, imagen_banner_top
+FROM actividades
+WHERE posicion_top = ? AND id_actividad != ?
+";
+$stmt_anterior = $conexion->prepare($sql_anterior);
+$stmt_anterior->bind_param('ii', $posicion_top, $id_actividad);
+$stmt_anterior->execute();
+$anterior = $stmt_anterior->get_result()->fetch_assoc();
+$stmt_anterior->close();
+if ($anterior) {
+eliminar_banner_top($anterior['imagen_banner_top']);
+$sql_liberar = "
+UPDATE actividades SET
+es_top = 0,
+posicion_top = NULL,
+imagen_banner_top = NULL
+WHERE id_actividad = ?
+";
+$stmt_liberar = $conexion->prepare($sql_liberar);
+$stmt_liberar->bind_param('i', $anterior['id_actividad']);
+$stmt_liberar->execute();
+$stmt_liberar->close();
+}
+}
+
 $sql = "
 UPDATE actividades SET
 nombre = ?,
@@ -132,12 +216,15 @@ tipo = ?,
 nivel = ?,
 duracion_minutos = ?,
 imagen = ?,
-activa = ?
+activa = ?,
+es_top = ?,
+posicion_top = ?,
+imagen_banner_top = ?
 WHERE id_actividad = ?
 ";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param(
-'sssssisii',
+'sssssisiiisi',
 $nombre,
 $descripcion,
 $categoria,
@@ -146,6 +233,9 @@ $nivel,
 $duracion,
 $imagen,
 $activa,
+$es_top,
+$posicion_top,
+$imagen_banner_top,
 $id_actividad
 );
 $stmt->execute();

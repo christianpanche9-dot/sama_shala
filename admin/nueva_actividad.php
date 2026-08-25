@@ -202,6 +202,61 @@ Mostrar la actividad en el catálogo
 <label>
 <input
 type="checkbox"
+id="es_top"
+name="es_top"
+value="1"
+>
+Esta es una actividad top (top 3 del mes)
+</label>
+</div>
+<fieldset
+class="campo-completo bloque-top"
+id="bloque-top"
+>
+<legend>
+Posición en el top 3
+</legend>
+<div class="campo">
+<label for="posicion_top">
+Posición
+</label>
+<select id="posicion_top" name="posicion_top">
+<option value="1">
+1 · Número uno (la más importante)
+</option>
+<option value="2">
+2
+</option>
+<option value="3">
+3
+</option>
+</select>
+</div>
+<div
+class="campo campo-completo bloque-banner-top"
+id="bloque-banner-top"
+>
+<label for="imagen_banner_top">
+Banner destacado (solo posición 1)
+</label>
+<input
+type="file"
+id="imagen_banner_top"
+name="imagen_banner_top"
+accept="image/jpeg,image/png,image/webp"
+>
+<small>
+Imagen ancha que se muestra debajo del botón
+"Filtrar actividades". Solo se usa cuando esta
+actividad es la posición 1. JPG, PNG o WEBP,
+máximo 5 MB.
+</small>
+</div>
+</fieldset>
+<div class="campo-checkbox campo-completo">
+<label>
+<input
+type="checkbox"
 id="es_regular"
 name="es_regular"
 value="1"
@@ -355,6 +410,30 @@ class="entrada-dia-calendario"
 </main>
 <script>
 (function () {
+const casillaTop = document.querySelector("#es_top");
+const bloqueTop = document.querySelector("#bloque-top");
+const selectPosicionTop = document.querySelector("#posicion_top");
+const bloqueBannerTop = document.querySelector("#bloque-banner-top");
+if (casillaTop && bloqueTop) {
+function actualizarBloqueTop() {
+bloqueTop.classList.toggle("visible", casillaTop.checked);
+}
+casillaTop.addEventListener("change", actualizarBloqueTop);
+actualizarBloqueTop();
+}
+if (selectPosicionTop && bloqueBannerTop) {
+function actualizarBloqueBannerTop() {
+bloqueBannerTop.classList.toggle(
+"visible",
+selectPosicionTop.value === "1"
+);
+}
+selectPosicionTop.addEventListener(
+"change",
+actualizarBloqueBannerTop
+);
+actualizarBloqueBannerTop();
+}
 const casillaRegular = document.querySelector("#es_regular");
 const bloqueRegular = document.querySelector("#bloque-regular");
 const selectEspacio = document.querySelector("#id_espacio_regular");

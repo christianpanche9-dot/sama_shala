@@ -22,7 +22,10 @@ tipo,
 nivel,
 duracion_minutos,
 imagen,
-activa
+activa,
+es_top,
+posicion_top,
+imagen_banner_top
 FROM actividades
 WHERE id_actividad = ?
 ";
@@ -229,6 +232,84 @@ value="1"
 Mostrar la actividad en el catálogo
 </label>
 </div>
+<div class="campo-checkbox campo-completo">
+<label>
+<input
+type="checkbox"
+id="es_top"
+name="es_top"
+value="1"
+<?= (int) $actividad['es_top'] === 1 ? 'checked' : '' ?>
+>
+Esta es una actividad top (top 3 del mes)
+</label>
+</div>
+<fieldset
+class="campo-completo bloque-top"
+id="bloque-top"
+>
+<legend>
+Posición en el top 3
+</legend>
+<div class="campo">
+<label for="posicion_top">
+Posición
+</label>
+<select id="posicion_top" name="posicion_top">
+<?php
+$posicion_actual = $actividad['posicion_top'] !== null
+? (int) $actividad['posicion_top']
+: 1;
+?>
+<option
+value="1"
+<?= $posicion_actual === 1 ? 'selected' : '' ?>
+>
+1 · Número uno (la más importante)
+</option>
+<option
+value="2"
+<?= $posicion_actual === 2 ? 'selected' : '' ?>
+>
+2
+</option>
+<option
+value="3"
+<?= $posicion_actual === 3 ? 'selected' : '' ?>
+>
+3
+</option>
+</select>
+</div>
+<div
+class="campo campo-completo bloque-banner-top"
+id="bloque-banner-top"
+>
+<label for="imagen_banner_top">
+Banner destacado (solo posición 1)
+</label>
+<?php if (!empty($actividad['imagen_banner_top'])): ?>
+<img
+class="miniatura-imagen-actual"
+src="../imagenes/actividades/<?= escapar($actividad['imagen_banner_top']) ?>"
+alt=""
+>
+<?php endif; ?>
+<input
+type="file"
+id="imagen_banner_top"
+name="imagen_banner_top"
+accept="image/jpeg,image/png,image/webp"
+>
+<small>
+Imagen ancha que se muestra debajo del botón
+"Filtrar actividades". Solo se usa cuando esta
+actividad es la posición 1. Deja vacío para
+mantener el banner actual. JPG, PNG o WEBP,
+máximo 5 MB.
+</small>
+</div>
+</fieldset>
 <div class="campo-completo">
 <button class="boton" type="submit">
     Guardar cambios
@@ -236,5 +317,33 @@ Mostrar la actividad en el catálogo
 </div>
 </form>
 </main>
+<script>
+(function () {
+const casillaTop = document.querySelector("#es_top");
+const bloqueTop = document.querySelector("#bloque-top");
+const selectPosicionTop = document.querySelector("#posicion_top");
+const bloqueBannerTop = document.querySelector("#bloque-banner-top");
+if (casillaTop && bloqueTop) {
+function actualizarBloqueTop() {
+bloqueTop.classList.toggle("visible", casillaTop.checked);
+}
+casillaTop.addEventListener("change", actualizarBloqueTop);
+actualizarBloqueTop();
+}
+if (selectPosicionTop && bloqueBannerTop) {
+function actualizarBloqueBannerTop() {
+bloqueBannerTop.classList.toggle(
+"visible",
+selectPosicionTop.value === "1"
+);
+}
+selectPosicionTop.addEventListener(
+"change",
+actualizarBloqueBannerTop
+);
+actualizarBloqueBannerTop();
+}
+})();
+</script>
 </body>
 </html>

@@ -494,6 +494,104 @@ border-radius: 12px;
 margin: 0;
 font-size: clamp(1.6rem, 2.6vw, 2.2rem);
 }
+.banner-top {
+position: relative;
+display: block;
+overflow: hidden;
+margin: 26px 0 10px;
+border-radius: 20px;
+color: inherit;
+text-decoration: none;
+}
+.banner-top img {
+width: 100%;
+height: 320px;
+object-fit: cover;
+}
+.banner-top-contenido {
+position: absolute;
+right: 0;
+bottom: 0;
+left: 0;
+display: flex;
+padding: 28px;
+flex-direction: column;
+gap: 6px;
+background: linear-gradient(
+to top,
+rgba(23, 32, 27, 0.75),
+rgba(23, 32, 27, 0)
+);
+}
+.banner-top-etiqueta {
+color: white;
+font-family: var(--fuente-etiquetas);
+font-size: 0.85rem;
+font-weight: 800;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+}
+.banner-top-nombre {
+color: white;
+font-family: var(--fuente-titulares);
+font-size: clamp(1.6rem, 3vw, 2.4rem);
+}
+.seccion-top-actividades {
+margin-bottom: 44px;
+padding: 40px 32px;
+background-color: white;
+border: 1px solid var(--color-borde);
+border-radius: 20px;
+box-shadow: 0 8px 22px var(--sombra-tarjeta-suave);
+}
+.seccion-top-actividades h3 {
+margin-bottom: 26px;
+color: var(--color-marron-oscuro);
+font-family: var(--fuente-titulares);
+font-size: clamp(1.8rem, 3vw, 2.4rem);
+}
+.rejilla-top-actividades {
+display: grid;
+grid-template-columns: repeat(3, minmax(0, 1fr));
+gap: 24px;
+}
+.tarjeta-top-actividad {
+position: relative;
+display: block;
+overflow: hidden;
+color: inherit;
+background-color: white;
+border: 1px solid var(--color-borde);
+border-radius: 14px;
+text-decoration: none;
+}
+.tarjeta-top-actividad img,
+.tarjeta-top-actividad .imagen-sin-contenido {
+height: 160px;
+}
+.tarjeta-top-actividad img {
+width: 100%;
+object-fit: cover;
+}
+.numero-top {
+position: absolute;
+top: 12px;
+left: 12px;
+display: grid;
+width: 34px;
+height: 34px;
+place-items: center;
+color: white;
+background-color: var(--color-marron-oscuro);
+border-radius: 999px;
+font-weight: 800;
+}
+.tarjeta-top-nombre {
+display: block;
+padding: 14px 16px;
+font-family: var(--fuente-titulares);
+font-size: 1.15rem;
+}
 .calendario-semana {
 display: flex;
 margin: 20px 0 10px;
@@ -820,11 +918,16 @@ justify-content: center;
 }
 .rejilla-ventajas,
 .rejilla-actividades,
-.rejilla-datos {
+.rejilla-datos,
+.rejilla-top-actividades {
 grid-template-columns: 1fr;
 }
-.seccion-tipo-actividad {
+.seccion-tipo-actividad,
+.seccion-top-actividades {
 padding: 26px 18px;
+}
+.banner-top img {
+height: 220px;
 }
 .formulario-filtros {
 align-items: stretch;
@@ -946,11 +1049,19 @@ legend {
 font-weight: 700;
 padding: 0 6px;
 }
-.bloque-regular {
+.bloque-regular,
+.bloque-top {
 display: none;
 }
-.bloque-regular.visible {
+.bloque-regular.visible,
+.bloque-top.visible {
 display: block;
+}
+.bloque-banner-top {
+display: none;
+}
+.bloque-banner-top.visible {
+display: grid;
 }
 .bloque-regular .ayuda {
 margin: 0 0 16px;
