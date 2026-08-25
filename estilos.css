@@ -479,6 +479,10 @@ font-weight: 700;
 color: var(--color-texto-tenue);
 font-style: italic;
 }
+.fecha-proxima-sesion {
+margin: 6px 0 16px;
+color: var(--color-texto-tenue);
+}
 .formulario-filtros {
 display: flex;
 margin: 30px 0;

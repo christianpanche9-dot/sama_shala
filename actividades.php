@@ -575,7 +575,7 @@ $actividad['descripcion']
     ? t('próxima sesión')
     : t('próximas sesiones') ?>
 </p>
-<p>
+<p class="fecha-proxima-sesion">
 <?= t('Próxima:') ?> <?= escapar(date('d/m/Y H:i', strtotime($actividad['proxima_fecha']))) ?>
 </p>
 <?php else: ?>
