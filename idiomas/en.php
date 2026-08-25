@@ -67,6 +67,7 @@ return [
 'Actividades | Sama Shala' => 'Activities | Sama Shala',
 'Consulta las actividades de nuestro centro y descubre increíbles clases, eventos y terapias pensadas en tu bienestar.' => 'Check out our center\'s activities and discover amazing classes, events and therapies designed for your wellbeing.',
 'Filtrar actividades' => 'Filter activities',
+'Calendario semanal' => 'Weekly calendar',
 'Categoría' => 'Category',
 'Todas las categorías' => 'All categories',
 'Tipo' => 'Type',

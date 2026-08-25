@@ -300,6 +300,9 @@ boton.setAttribute("aria-expanded", abierto ? "true" : "false");
 });
 })();
 </script>
+<h2 class="titulo-calendario-semana">
+<?= t('Calendario semanal') ?>
+</h2>
 <div class="calendario-semana">
 <?php foreach ($dias_semana as $indice => $dia): ?>
 <button

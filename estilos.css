@@ -490,6 +490,10 @@ background-color: white;
 border: 1px solid var(--color-borde);
 border-radius: 12px;
 }
+.titulo-calendario-semana {
+margin: 0;
+font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+}
 .calendario-semana {
 display: flex;
 margin: 20px 0 10px;
