@@ -298,6 +298,36 @@ panel.getAttribute("data-fecha") === fecha
 <h2 class="titulo-todas-actividades">
 <?= t('Conoce todas nuestras actividades') ?>
 </h2>
+<?php if (!empty($actividades_top)): ?>
+<section class="seccion-top-actividades">
+<h3><?= t('Top 3 del mes') ?></h3>
+<div class="rejilla-top-actividades">
+<?php foreach ($actividades_top as $actividad_top): ?>
+<a
+class="tarjeta-top-actividad"
+href="detalle_actividad.php?id=<?= (int) $actividad_top['id_actividad'] ?>"
+>
+<span class="numero-top">
+#<?= (int) $actividad_top['posicion_top'] ?>
+</span>
+<?php if (!empty($actividad_top['imagen'])): ?>
+<img
+src="imagenes/actividades/<?= escapar($actividad_top['imagen']) ?>"
+alt="<?= escapar($actividad_top['nombre']) ?>"
+>
+<?php else: ?>
+<div class="imagen-sin-contenido">
+<?= t('Sin imagen') ?>
+</div>
+<?php endif; ?>
+<span class="tarjeta-top-nombre">
+<?= escapar($actividad_top['nombre']) ?>
+</span>
+</a>
+<?php endforeach; ?>
+</div>
+</section>
+<?php endif; ?>
 <button
 type="button"
 class="boton boton-secundario boton-alternar-filtros"
@@ -426,36 +456,6 @@ boton.setAttribute("aria-expanded", abierto ? "true" : "false");
 <?= t('No se han encontrado actividades con los filtros seleccionados.') ?>
 </div>
 <?php else: ?>
-<?php if (!empty($actividades_top)): ?>
-<section class="seccion-top-actividades">
-<h3><?= t('Top 3 del mes') ?></h3>
-<div class="rejilla-top-actividades">
-<?php foreach ($actividades_top as $actividad_top): ?>
-<a
-class="tarjeta-top-actividad"
-href="detalle_actividad.php?id=<?= (int) $actividad_top['id_actividad'] ?>"
->
-<span class="numero-top">
-#<?= (int) $actividad_top['posicion_top'] ?>
-</span>
-<?php if (!empty($actividad_top['imagen'])): ?>
-<img
-src="imagenes/actividades/<?= escapar($actividad_top['imagen']) ?>"
-alt="<?= escapar($actividad_top['nombre']) ?>"
->
-<?php else: ?>
-<div class="imagen-sin-contenido">
-<?= t('Sin imagen') ?>
-</div>
-<?php endif; ?>
-<span class="tarjeta-top-nombre">
-<?= escapar($actividad_top['nombre']) ?>
-</span>
-</a>
-<?php endforeach; ?>
-</div>
-</section>
-<?php endif; ?>
 <?php
 $actividades_por_tipo = [
 'clase' => [],
