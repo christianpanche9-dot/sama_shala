@@ -334,3 +334,12 @@ return [
 }
 return ['ok' => true, 'archivo' => $nombre_archivo];
 }
+
+// Placeholder hasta conectar un proveedor de correo (el hosting no
+// soporta SMTP ni mail() de forma fiable). De momento solo registra el
+// enlace en el log del servidor.
+function enviar_correo_recuperacion(string $email, string $enlace): bool
+{
+error_log("[recuperacion_password] $email => $enlace");
+return false;
+}

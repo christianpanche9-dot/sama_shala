@@ -31,6 +31,10 @@ content="width=device-width, initial-scale=1.0"
 <div class="mensaje exito">
 <?= t("La cuenta se ha creado correctamente. Ya puedes iniciar sesión.") ?>
 </div>
+<?php elseif ($mensaje === "password_actualizada"): ?>
+<div class="mensaje exito">
+<?= t("Tu contraseña se ha actualizado. Ya puedes iniciar sesión.") ?>
+</div>
 <?php endif; ?>
 <?php if ($error === "credenciales"): ?>
 <div class="mensaje error">
@@ -72,6 +76,11 @@ id="password"
 name="password"
 required
 >
+<p class="ayuda">
+<a href="recuperar_contrasena.php">
+<?= t("¿Olvidaste tu contraseña?") ?>
+</a>
+</p>
 </div>
 <div class="grupo-botones">
 <button type="submit" class="boton">
