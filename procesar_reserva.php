@@ -22,7 +22,7 @@ $id_paquete_cliente = null;
 if (str_starts_with($metodo_pago_enviado, "paquete:")) {
 $tipo_pago = "paquete";
 $id_paquete_cliente = filter_var(
-substr($metodo_pago_enviado, 5),
+substr($metodo_pago_enviado, 8),
 FILTER_VALIDATE_INT
 );
 if (!$id_paquete_cliente) {
