@@ -194,7 +194,7 @@ content="width=device-width, initial-scale=1.0"
 <div class="encabezado-pagina">
 <div>
 <p class="etiqueta">
-<?= t('Actividades') ?>
+<?= t('Clases, Terapias y Eventos') ?>
 </p>
 <h1><?= t('Actividades') ?></h1>
 <p>
