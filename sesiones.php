@@ -48,7 +48,8 @@ s.fecha,
 s.hora_inicio,
 s.hora_fin,
 a.id_actividad,
-a.nombre AS actividad
+a.nombre AS actividad,
+a.tipo
 FROM sesiones AS s
 INNER JOIN actividades AS a
 ON s.id_actividad = a.id_actividad
@@ -155,7 +156,7 @@ $es_pasado = $dia < $hoy;
 <div class="sesiones-dia-calendario">
 <?php foreach ($sesiones_por_dia[$clave_dia] as $sesion_dia): ?>
 <a
-class="sesion-calendario-chip"
+class="sesion-calendario-chip sesion-calendario-chip-<?= escapar($sesion_dia['tipo']) ?>"
 href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
 >
 <span class="sesion-calendario-hora">
