@@ -99,6 +99,20 @@ $tipos = [
 return t($tipos[$tipo] ?? ucfirst($tipo));
 }
 
+function texto_dia_semana_abreviado(int $dia_semana): string
+{
+$dias = [
+1 => 'Lun',
+2 => 'Mar',
+3 => 'Mié',
+4 => 'Jue',
+5 => 'Vie',
+6 => 'Sáb',
+7 => 'Dom'
+];
+return t($dias[$dia_semana] ?? '');
+}
+
 function texto_estado_sesion(string $estado): string
 {
 $estados = [

@@ -108,6 +108,48 @@ $tipos,
 }
 $stmt->execute();
 $resultado = $stmt->get_result();
+
+$dias_semana = [];
+$sesiones_por_dia = [];
+$hoy = new DateTime('today');
+for ($i = 0; $i < 7; $i++) {
+$dia = (clone $hoy)->modify("+$i day");
+$dias_semana[] = $dia;
+$sesiones_por_dia[$dia->format('Y-m-d')] = [];
+}
+$fecha_inicio_semana = $dias_semana[0]->format('Y-m-d');
+$fecha_fin_semana = $dias_semana[6]->format('Y-m-d');
+$sql_semana = "
+SELECT
+s.id_sesion,
+s.fecha,
+s.hora_inicio,
+s.hora_fin,
+a.id_actividad,
+a.nombre AS actividad,
+a.nivel,
+CONCAT(p.nombre, ' ', p.apellidos) AS profesor
+FROM sesiones AS s
+INNER JOIN actividades AS a
+ON s.id_actividad = a.id_actividad
+INNER JOIN profesores AS p
+ON s.id_profesor = p.id_profesor
+WHERE a.activa = 1
+AND s.estado IN ('programada', 'completa')
+AND s.fecha BETWEEN ? AND ?
+ORDER BY s.fecha, s.hora_inicio
+";
+$stmt_semana = $conexion->prepare($sql_semana);
+$stmt_semana->bind_param(
+'ss',
+$fecha_inicio_semana,
+$fecha_fin_semana
+);
+$stmt_semana->execute();
+$resultado_semana = $stmt_semana->get_result();
+while ($fila_semana = $resultado_semana->fetch_assoc()) {
+$sesiones_por_dia[$fila_semana['fecha']][] = $fila_semana;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -255,6 +297,88 @@ return;
 boton.addEventListener("click", function () {
 const abierto = panel.classList.toggle("abierto");
 boton.setAttribute("aria-expanded", abierto ? "true" : "false");
+});
+})();
+</script>
+<div class="calendario-semana">
+<?php foreach ($dias_semana as $indice => $dia): ?>
+<button
+type="button"
+class="dia-semana-boton<?= $indice === 0 ? ' activo' : '' ?>"
+data-fecha="<?= $dia->format('Y-m-d') ?>"
+>
+<span class="dia-semana-abrev">
+<?= escapar(
+texto_dia_semana_abreviado(
+(int) $dia->format('N')
+)
+) ?>
+</span>
+<span class="dia-semana-numero">
+<?= $dia->format('j') ?>
+</span>
+</button>
+<?php endforeach; ?>
+</div>
+<div class="dias-actividades">
+<?php foreach ($dias_semana as $indice => $dia): ?>
+<?php $clave_dia = $dia->format('Y-m-d'); ?>
+<div
+class="dia-actividades<?= $indice === 0 ? ' activo' : '' ?>"
+data-fecha="<?= $clave_dia ?>"
+>
+<?php if (empty($sesiones_por_dia[$clave_dia])): ?>
+<p class="sin-sesiones">
+<?= t('No hay actividades programadas ese día.') ?>
+</p>
+<?php else: ?>
+<?php foreach (
+$sesiones_por_dia[$clave_dia] as $sesion_dia
+): ?>
+<a
+class="item-actividad-dia"
+href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
+>
+<span class="item-actividad-hora">
+<?= escapar(
+formatear_hora($sesion_dia['hora_inicio'])
+) ?>
+–
+<?= escapar(
+formatear_hora($sesion_dia['hora_fin'])
+) ?>
+</span>
+<span class="item-actividad-nombre">
+<?= escapar($sesion_dia['actividad']) ?>
+</span>
+<span class="item-actividad-detalle">
+<?= escapar($sesion_dia['profesor']) ?>
+·
+<?= escapar(texto_nivel($sesion_dia['nivel'])) ?>
+</span>
+</a>
+<?php endforeach; ?>
+<?php endif; ?>
+</div>
+<?php endforeach; ?>
+</div>
+<script>
+(function () {
+const botonesDias = document.querySelectorAll(".dia-semana-boton");
+const panelesDias = document.querySelectorAll(".dia-actividades");
+botonesDias.forEach(function (boton) {
+boton.addEventListener("click", function () {
+const fecha = boton.getAttribute("data-fecha");
+botonesDias.forEach(function (b) {
+b.classList.toggle("activo", b === boton);
+});
+panelesDias.forEach(function (panel) {
+panel.classList.toggle(
+"activo",
+panel.getAttribute("data-fecha") === fecha
+);
+});
+});
 });
 })();
 </script>
