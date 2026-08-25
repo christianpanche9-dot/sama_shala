@@ -680,6 +680,9 @@ gap: 6px;
 .campo label {
 font-weight: 700;
 }
+.etiqueta-invisible {
+visibility: hidden;
+}
 .campo input,
 .campo select {
     min-height: 44px;

@@ -425,6 +425,10 @@ texto_nivel($valor_nivel)
 <?php endforeach; ?>
 </select>
 </div>
+<div class="campo campo-acciones-filtro">
+<label class="etiqueta-invisible" aria-hidden="true">
+&nbsp;
+</label>
 <div class="acciones-filtro">
 <button class="boton" type="submit">
 <?= t('Filtrar') ?>
@@ -435,6 +439,7 @@ href="actividades.php"
 >
 <?= t('Limpiar') ?>
 </a>
+</div>
 </div>
 </form>
 </div>
