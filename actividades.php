@@ -387,10 +387,32 @@ panel.getAttribute("data-fecha") === fecha
 <?= t('No se han encontrado actividades con los filtros seleccionados.') ?>
 </div>
 <?php else: ?>
+<h2 class="titulo-todas-actividades">
+<?= t('Conoce todas nuestras actividades') ?>
+</h2>
+<?php
+$actividades_por_tipo = [
+'clase' => [],
+'evento' => [],
+'terapia' => []
+];
+while ($actividad = $resultado->fetch_assoc()) {
+$actividades_por_tipo[$actividad['tipo']][] = $actividad;
+}
+$titulos_tipo = [
+'clase' => t('Clases'),
+'evento' => t('Eventos'),
+'terapia' => t('Terapias')
+];
+?>
+<?php foreach ($actividades_por_tipo as $tipo_actual => $actividades_tipo): ?>
+<?php if (empty($actividades_tipo)): ?>
+<?php continue; ?>
+<?php endif; ?>
+<section class="seccion-tipo-actividad">
+<h3><?= escapar($titulos_tipo[$tipo_actual]) ?></h3>
 <div class="rejilla-actividades">
-<?php while (
-$actividad = $resultado->fetch_assoc()
-): ?>
+<?php foreach ($actividades_tipo as $actividad): ?>
 <article class="tarjeta-actividad">
 <?php if (!empty($actividad['imagen'])): ?>
 <img
@@ -433,11 +455,11 @@ $actividad['nivel']
 <?= escapar(
 $actividad['nombre']
 ) ?>
+</h2>
 <p>
 <?= escapar(
 $actividad['descripcion']
 ) ?>
-</h2>
 </p>
 <p class="dato-destacado">
 <?= t('Duración habitual:') ?>
@@ -478,8 +500,10 @@ $actividad['id_actividad'] ?>"
 </a>
 </div>
 </article>
-<?php endwhile; ?>
+<?php endforeach; ?>
 </div>
+</section>
+<?php endforeach; ?>
 <?php endif; ?>
 </main>
 <?php require_once __DIR__ . '/pie.php'; ?>

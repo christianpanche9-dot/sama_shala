@@ -110,5 +110,115 @@ $imagen,
 $activa
 );
 $stmt->execute();
-header('Location: actividades.php?mensaje=creada');
+$id_actividad = $conexion->insert_id;
+$sesiones_creadas = 0;
+$sesiones_omitidas = 0;
+$es_regular = isset($_POST['es_regular']);
+if ($es_regular) {
+$id_profesor_regular = filter_input(
+INPUT_POST,
+'id_profesor_regular',
+FILTER_VALIDATE_INT
+);
+$id_espacio_regular = filter_input(
+INPUT_POST,
+'id_espacio_regular',
+FILTER_VALIDATE_INT
+);
+$hora_inicio_regular = trim(
+$_POST['hora_inicio_regular'] ?? ''
+);
+$aforo_regular = filter_input(
+INPUT_POST,
+'aforo_regular',
+FILTER_VALIDATE_INT
+);
+$fechas_regulares = $_POST['fechas_regulares'] ?? [];
+if (
+$id_profesor_regular &&
+$id_espacio_regular &&
+$hora_inicio_regular !== '' &&
+hora_valida($hora_inicio_regular) &&
+$aforo_regular &&
+is_array($fechas_regulares)
+) {
+$sql_conflicto = "
+SELECT id_sesion
+FROM sesiones
+WHERE fecha = ?
+AND estado <> 'cancelada'
+AND hora_inicio < ?
+AND hora_fin > ?
+AND (id_espacio = ? OR id_profesor = ?)
+LIMIT 1
+";
+$stmt_conflicto = $conexion->prepare($sql_conflicto);
+$sql_insertar_sesion = "
+INSERT INTO sesiones (
+id_actividad,
+id_espacio,
+id_profesor,
+fecha,
+hora_inicio,
+hora_fin,
+aforo,
+estado
+)
+VALUES (?, ?, ?, ?, ?, ?, ?, 'programada')
+";
+$stmt_insertar_sesion =
+$conexion->prepare($sql_insertar_sesion);
+foreach ($fechas_regulares as $fecha_regular) {
+$fecha_regular = trim($fecha_regular);
+if (!fecha_valida($fecha_regular)) {
+$sesiones_omitidas++;
+continue;
+}
+$inicio_regular = DateTime::createFromFormat(
+'Y-m-d H:i',
+$fecha_regular . ' ' . $hora_inicio_regular
+);
+$fin_regular = clone $inicio_regular;
+$fin_regular->modify("+{$duracion} minutes");
+$hora_inicio_sesion = $inicio_regular->format('H:i:s');
+$hora_fin_sesion = $fin_regular->format('H:i:s');
+$stmt_conflicto->bind_param(
+'sssii',
+$fecha_regular,
+$hora_fin_sesion,
+$hora_inicio_sesion,
+$id_espacio_regular,
+$id_profesor_regular
+);
+$stmt_conflicto->execute();
+$resultado_conflicto = $stmt_conflicto->get_result();
+if ($resultado_conflicto->num_rows > 0) {
+$sesiones_omitidas++;
+continue;
+}
+$stmt_insertar_sesion->bind_param(
+'iiisssi',
+$id_actividad,
+$id_espacio_regular,
+$id_profesor_regular,
+$fecha_regular,
+$hora_inicio_sesion,
+$hora_fin_sesion,
+$aforo_regular
+);
+if ($stmt_insertar_sesion->execute()) {
+$sesiones_creadas++;
+} else {
+$sesiones_omitidas++;
+}
+}
+$stmt_conflicto->close();
+$stmt_insertar_sesion->close();
+}
+}
+header(
+'Location: actividades.php?mensaje=creada' .
+'&sesiones_creadas=' . $sesiones_creadas .
+'&sesiones_omitidas=' . $sesiones_omitidas
+);
 exit;

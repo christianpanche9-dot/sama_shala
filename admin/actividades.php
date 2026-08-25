@@ -54,6 +54,16 @@ Nueva actividad
 
 <div class="mensaje mensaje-exito">
 La actividad se ha creado correctamente.
+<?php if (isset($_GET['sesiones_creadas'])): ?>
+Se <?= (int) $_GET['sesiones_creadas'] === 1 ? 'ha creado' : 'han creado' ?>
+<?= (int) $_GET['sesiones_creadas'] ?>
+sesión<?= (int) $_GET['sesiones_creadas'] === 1 ? '' : 'es' ?> regular<?= (int) $_GET['sesiones_creadas'] === 1 ? '' : 'es' ?>.
+<?php if ((int) ($_GET['sesiones_omitidas'] ?? 0) > 0): ?>
+Se <?= (int) $_GET['sesiones_omitidas'] === 1 ? 'ha omitido' : 'han omitido' ?>
+<?= (int) $_GET['sesiones_omitidas'] ?>
+por conflicto de horario.
+<?php endif; ?>
+<?php endif; ?>
 </div>
 <?php endif; ?>
 <?php if (

@@ -361,6 +361,17 @@ grid-template-columns:
 repeat(3, minmax(0, 1fr));
 gap: 24px;
 }
+.titulo-todas-actividades {
+margin: 10px 0 30px;
+text-align: center;
+}
+.seccion-tipo-actividad {
+margin-bottom: 44px;
+}
+.seccion-tipo-actividad h3 {
+margin-bottom: 18px;
+font-size: 1.5rem;
+}
 .franja-horarios-paquetes {
 display: flex;
 flex-wrap: wrap;
@@ -904,6 +915,81 @@ margin: 16px 0;
 legend {
 font-weight: 700;
 padding: 0 6px;
+}
+.bloque-regular {
+display: none;
+}
+.bloque-regular.visible {
+display: block;
+}
+.bloque-regular .ayuda {
+margin: 0 0 16px;
+color: var(--color-texto-tenue);
+}
+.calendarios-regular {
+display: flex;
+margin-top: 20px;
+gap: 24px;
+flex-wrap: wrap;
+}
+.calendario-mes {
+flex: 1 1 260px;
+min-width: 260px;
+}
+.calendario-mes-titulo {
+margin: 0 0 10px;
+font-weight: 700;
+text-align: center;
+text-transform: capitalize;
+}
+.calendario-mes-cabecera,
+.calendario-mes-grilla {
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+gap: 4px;
+}
+.calendario-mes-cabecera span {
+padding-bottom: 4px;
+color: var(--color-texto-tenue);
+font-size: 0.75rem;
+font-weight: 700;
+text-align: center;
+text-transform: uppercase;
+}
+.dia-calendario {
+position: relative;
+display: grid;
+aspect-ratio: 1;
+place-items: center;
+color: var(--color-texto);
+background-color: white;
+border: 1px solid var(--color-borde);
+border-radius: 7px;
+font-size: 0.85rem;
+cursor: pointer;
+transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+.dia-calendario-vacio {
+visibility: hidden;
+}
+.dia-calendario-pasado {
+color: var(--color-texto-tenue);
+background-color: transparent;
+border-color: transparent;
+cursor: default;
+}
+.dia-calendario:hover {
+border-color: var(--color-verde-oscuro);
+}
+.dia-calendario .entrada-dia-calendario {
+position: absolute;
+opacity: 0;
+pointer-events: none;
+}
+.dia-calendario:has(.entrada-dia-calendario:checked) {
+color: white;
+background-color: var(--color-verde-oscuro);
+border-color: var(--color-verde-oscuro);
 }
 .opcion-pago {
 display: flex;

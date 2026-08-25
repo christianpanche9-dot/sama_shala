@@ -113,6 +113,52 @@ $dias = [
 return t($dias[$dia_semana] ?? '');
 }
 
+function texto_mes(int $mes): string
+{
+$meses = [
+1 => 'Enero',
+2 => 'Febrero',
+3 => 'Marzo',
+4 => 'Abril',
+5 => 'Mayo',
+6 => 'Junio',
+7 => 'Julio',
+8 => 'Agosto',
+9 => 'Septiembre',
+10 => 'Octubre',
+11 => 'Noviembre',
+12 => 'Diciembre'
+];
+return t($meses[$mes] ?? '');
+}
+
+function generar_calendario_mes(int $anio, int $mes): array
+{
+$primer_dia = new DateTime(
+sprintf('%04d-%02d-01', $anio, $mes)
+);
+$dias_en_mes = (int) $primer_dia->format('t');
+$dia_semana_inicio = (int) $primer_dia->format('N');
+$semanas = [];
+$semana_actual = array_fill(0, $dia_semana_inicio - 1, null);
+for ($dia = 1; $dia <= $dias_en_mes; $dia++) {
+$semana_actual[] = new DateTime(
+sprintf('%04d-%02d-%02d', $anio, $mes, $dia)
+);
+if (count($semana_actual) === 7) {
+$semanas[] = $semana_actual;
+$semana_actual = [];
+}
+}
+if (!empty($semana_actual)) {
+while (count($semana_actual) < 7) {
+$semana_actual[] = null;
+}
+$semanas[] = $semana_actual;
+}
+return $semanas;
+}
+
 function texto_estado_sesion(string $estado): string
 {
 $estados = [
