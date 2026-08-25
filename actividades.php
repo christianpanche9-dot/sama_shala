@@ -401,7 +401,7 @@ $titulos_tipo = [
 <?php if (empty($actividades_tipo)): ?>
 <?php continue; ?>
 <?php endif; ?>
-<section class="seccion-tipo-actividad">
+<section class="seccion-tipo-actividad seccion-tipo-<?= escapar($tipo_actual) ?>">
 <h3><?= escapar($titulos_tipo[$tipo_actual]) ?></h3>
 <div class="rejilla-actividades">
 <?php foreach ($actividades_tipo as $actividad): ?>

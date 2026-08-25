@@ -368,10 +368,23 @@ text-align: center;
 }
 .seccion-tipo-actividad {
 margin-bottom: 44px;
+padding: 40px 32px;
+border-radius: 20px;
+}
+.seccion-tipo-clase {
+background-color: var(--color-verde-claro);
+}
+.seccion-tipo-evento {
+background-color: var(--color-marron-claro);
+}
+.seccion-tipo-terapia {
+background-color: var(--color-azul-claro);
 }
 .seccion-tipo-actividad h3 {
-margin-bottom: 18px;
-font-size: 1.5rem;
+margin-bottom: 26px;
+color: var(--color-verde-oscuro);
+font-family: var(--fuente-titulares);
+font-size: clamp(1.8rem, 3vw, 2.4rem);
 }
 .franja-horarios-paquetes {
 display: flex;
@@ -433,7 +446,7 @@ display: grid;
 height: 210px;
 place-items: center;
 color: var(--color-texto-tenue);
-background-color: var(--color-azul-claro);
+background-color: var(--color-blanco-hueso);
 }
 .contenido-tarjeta {
 padding: 24px;
@@ -805,6 +818,9 @@ justify-content: center;
 .rejilla-actividades,
 .rejilla-datos {
 grid-template-columns: 1fr;
+}
+.seccion-tipo-actividad {
+padding: 26px 18px;
 }
 .formulario-filtros {
 align-items: stretch;
