@@ -96,6 +96,17 @@ maxlength="180"
 required
 >
 </div>
+<div class="campo campo-completo">
+<label for="resena">
+Reseña del profesor
+</label>
+<textarea
+id="resena"
+name="resena"
+rows="5"
+maxlength="2000"
+></textarea>
+</div>
 <div class="campo-checkbox campo-completo">
 <label>
 <input

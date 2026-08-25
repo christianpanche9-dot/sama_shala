@@ -20,6 +20,7 @@ apellidos,
 email,
 telefono,
 especialidad,
+resena,
 activo
 FROM profesores
 WHERE id_profesor = ?
@@ -138,6 +139,17 @@ maxlength="180"
 value="<?= escapar($profesor['especialidad']) ?>"
 required
 >
+</div>
+<div class="campo campo-completo">
+<label for="resena">
+Reseña del profesor
+</label>
+<textarea
+id="resena"
+name="resena"
+rows="5"
+maxlength="2000"
+><?= escapar($profesor['resena']) ?></textarea>
 </div>
 <div class="campo-checkbox campo-completo">
 <label>

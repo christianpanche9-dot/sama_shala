@@ -12,6 +12,7 @@ $apellidos = trim($_POST['apellidos'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $telefono = trim($_POST['telefono'] ?? '');
 $especialidad = trim($_POST['especialidad'] ?? '');
+$resena = trim($_POST['resena'] ?? '');
 $activo = isset($_POST['activo']) ? 1 : 0;
 $errores = [];
 if ($nombre === '') {
@@ -25,6 +26,9 @@ $errores[] = 'El correo no es válido.';
 }
 if ($especialidad === '') {
 $errores[] = 'La especialidad es obligatoria.';
+}
+if (mb_strlen($resena) > 2000) {
+$errores[] = 'La reseña es demasiado larga.';
 }
 if ($errores) {
 header('Location: nuevo_profesor.php?error=datos');
@@ -55,19 +59,21 @@ apellidos,
 email,
 telefono,
 especialidad,
+resena,
 activo
 )
-VALUES (?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?)
 ";
 $stmt_insertar =
 $conexion->prepare($sql_insertar);
 $stmt_insertar->bind_param(
-'sssssi',
+'ssssssi',
 $nombre,
 $apellidos,
 $email,
 $telefono,
 $especialidad,
+$resena,
 $activo
 );
 $stmt_insertar->execute();
