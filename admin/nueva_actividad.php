@@ -17,14 +17,14 @@ ORDER BY apellidos, nombre
 $espacios = $conexion->query($sql_espacios);
 $profesores = $conexion->query($sql_profesores);
 $hoy = new DateTime('today');
-$mes_actual = (int) $hoy->format('n');
-$anio_actual = (int) $hoy->format('Y');
-$mes_siguiente = $mes_actual === 12 ? 1 : $mes_actual + 1;
-$anio_siguiente = $mes_actual === 12 ? $anio_actual + 1 : $anio_actual;
-$meses_calendario = [
-['anio' => $anio_actual, 'mes' => $mes_actual],
-['anio' => $anio_siguiente, 'mes' => $mes_siguiente]
+$meses_calendario = [];
+for ($i = 0; $i <= 5; $i++) {
+$mes_recorrido = (clone $hoy)->modify("+$i month");
+$meses_calendario[] = [
+'anio' => (int) $mes_recorrido->format('Y'),
+'mes' => (int) $mes_recorrido->format('n')
 ];
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
