@@ -46,8 +46,8 @@ return [
 
 // actividades.php / detalle_actividad.php
 'Actividades | Sama Shala' => 'Activities | Sama Shala',
-'Catálogo' => 'Catalog',
-'Consulta las actividades del centro y descubre sus próximas sesiones.' => 'Browse the center\'s activities and discover their upcoming sessions.',
+'Consulta las actividades de nuestro centro y descubre increíbles clases, eventos y terapias pensadas en tu bienestar.' => 'Check out our center\'s activities and discover amazing classes, events and therapies designed for your wellbeing.',
+'Filtrar actividades' => 'Filter activities',
 'Categoría' => 'Category',
 'Todas las categorías' => 'All categories',
 'Tipo' => 'Type',

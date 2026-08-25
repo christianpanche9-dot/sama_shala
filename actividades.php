@@ -129,15 +129,25 @@ content="width=device-width, initial-scale=1.0"
 <main class="contenedor seccion">
 <div class="encabezado-pagina">
 <div>
-<p class="etiqueta">
-<?= t('Catálogo') ?>
-</p>
 <h1><?= t('Actividades') ?></h1>
 <p>
-<?= t('Consulta las actividades del centro y descubre sus próximas sesiones.') ?>
+<?= t('Consulta las actividades de nuestro centro y descubre increíbles clases, eventos y terapias pensadas en tu bienestar.') ?>
 </p>
 </div>
 </div>
+<button
+type="button"
+class="boton boton-secundario boton-alternar-filtros"
+id="boton-alternar-filtros"
+aria-expanded="false"
+aria-controls="panel-filtros"
+>
+<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8">
+<path d="M4 6h16M7 12h10M10 18h4"/>
+</svg>
+<?= t('Filtrar actividades') ?>
+</button>
+<div class="panel-filtros" id="panel-filtros">
 <form
 class="formulario-filtros"
 action="actividades.php"
@@ -234,6 +244,20 @@ href="actividades.php"
 </a>
 </div>
 </form>
+</div>
+<script>
+(function () {
+const boton = document.querySelector("#boton-alternar-filtros");
+const panel = document.querySelector("#panel-filtros");
+if (!boton || !panel) {
+return;
+}
+boton.addEventListener("click", function () {
+const abierto = panel.classList.toggle("abierto");
+boton.setAttribute("aria-expanded", abierto ? "true" : "false");
+});
+})();
+</script>
 <?php if ($resultado->num_rows === 0): ?>
 <div class="mensaje mensaje-aviso">
 <?= t('No se han encontrado actividades con los filtros seleccionados.') ?>

@@ -304,7 +304,20 @@ color: var(--color-azul);
 .acciones-filtro {
 display: flex;
 flex-wrap: wrap;
+align-items: center;
 gap: 12px;
+}
+.boton-alternar-filtros {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+margin-top: 10px;
+}
+.panel-filtros {
+display: none;
+}
+.panel-filtros.abierto {
+display: block;
 }
 .boton {
     display: inline-block;
