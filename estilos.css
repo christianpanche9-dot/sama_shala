@@ -871,11 +871,28 @@ justify-content: center;
 gap: 8px 18px;
 }
 .rejilla-ventajas,
-.rejilla-actividades {
+.rejilla-actividades,
+.rejilla-top-actividades {
 grid-template-columns: 1fr 1fr;
 }
 .tarjeta-sesion {
 grid-template-columns: 1fr;
+}
+.titulo-todas-actividades,
+.seccion-top-actividades h3,
+.seccion-tipo-actividad h3 {
+margin-bottom: 20px;
+}
+.seccion-tipo-actividad,
+.seccion-top-actividades {
+padding: 32px 24px;
+}
+.banner-top img {
+height: 380px;
+}
+.item-actividad-dia {
+grid-template-columns: 110px 1fr;
+gap: 4px 12px;
 }
 .panel-reserva {
 position: static;
@@ -931,6 +948,33 @@ padding: 26px 18px;
 }
 .banner-top img {
 height: 320px;
+}
+.banner-top-contenido {
+padding: 18px;
+}
+.banner-top-etiqueta {
+font-size: 0.75rem;
+}
+.calendario-semana {
+gap: 6px;
+}
+.dia-semana-boton {
+min-width: 58px;
+padding: 10px 6px;
+}
+.dia-semana-abrev {
+font-size: 0.7rem;
+}
+.dia-semana-numero {
+font-size: 1.1rem;
+}
+.item-actividad-dia {
+grid-template-columns: 1fr;
+gap: 2px;
+}
+.item-actividad-nombre,
+.item-actividad-detalle {
+grid-column: 1;
 }
 .formulario-filtros {
 align-items: stretch;
