@@ -199,6 +199,105 @@ content="width=device-width, initial-scale=1.0"
 </p>
 </div>
 </div>
+<?php if ($actividad_banner_top !== null): ?>
+<a
+class="banner-top"
+href="detalle_actividad.php?id=<?= (int) $actividad_banner_top['id_actividad'] ?>"
+>
+<img
+src="imagenes/actividades/<?= escapar($actividad_banner_top['imagen_banner_top']) ?>"
+alt="<?= escapar($actividad_banner_top['nombre']) ?>"
+>
+<span class="banner-top-contenido">
+<span class="banner-top-etiqueta">
+<?= t('Actividad destacada del mes') ?>
+</span>
+<span class="banner-top-nombre">
+<?= escapar($actividad_banner_top['nombre']) ?>
+</span>
+</span>
+</a>
+<?php endif; ?>
+<h2 class="titulo-calendario-semana">
+<?= t('Calendario semanal') ?>
+</h2>
+<div class="calendario-semana">
+<?php foreach ($dias_semana as $indice => $dia): ?>
+<button
+type="button"
+class="dia-semana-boton<?= $indice === 0 ? ' activo' : '' ?>"
+data-fecha="<?= $dia->format('Y-m-d') ?>"
+>
+<span class="dia-semana-abrev">
+<?= escapar(
+texto_dia_semana_abreviado(
+(int) $dia->format('N')
+)
+) ?>
+</span>
+<span class="dia-semana-numero">
+<?= $dia->format('j') ?>
+</span>
+</button>
+<?php endforeach; ?>
+</div>
+<div class="dias-actividades">
+<?php foreach ($dias_semana as $indice => $dia): ?>
+<?php $clave_dia = $dia->format('Y-m-d'); ?>
+<div
+class="dia-actividades<?= $indice === 0 ? ' activo' : '' ?>"
+data-fecha="<?= $clave_dia ?>"
+>
+<?php if (empty($sesiones_por_dia[$clave_dia])): ?>
+<p class="sin-sesiones">
+<?= t('No hay actividades programadas ese día.') ?>
+</p>
+<?php else: ?>
+<?php foreach (
+$sesiones_por_dia[$clave_dia] as $sesion_dia
+): ?>
+<a
+class="item-actividad-dia"
+href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
+>
+<span class="item-actividad-hora">
+<?= escapar(formatear_hora($sesion_dia['hora_inicio'])) ?> – <?= escapar(formatear_hora($sesion_dia['hora_fin'])) ?>
+</span>
+<span class="item-actividad-nombre">
+<?= escapar($sesion_dia['actividad']) ?>
+</span>
+<span class="item-actividad-detalle">
+<?= escapar($sesion_dia['profesor']) ?> · <?= escapar(texto_nivel($sesion_dia['nivel'])) ?>
+</span>
+</a>
+<?php endforeach; ?>
+<?php endif; ?>
+</div>
+<?php endforeach; ?>
+</div>
+<script>
+(function () {
+const botonesDias = document.querySelectorAll(".dia-semana-boton");
+const panelesDias = document.querySelectorAll(".dia-actividades");
+botonesDias.forEach(function (boton) {
+boton.addEventListener("click", function () {
+const fecha = boton.getAttribute("data-fecha");
+botonesDias.forEach(function (b) {
+b.classList.toggle("activo", b === boton);
+});
+panelesDias.forEach(function (panel) {
+panel.classList.toggle(
+"activo",
+panel.getAttribute("data-fecha") === fecha
+);
+});
+});
+});
+})();
+</script>
+<h2 class="titulo-todas-actividades">
+<?= t('Conoce todas nuestras actividades') ?>
+</h2>
 <button
 type="button"
 class="boton boton-secundario boton-alternar-filtros"
@@ -322,110 +421,11 @@ boton.setAttribute("aria-expanded", abierto ? "true" : "false");
 });
 })();
 </script>
-<?php if ($actividad_banner_top !== null): ?>
-<a
-class="banner-top"
-href="detalle_actividad.php?id=<?= (int) $actividad_banner_top['id_actividad'] ?>"
->
-<img
-src="imagenes/actividades/<?= escapar($actividad_banner_top['imagen_banner_top']) ?>"
-alt="<?= escapar($actividad_banner_top['nombre']) ?>"
->
-<span class="banner-top-contenido">
-<span class="banner-top-etiqueta">
-<?= t('Actividad destacada del mes') ?>
-</span>
-<span class="banner-top-nombre">
-<?= escapar($actividad_banner_top['nombre']) ?>
-</span>
-</span>
-</a>
-<?php endif; ?>
-<h2 class="titulo-calendario-semana">
-<?= t('Calendario semanal') ?>
-</h2>
-<div class="calendario-semana">
-<?php foreach ($dias_semana as $indice => $dia): ?>
-<button
-type="button"
-class="dia-semana-boton<?= $indice === 0 ? ' activo' : '' ?>"
-data-fecha="<?= $dia->format('Y-m-d') ?>"
->
-<span class="dia-semana-abrev">
-<?= escapar(
-texto_dia_semana_abreviado(
-(int) $dia->format('N')
-)
-) ?>
-</span>
-<span class="dia-semana-numero">
-<?= $dia->format('j') ?>
-</span>
-</button>
-<?php endforeach; ?>
-</div>
-<div class="dias-actividades">
-<?php foreach ($dias_semana as $indice => $dia): ?>
-<?php $clave_dia = $dia->format('Y-m-d'); ?>
-<div
-class="dia-actividades<?= $indice === 0 ? ' activo' : '' ?>"
-data-fecha="<?= $clave_dia ?>"
->
-<?php if (empty($sesiones_por_dia[$clave_dia])): ?>
-<p class="sin-sesiones">
-<?= t('No hay actividades programadas ese día.') ?>
-</p>
-<?php else: ?>
-<?php foreach (
-$sesiones_por_dia[$clave_dia] as $sesion_dia
-): ?>
-<a
-class="item-actividad-dia"
-href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
->
-<span class="item-actividad-hora">
-<?= escapar(formatear_hora($sesion_dia['hora_inicio'])) ?> – <?= escapar(formatear_hora($sesion_dia['hora_fin'])) ?>
-</span>
-<span class="item-actividad-nombre">
-<?= escapar($sesion_dia['actividad']) ?>
-</span>
-<span class="item-actividad-detalle">
-<?= escapar($sesion_dia['profesor']) ?> · <?= escapar(texto_nivel($sesion_dia['nivel'])) ?>
-</span>
-</a>
-<?php endforeach; ?>
-<?php endif; ?>
-</div>
-<?php endforeach; ?>
-</div>
-<script>
-(function () {
-const botonesDias = document.querySelectorAll(".dia-semana-boton");
-const panelesDias = document.querySelectorAll(".dia-actividades");
-botonesDias.forEach(function (boton) {
-boton.addEventListener("click", function () {
-const fecha = boton.getAttribute("data-fecha");
-botonesDias.forEach(function (b) {
-b.classList.toggle("activo", b === boton);
-});
-panelesDias.forEach(function (panel) {
-panel.classList.toggle(
-"activo",
-panel.getAttribute("data-fecha") === fecha
-);
-});
-});
-});
-})();
-</script>
 <?php if ($resultado->num_rows === 0): ?>
 <div class="mensaje mensaje-aviso">
 <?= t('No se han encontrado actividades con los filtros seleccionados.') ?>
 </div>
 <?php else: ?>
-<h2 class="titulo-todas-actividades">
-<?= t('Conoce todas nuestras actividades') ?>
-</h2>
 <?php if (!empty($actividades_top)): ?>
 <section class="seccion-top-actividades">
 <h3><?= t('Top 3 del mes') ?></h3>
