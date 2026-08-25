@@ -1,85 +1,71 @@
 <?php
 require_once __DIR__ . '/conexion.php';
 require_once __DIR__ . '/funciones.php';
-$fecha = trim($_GET['fecha'] ?? '');
-if ($fecha !== '' && !fecha_valida($fecha)) {
-$fecha = '';
+
+$hoy = new DateTime('today');
+$primer_dia_mes_actual = new DateTime($hoy->format('Y-m-01'));
+
+$mes = filter_input(
+INPUT_GET,
+'mes',
+FILTER_VALIDATE_INT,
+['options' => ['min_range' => 1, 'max_range' => 12]]
+);
+$anio = filter_input(
+INPUT_GET,
+'anio',
+FILTER_VALIDATE_INT,
+['options' => ['min_range' => 2020, 'max_range' => 2100]]
+);
+if (!$mes || !$anio) {
+$mes = (int) $hoy->format('n');
+$anio = (int) $hoy->format('Y');
 }
-$condiciones = [
-'a.activa = 1',
-"s.estado IN ('programada', 'completa')",
-'TIMESTAMP(s.fecha, s.hora_fin) >= NOW()'
-];
-$tipos = '';
-$valores = [];
-if ($fecha !== '') {
-$condiciones[] = 's.fecha = ?';
-$tipos .= 's';
-$valores[] = $fecha;
+$primer_dia_mes_visible = new DateTime(
+sprintf('%04d-%02d-01', $anio, $mes)
+);
+if ($primer_dia_mes_visible < $primer_dia_mes_actual) {
+$mes = (int) $hoy->format('n');
+$anio = (int) $hoy->format('Y');
+$primer_dia_mes_visible = clone $primer_dia_mes_actual;
 }
-$where = implode(' AND ', $condiciones);
+
+$mes_anterior = $mes === 1 ? 12 : $mes - 1;
+$anio_mes_anterior = $mes === 1 ? $anio - 1 : $anio;
+$mes_siguiente = $mes === 12 ? 1 : $mes + 1;
+$anio_mes_siguiente = $mes === 12 ? $anio + 1 : $anio;
+$primer_dia_mes_anterior = new DateTime(
+sprintf('%04d-%02d-01', $anio_mes_anterior, $mes_anterior)
+);
+$mostrar_mes_anterior = $primer_dia_mes_anterior >= $primer_dia_mes_actual;
+
+$fecha_inicio_mes = $primer_dia_mes_visible->format('Y-m-01');
+$fecha_fin_mes = $primer_dia_mes_visible->format('Y-m-t');
+
 $sql = "
 SELECT
-s.id_sesion,
 s.fecha,
 s.hora_inicio,
 s.hora_fin,
-s.aforo,
-s.estado,
 a.id_actividad,
-a.nombre AS actividad,
-a.categoria,
-a.nivel,
-e.nombre AS espacio,
-CONCAT(
-m.nombre,
-' ',
-m.apellidos
-) AS profesor,
-COUNT(r.id_reserva)
-AS reservas_confirmadas,
-GREATEST(
-s.aforo - COUNT(r.id_reserva),
-0
-) AS plazas_disponibles
+a.nombre AS actividad
 FROM sesiones AS s
 INNER JOIN actividades AS a
 ON s.id_actividad = a.id_actividad
-INNER JOIN espacios AS e
-ON s.id_espacio = e.id_espacio
-INNER JOIN profesores AS m
-ON s.id_profesor = m.id_profesor
-LEFT JOIN reservas AS r
-ON r.id_sesion = s.id_sesion
-AND r.estado = 'confirmada'
-WHERE $where
-GROUP BY
-s.id_sesion,
-s.fecha,
-s.hora_inicio,
-s.hora_fin,
-s.aforo,
-s.estado,
-a.id_actividad,
-a.nombre,
-a.categoria,
-a.nivel,
-e.nombre,
-m.nombre,
-m.apellidos
-ORDER BY
-s.fecha,
-s.hora_inicio
+WHERE a.activa = 1
+AND s.estado IN ('programada', 'completa')
+AND s.fecha BETWEEN ? AND ?
+ORDER BY s.fecha, s.hora_inicio
 ";
 $stmt = $conexion->prepare($sql);
-if ($tipos !== '') {
-$stmt->bind_param(
-$tipos,
-...$valores
-);
-}
+$stmt->bind_param('ss', $fecha_inicio_mes, $fecha_fin_mes);
 $stmt->execute();
 $resultado = $stmt->get_result();
+$sesiones_por_dia = [];
+while ($sesion = $resultado->fetch_assoc()) {
+$sesiones_por_dia[$sesion['fecha']][] = $sesion;
+}
+$semanas_mes = generar_calendario_mes($anio, $mes);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -113,129 +99,81 @@ content="width=device-width, initial-scale=1.0"
 </p>
 </div>
 </div>
-<form
-class="formulario-filtros"
-action="sesiones.php"
-method="get"    
->
-<div class="campo">
-<label for="fecha">
-<?= t('Buscar por fecha') ?>
-</label>
-<input
-type="date"
-id="fecha"
-name="fecha"
-value="<?= escapar($fecha) ?>"
->
-</div>
-<div class="acciones-filtro">
-<button class="boton" type="submit">
-<?= t('Buscar') ?>
-</button>
+<div class="navegacion-mes">
+<?php if ($mostrar_mes_anterior): ?>
 <a
-class="boton boton-secundario"
-href="sesiones.php"
+class="boton-mes"
+href="sesiones.php?mes=<?= $mes_anterior ?>&anio=<?= $anio_mes_anterior ?>"
+aria-label="<?= t('Mes anterior') ?>"
 >
-<?= t('Mostrar todas') ?>
+←
+</a>
+<?php else: ?>
+<span class="boton-mes boton-mes-deshabilitado" aria-hidden="true">
+←
+</span>
+<?php endif; ?>
+<span class="navegacion-mes-titulo">
+<?= escapar(texto_mes($mes)) ?> <?= $anio ?>
+</span>
+<a
+class="boton-mes"
+href="sesiones.php?mes=<?= $mes_siguiente ?>&anio=<?= $anio_mes_siguiente ?>"
+aria-label="<?= t('Mes siguiente') ?>"
+>
+→
 </a>
 </div>
-</form>
-<?php if ($resultado->num_rows === 0): ?>
+<?php if (empty($sesiones_por_dia)): ?>
 <div class="mensaje mensaje-aviso">
-<?= t('No hay sesiones disponibles para la fecha seleccionada.') ?>
+<?= t('No hay sesiones programadas este mes.') ?>
+</div>
+<?php endif; ?>
+<div class="calendario-mes-publico">
+<div class="calendario-publico-cabecera">
+<?php for ($d = 1; $d <= 7; $d++): ?>
+<span><?= escapar(texto_dia_semana_abreviado($d)) ?></span>
+<?php endfor; ?>
+</div>
+<div class="calendario-publico-grilla">
+<?php foreach ($semanas_mes as $semana): ?>
+<?php foreach ($semana as $dia): ?>
+<?php if ($dia === null): ?>
+<div class="dia-calendario-publico dia-calendario-publico-vacio">
 </div>
 <?php else: ?>
-<div class="lista-sesiones">
-<?php while (
-$sesion = $resultado->fetch_assoc()
-): ?>
 <?php
-$plazas = (int)
-$sesion['plazas_disponibles'];
-$reservas = (int)
-$sesion['reservas_confirmadas'];
-$aforo = (int)
-$sesion['aforo'];
+$clave_dia = $dia->format('Y-m-d');
+$es_hoy = $clave_dia === $hoy->format('Y-m-d');
+$es_pasado = $dia < $hoy;
 ?>
-<article class="tarjeta-sesion">
-<div class="fecha-sesion">
-<span class="fecha-principal">
-    <?= escapar(
-formatear_fecha(
-$sesion['fecha']
-)
-) ?>
+<div class="dia-calendario-publico<?= $es_hoy ? ' dia-calendario-publico-hoy' : '' ?><?= $es_pasado ? ' dia-calendario-publico-pasado' : '' ?>">
+<span class="dia-calendario-publico-numero">
+<?= (int) $dia->format('j') ?>
 </span>
-<span>
-<?= escapar(
-formatear_hora(
-$sesion['hora_inicio']
-)
-) ?>
-–
-<?= escapar(
-formatear_hora(
-$sesion['hora_fin']
-)
-) ?>
-</span>
-</div>
-<div class="datos-sesion">
-<p class="insignia">
-<?= escapar(
-$sesion['categoria']
-) ?>
-</p>
-
-<h2>
-<?= escapar(
-$sesion['actividad']
-) ?>
-</h2>
-
-<p>
-<strong><?= t('Espacio:') ?></strong>
-<?= escapar(
-$sesion['espacio']
-) ?>
-</p>
-<p>
-<strong><?= t('Profesor:') ?></strong>
-<?= escapar(
-$sesion['profesor']
-) ?>
-</p>
-<p>
-<?= $reservas ?>
-<?= t('de') ?>
-<?= $aforo ?>
-<?= t('plazas ocupadas') ?>
-</p>
-</div>
-<div class="acciones-sesion">
-<?php if ($plazas > 0): ?>
-<span class="plazas-disponibles">
-<?= $plazas ?>
-<?= t('plazas disponibles') ?>
-</span>
-<?php else: ?>
-<span class="sesion-completa">
-<?= t('Lista de espera disponible') ?>
-</span>
-<?php endif; ?>
+<?php if (!empty($sesiones_por_dia[$clave_dia])): ?>
+<div class="sesiones-dia-calendario">
+<?php foreach ($sesiones_por_dia[$clave_dia] as $sesion_dia): ?>
 <a
-class="boton"
-href="detalle_sesion.php?id=<?= (int)
-$sesion['id_sesion'] ?>"
+class="sesion-calendario-chip"
+href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
 >
-<?= t('Ver detalles') ?>
+<span class="sesion-calendario-hora">
+<?= escapar(formatear_hora($sesion_dia['hora_inicio'])) ?>
+</span>
+<span class="sesion-calendario-nombre">
+<?= escapar($sesion_dia['actividad']) ?>
+</span>
 </a>
-</div>
-</article>
-<?php endwhile; ?>
+<?php endforeach; ?>
 </div>
 <?php endif; ?>
+</div>
+<?php endif; ?>
+<?php endforeach; ?>
+<?php endforeach; ?>
+</div>
+</div>
 </main>
 <?php require_once __DIR__ . '/pie.php'; ?>
 </body>
