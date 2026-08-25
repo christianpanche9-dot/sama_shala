@@ -123,6 +123,7 @@ return [
 'plazas ocupadas' => 'spots taken',
 'reservas confirmadas' => 'confirmed bookings',
 'próximas sesiones' => 'upcoming sessions',
+'próxima sesión' => 'upcoming session',
 'Esta sesión ya ha finalizado.' => 'This session has already finished.',
 'Esta sesión ha sido cancelada.' => 'This session has been cancelled.',
 'Reservar una plaza' => 'Book a spot',

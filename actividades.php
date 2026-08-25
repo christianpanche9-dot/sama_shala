@@ -340,21 +340,13 @@ class="item-actividad-dia"
 href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
 >
 <span class="item-actividad-hora">
-<?= escapar(
-formatear_hora($sesion_dia['hora_inicio'])
-) ?>
-–
-<?= escapar(
-formatear_hora($sesion_dia['hora_fin'])
-) ?>
+<?= escapar(formatear_hora($sesion_dia['hora_inicio'])) ?> – <?= escapar(formatear_hora($sesion_dia['hora_fin'])) ?>
 </span>
 <span class="item-actividad-nombre">
 <?= escapar($sesion_dia['actividad']) ?>
 </span>
 <span class="item-actividad-detalle">
-<?= escapar($sesion_dia['profesor']) ?>
-·
-<?= escapar(texto_nivel($sesion_dia['nivel'])) ?>
+<?= escapar($sesion_dia['profesor']) ?> · <?= escapar(texto_nivel($sesion_dia['nivel'])) ?>
 </span>
 </a>
 <?php endforeach; ?>
@@ -462,29 +454,17 @@ $actividad['descripcion']
 ) ?>
 </p>
 <p class="dato-destacado">
-<?= t('Duración habitual:') ?>
-<?= (int)
-$actividad['duracion_minutos'] ?>
-<?= t('minutos') ?>
+<?= t('Duración habitual:') ?> <?= (int) $actividad['duracion_minutos'] ?> <?= t('minutos') ?>
 </p>
-<?php if (
-    (int) $actividad['proximas_sesiones'] > 0
-): ?>
+<?php $numero_proximas_sesiones = (int) $actividad['proximas_sesiones']; ?>
+<?php if ($numero_proximas_sesiones > 0): ?>
 <p class="proxima-sesion">
-<?= (int)
-$actividad['proximas_sesiones'] ?>
-<?= t('próximas sesiones') ?>
+<?= $numero_proximas_sesiones ?> <?= $numero_proximas_sesiones === 1
+    ? t('próxima sesión')
+    : t('próximas sesiones') ?>
 </p>
 <p>
-<?= t('Próxima:') ?>
-<?= escapar(
-    date(
-'d/m/Y H:i',
-strtotime(
-$actividad['proxima_fecha']
-)
-)
-) ?>
+<?= t('Próxima:') ?> <?= escapar(date('d/m/Y H:i', strtotime($actividad['proxima_fecha']))) ?>
 </p>
 <?php else: ?>
 <p class="sin-sesiones">

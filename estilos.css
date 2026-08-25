@@ -311,7 +311,7 @@ gap: 12px;
 display: inline-flex;
 align-items: center;
 gap: 8px;
-margin-top: 10px;
+margin: 26px 0 32px;
 }
 .panel-filtros {
 display: none;
@@ -362,7 +362,8 @@ repeat(3, minmax(0, 1fr));
 gap: 24px;
 }
 .titulo-todas-actividades {
-margin: 10px 0 30px;
+margin: 60px 0 30px;
+font-size: clamp(2.2rem, 4vw, 3.2rem);
 text-align: center;
 }
 .seccion-tipo-actividad {
@@ -478,7 +479,7 @@ border-radius: 12px;
 }
 .calendario-semana {
 display: flex;
-margin: 10px 0 0;
+margin: 20px 0 10px;
 gap: 8px;
 overflow-x: auto;
 padding-bottom: 4px;
