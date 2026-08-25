@@ -17,13 +17,24 @@ header('Location: actividades.php?error=no_encontrada');
 exit;
 }
 
+$sql_actual = "SELECT imagen FROM actividades WHERE id_actividad = ?";
+$stmt_actual = $conexion->prepare($sql_actual);
+$stmt_actual->bind_param('i', $id_actividad);
+$stmt_actual->execute();
+$actividad_actual = $stmt_actual->get_result()->fetch_assoc();
+$stmt_actual->close();
+if (!$actividad_actual) {
+header('Location: actividades.php?error=no_encontrada');
+exit;
+}
+$imagen_actual = $actividad_actual['imagen'];
+
 $nombre = trim($_POST['nombre'] ?? '');
 $descripcion = trim($_POST['descripcion'] ?? '');
 $categoria = trim($_POST['categoria'] ?? '');
 $tipo = trim($_POST['tipo'] ?? '');
 $nivel = trim($_POST['nivel'] ?? '');
 $duracion = $_POST['duracion_minutos'] ?? '';
-$imagen = trim($_POST['imagen'] ?? '');
 $activa = isset($_POST['activa']) ? 1 : 0;
 $categorias_validas = [
 'Deporte',
@@ -88,13 +99,29 @@ if ($duracion === false) {
 $errores[] =
 'La duración debe estar entre 15 y 480 minutos.';
 }
-if (mb_strlen($imagen) > 255) {
-$errores[] =
-'El nombre de la imagen es demasiado largo.';
-}
 if ($errores) {
 header("Location: editar_actividad.php?id_actividad=$id_actividad&error=1");
 exit;
+}
+$resultado_imagen = procesar_imagen_subida(
+'imagen',
+__DIR__ . '/../imagenes/actividades',
+'actividad'
+);
+if (!$resultado_imagen['ok']) {
+header("Location: editar_actividad.php?id_actividad=$id_actividad&error=1");
+exit;
+}
+if ($resultado_imagen['archivo'] !== null) {
+if (
+!empty($imagen_actual) &&
+file_exists(__DIR__ . '/../imagenes/actividades/' . $imagen_actual)
+) {
+unlink(__DIR__ . '/../imagenes/actividades/' . $imagen_actual);
+}
+$imagen = $resultado_imagen['archivo'];
+} else {
+$imagen = $imagen_actual;
 }
 $sql = "
 UPDATE actividades SET

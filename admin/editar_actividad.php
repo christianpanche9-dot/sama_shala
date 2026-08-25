@@ -95,6 +95,7 @@ Revisa los datos del formulario.
 class="formulario-admin"
 action="actualizar_actividad.php"
 method="post"
+enctype="multipart/form-data"
 >
 <input
 type="hidden"
@@ -195,18 +196,27 @@ value="<?= (int) $actividad['duracion_minutos'] ?>"
 required
 >
 </div>
-<div class="campo">
+<div class="campo campo-completo">
 <label for="imagen">
-Nombre de la imagen
+Foto de la actividad
 </label>
+<?php if (!empty($actividad['imagen'])): ?>
+<img
+class="miniatura-imagen-actual"
+src="../imagenes/actividades/<?= escapar($actividad['imagen']) ?>"
+alt=""
+>
+<?php endif; ?>
 <input
-type="text"
+type="file"
 id="imagen"
 name="imagen"
-maxlength="255"
-placeholder="yoga.jpg"
-value="<?= escapar($actividad['imagen']) ?>"
+accept="image/jpeg,image/png,image/webp"
 >
+<small>
+Deja este campo vacío para mantener la imagen actual.
+JPG, PNG o WEBP, máximo 5 MB.
+</small>
 </div>
 <div class="campo-checkbox campo-completo">
 <label>

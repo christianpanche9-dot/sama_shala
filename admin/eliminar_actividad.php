@@ -31,9 +31,22 @@ header('Location: actividades.php?error=en_uso');
 exit;
 }
 
+$sql_imagen = "SELECT imagen FROM actividades WHERE id_actividad = ?";
+$stmt_imagen = $conexion->prepare($sql_imagen);
+$stmt_imagen->bind_param('i', $id_actividad);
+$stmt_imagen->execute();
+$fila_imagen = $stmt_imagen->get_result()->fetch_assoc();
+$imagen_actividad = $fila_imagen['imagen'] ?? '';
+
 $sql = "DELETE FROM actividades WHERE id_actividad = ?";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param('i', $id_actividad);
 $stmt->execute();
+if (
+!empty($imagen_actividad) &&
+file_exists(__DIR__ . '/../imagenes/actividades/' . $imagen_actividad)
+) {
+unlink(__DIR__ . '/../imagenes/actividades/' . $imagen_actividad);
+}
 header('Location: actividades.php?mensaje=eliminada');
 exit;

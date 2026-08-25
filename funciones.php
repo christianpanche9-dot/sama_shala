@@ -238,3 +238,99 @@ FILTER_VALIDATE_INT,
 ]
 ) !== false;
 }
+
+function procesar_imagen_subida(
+string $campo,
+string $carpeta_destino,
+string $prefijo_archivo = 'imagen',
+int $ancho_maximo = 1600
+): array {
+if (
+!isset($_FILES[$campo]) ||
+$_FILES[$campo]['error'] === UPLOAD_ERR_NO_FILE
+) {
+return ['ok' => true, 'archivo' => null];
+}
+$archivo = $_FILES[$campo];
+if ($archivo['error'] !== UPLOAD_ERR_OK) {
+return [
+'ok' => false,
+'error' => 'No se ha podido subir la imagen.'
+];
+}
+if ($archivo['size'] > 5 * 1024 * 1024) {
+return [
+'ok' => false,
+'error' => 'La imagen no puede superar los 5 MB.'
+];
+}
+$informacion = @getimagesize($archivo['tmp_name']);
+if ($informacion === false) {
+return [
+'ok' => false,
+'error' => 'El archivo no es una imagen válida.'
+];
+}
+$creadores_por_tipo = [
+IMAGETYPE_JPEG => 'imagecreatefromjpeg',
+IMAGETYPE_PNG => 'imagecreatefrompng',
+IMAGETYPE_WEBP => 'imagecreatefromwebp'
+];
+$tipo_imagen = $informacion[2];
+if (!isset($creadores_por_tipo[$tipo_imagen])) {
+return [
+'ok' => false,
+'error' => 'Solo se permiten imágenes JPG, PNG o WEBP.'
+];
+}
+$imagen_original = $creadores_por_tipo[$tipo_imagen](
+$archivo['tmp_name']
+);
+if ($imagen_original === false) {
+return [
+'ok' => false,
+'error' => 'No se ha podido procesar la imagen.'
+];
+}
+$ancho_original = imagesx($imagen_original);
+$alto_original = imagesy($imagen_original);
+if ($ancho_original > $ancho_maximo) {
+$ancho_final = $ancho_maximo;
+$alto_final = (int) round(
+$alto_original * ($ancho_maximo / $ancho_original)
+);
+} else {
+$ancho_final = $ancho_original;
+$alto_final = $alto_original;
+}
+$imagen_final = imagecreatetruecolor($ancho_final, $alto_final);
+$fondo_blanco = imagecolorallocate($imagen_final, 255, 255, 255);
+imagefill($imagen_final, 0, 0, $fondo_blanco);
+imagecopyresampled(
+$imagen_final,
+$imagen_original,
+0,
+0,
+0,
+0,
+$ancho_final,
+$alto_final,
+$ancho_original,
+$alto_original
+);
+imagedestroy($imagen_original);
+$nombre_archivo = uniqid($prefijo_archivo . '_') . '.jpg';
+$guardado = imagejpeg(
+$imagen_final,
+$carpeta_destino . '/' . $nombre_archivo,
+82
+);
+imagedestroy($imagen_final);
+if (!$guardado) {
+return [
+'ok' => false,
+'error' => 'No se ha podido guardar la imagen.'
+];
+}
+return ['ok' => true, 'archivo' => $nombre_archivo];
+}

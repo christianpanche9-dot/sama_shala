@@ -907,6 +907,15 @@ align-items: center;
 gap: 9px;
 font-weight: 700;
 }
+.miniatura-imagen-actual {
+display: block;
+width: 160px;
+height: 110px;
+margin-bottom: 10px;
+object-fit: cover;
+border: 1px solid var(--color-borde);
+border-radius: 8px;
+}
 fieldset {
 border: 1px solid var(--color-borde);
 border-radius: 10px;

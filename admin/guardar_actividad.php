@@ -11,7 +11,6 @@ $categoria = trim($_POST['categoria'] ?? '');
 $tipo = trim($_POST['tipo'] ?? '');
 $nivel = trim($_POST['nivel'] ?? '');
 $duracion = $_POST['duracion_minutos'] ?? '';
-$imagen = trim($_POST['imagen'] ?? '');
 $activa = isset($_POST['activa']) ? 1 : 0;
 $categorias_validas = [
 'Deporte',
@@ -76,14 +75,20 @@ if ($duracion === false) {
 $errores[] =
 'La duración debe estar entre 15 y 480 minutos.';
 }
-if (mb_strlen($imagen) > 255) {
-$errores[] =
-'El nombre de la imagen es demasiado largo.';
-}
 if ($errores) {
 header('Location: nueva_actividad.php?error=1');
 exit;
 }
+$resultado_imagen = procesar_imagen_subida(
+'imagen',
+__DIR__ . '/../imagenes/actividades',
+'actividad'
+);
+if (!$resultado_imagen['ok']) {
+header('Location: nueva_actividad.php?error=1');
+exit;
+}
+$imagen = $resultado_imagen['archivo'] ?? '';
 $sql = "
 INSERT INTO actividades (
 nombre,

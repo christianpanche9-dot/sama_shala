@@ -65,6 +65,7 @@ Revisa los datos del formulario.
 class="formulario-admin"
 action="guardar_actividad.php"
 method="post"
+enctype="multipart/form-data"
 >
 <div class="campo">
 <label for="nombre">
@@ -173,15 +174,18 @@ required
 </div>
 <div class="campo">
 <label for="imagen">
-Nombre de la imagen
+Foto de la actividad
 </label>
 <input
-type="text"
+type="file"
 id="imagen"
 name="imagen"
-maxlength="255"
-placeholder="yoga.jpg"
+accept="image/jpeg,image/png,image/webp"
 >
+<small>
+JPG, PNG o WEBP, máximo 5 MB. Se optimiza
+automáticamente para no ralentizar la web.
+</small>
 </div>
 <div class="campo-checkbox campo-completo">
 <label>
