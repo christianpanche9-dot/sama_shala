@@ -66,6 +66,21 @@ required
 >
 </div>
 <div class="campo">
+<label for="username">Username</label>
+<input
+type="text"
+id="username"
+name="username"
+maxlength="60"
+placeholder="Ángeles"
+>
+<small>
+Nombre corto para las secciones donde no cabe el
+nombre completo. Si lo dejas vacío, se usa el nombre
+y apellidos.
+</small>
+</div>
+<div class="campo">
 <label for="email">Correo electrónico</label>
 <input
 type="email"

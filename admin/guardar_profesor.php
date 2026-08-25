@@ -9,6 +9,7 @@ exit;
 
 $nombre = trim($_POST['nombre'] ?? '');
 $apellidos = trim($_POST['apellidos'] ?? '');
+$username = trim($_POST['username'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $telefono = trim($_POST['telefono'] ?? '');
 $especialidad = trim($_POST['especialidad'] ?? '');
@@ -29,6 +30,9 @@ $errores[] = 'La especialidad es obligatoria.';
 }
 if (mb_strlen($resena) > 2000) {
 $errores[] = 'La reseña es demasiado larga.';
+}
+if (mb_strlen($username) > 60) {
+$errores[] = 'El username es demasiado largo.';
 }
 if ($errores) {
 header('Location: nuevo_profesor.php?error=datos');
@@ -52,24 +56,27 @@ if ($resultado_comprobar->num_rows > 0) {
 header('Location: nuevo_profesor.php?error=email');
 exit;
 }
+$username = $username === '' ? null : $username;
 $sql_insertar = "
 INSERT INTO profesores (
 nombre,
 apellidos,
+username,
 email,
 telefono,
 especialidad,
 resena,
 activo
 )
-VALUES (?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 ";
 $stmt_insertar =
 $conexion->prepare($sql_insertar);
 $stmt_insertar->bind_param(
-'ssssssi',
+'sssssssi',
 $nombre,
 $apellidos,
+$username,
 $email,
 $telefono,
 $especialidad,
