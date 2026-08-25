@@ -29,7 +29,7 @@ return $traducciones[$texto] ?? $texto;
 }
 function usuarioAutenticado(): bool
 {
-return isset($_SESSION["usuario"]);
+return isset($_SESSION["usuario"]["id_usuario"]);
 }
 function usuarioEsAdmin(): bool
 {

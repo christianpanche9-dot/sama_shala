@@ -12,7 +12,8 @@ INPUT_POST,
 "id_reserva",
 FILTER_VALIDATE_INT
 );
-if (!$id_reserva) {
+$id_usuario = idUsuarioActual();
+if (!$id_reserva || !$id_usuario) {
 header("Location: mis_reservas.php?error=datos");
 exit;
 }
@@ -20,7 +21,7 @@ try {
 cancelarReservaYPromocionar(
 $conexion,
 $id_reserva,
-idUsuarioActual()
+$id_usuario
 );
 $conexion->close();
 header(
