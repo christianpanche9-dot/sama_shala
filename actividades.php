@@ -128,10 +128,7 @@ s.hora_fin,
 a.id_actividad,
 a.nombre AS actividad,
 a.nivel,
-COALESCE(
-NULLIF(p.username, ''),
-CONCAT(p.nombre, ' ', p.apellidos)
-) AS profesor
+CONCAT(p.nombre, ' ', p.apellidos) AS profesor
 FROM sesiones AS s
 INNER JOIN actividades AS a
 ON s.id_actividad = a.id_actividad
