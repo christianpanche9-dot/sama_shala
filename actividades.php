@@ -193,6 +193,9 @@ content="width=device-width, initial-scale=1.0"
 <main class="contenedor seccion">
 <div class="encabezado-pagina">
 <div>
+<p class="etiqueta">
+<?= t('Actividades') ?>
+</p>
 <h1><?= t('Actividades') ?></h1>
 <p>
 <?= t('Consulta las actividades de nuestro centro y descubre increíbles clases, eventos y terapias pensadas en tu bienestar.') ?>
