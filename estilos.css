@@ -623,6 +623,30 @@ height: auto;
 .panel-imagen {
 height: 240px;
 }
+.panel-texto {
+padding: 28px;
+}
+.panel-texto h3 {
+font-size: 1.5rem;
+}
+.franja-horarios-paquetes {
+margin-bottom: 50px;
+}
+.pie-interior {
+padding: 40px 0 24px;
+gap: 14px;
+}
+.pie-contacto {
+align-items: center;
+}
+.pie-contacto p {
+max-width: 280px;
+text-align: center;
+justify-content: center;
+}
+.pie-enlaces {
+gap: 8px 18px;
+}
 .rejilla-ventajas,
 .rejilla-actividades {
 grid-template-columns: 1fr 1fr;
@@ -683,6 +707,23 @@ flex-direction: column;
 }
 .campo {
 width: 100%;
+}
+.panel-imagen {
+height: 190px;
+}
+.panel-texto {
+padding: 22px;
+gap: 10px;
+}
+.pie-redes {
+gap: 10px;
+}
+.pie-icono-red {
+width: 38px;
+height: 38px;
+}
+.pie-enlaces {
+gap: 6px 12px;
 }
 }
 .cabecera-admin {

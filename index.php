@@ -132,7 +132,7 @@ window.addEventListener("resize", ajustarTamano);
 <div class="panel-horario-paquete">
 <img
 class="panel-imagen"
-src="imagenes/actividades/yoga.jpg"
+src="imagenes/actividades/horarios.png"
 alt=""
 >
 <div class="panel-texto">
@@ -148,7 +148,7 @@ alt=""
 <div class="panel-horario-paquete">
 <img
 class="panel-imagen"
-src="imagenes/actividades/funcional.jpg"
+src="imagenes/actividades/paquetes.png"
 alt=""
 >
 <div class="panel-texto">
