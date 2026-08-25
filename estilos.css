@@ -588,9 +588,15 @@ font-weight: 800;
 }
 .tarjeta-top-nombre {
 display: block;
-padding: 14px 16px;
+padding: 14px 16px 4px;
 font-family: var(--fuente-titulares);
 font-size: 1.15rem;
+}
+.tarjeta-top-fecha {
+display: block;
+padding: 0 16px 14px;
+color: var(--color-texto-tenue);
+font-size: 0.85rem;
 }
 .calendario-semana {
 display: flex;

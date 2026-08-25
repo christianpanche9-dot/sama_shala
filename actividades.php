@@ -155,12 +155,30 @@ $sesiones_por_dia[$fila_semana['fecha']][] = $fila_semana;
 }
 
 $sql_top = "
-SELECT id_actividad, nombre, imagen, imagen_banner_top, posicion_top
-FROM actividades
-WHERE activa = 1
-AND es_top = 1
-AND posicion_top IS NOT NULL
-ORDER BY posicion_top ASC
+SELECT
+a.id_actividad,
+a.nombre,
+a.imagen,
+a.imagen_banner_top,
+a.posicion_top,
+MIN(
+TIMESTAMP(s.fecha, s.hora_inicio)
+) AS proxima_fecha
+FROM actividades AS a
+LEFT JOIN sesiones AS s
+ON s.id_actividad = a.id_actividad
+AND s.estado IN ('programada', 'completa')
+AND TIMESTAMP(s.fecha, s.hora_fin) >= NOW()
+WHERE a.activa = 1
+AND a.es_top = 1
+AND a.posicion_top IS NOT NULL
+GROUP BY
+a.id_actividad,
+a.nombre,
+a.imagen,
+a.imagen_banner_top,
+a.posicion_top
+ORDER BY a.posicion_top ASC
 LIMIT 3
 ";
 $resultado_top = $conexion->query($sql_top);
@@ -329,6 +347,15 @@ alt="<?= escapar($actividad_top['nombre']) ?>"
 <span class="tarjeta-top-nombre">
 <?= escapar($actividad_top['nombre']) ?>
 </span>
+<?php if (!empty($actividad_top['proxima_fecha'])): ?>
+<span class="tarjeta-top-fecha">
+<?= t('Próxima:') ?> <?= escapar(date('d/m/Y H:i', strtotime($actividad_top['proxima_fecha']))) ?>
+</span>
+<?php else: ?>
+<span class="tarjeta-top-fecha">
+<?= t('Próximamente anunciaremos nuevas fechas.') ?>
+</span>
+<?php endif; ?>
 </a>
 <?php endforeach; ?>
 </div>
