@@ -171,7 +171,7 @@ $actividad['descripcion']
 </p>
 <p>
 <strong><?= t('Duración habitual:') ?></strong>
-<?= (int) $actividad['duracion_minutos'] ?> <?= t('minutos') ?>
+<?= (int) $actividad['duracion_minutos'] ?> <?= (int) $actividad['duracion_minutos'] === 1 ? t('minuto') : t('minutos') ?>
 </p>
 <a
 class="enlace-volver"
@@ -259,7 +259,7 @@ $sesion['profesor']
 </p>
 <p>
 <strong><?= t('Aforo:') ?></strong>
-<?= $aforo ?> <?= t('persona') ?>
+<?= $aforo ?> <?= $aforo === 1 ? t('persona') : t('personas') ?>
 </p>
 <div class="barra-ocupacion">
 <div
@@ -269,13 +269,13 @@ style="width:
 ></div>
 </div>
 <small>
-<?= $reservas ?> <?= t('de') ?> <?= $aforo ?> <?= t('plazas ocupadas') ?>
+<?= $reservas ?> <?= t('de') ?> <?= $aforo ?> <?= $aforo === 1 ? t('plaza ocupada') : t('plazas ocupadas') ?>
 </small>
 </div>
 <div class="acciones-sesion">
 <?php if ($plazas > 0): ?>
 <span class="plazas-disponibles">
-<?= $plazas ?> <?= t('plazas disponibles') ?>
+<?= $plazas ?> <?= $plazas === 1 ? t('plaza disponible') : t('plazas disponibles') ?>
 </span>
 <?php else: ?>
 <span class="sesion-completa">

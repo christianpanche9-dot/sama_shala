@@ -142,7 +142,9 @@ $sesion["profesor_apellidos"]
 </p>
 <?php if ($plazas_disponibles > 0): ?>
 <div class="mensaje exito">
-<?= sprintf(t("Quedan %d plazas disponibles."), $plazas_disponibles) ?>
+<?= $plazas_disponibles === 1
+? t("Queda 1 plaza disponible.")
+: sprintf(t("Quedan %d plazas disponibles."), $plazas_disponibles) ?>
 </div>
 <p>
 <?= t("Al confirmar se creará una reserva.") ?>

@@ -566,7 +566,7 @@ $actividad['descripcion']
 ) ?>
 </p>
 <p class="dato-destacado">
-<?= t('Duración habitual:') ?> <?= (int) $actividad['duracion_minutos'] ?> <?= t('minutos') ?>
+<?= t('Duración habitual:') ?> <?= (int) $actividad['duracion_minutos'] ?> <?= (int) $actividad['duracion_minutos'] === 1 ? t('minuto') : t('minutos') ?>
 </p>
 <?php $numero_proximas_sesiones = (int) $actividad['proximas_sesiones']; ?>
 <?php if ($numero_proximas_sesiones > 0): ?>
