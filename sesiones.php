@@ -74,7 +74,6 @@ id_profesor,
 nombre,
 apellidos,
 username,
-imagen,
 resena
 FROM profesores
 WHERE activo = 1
