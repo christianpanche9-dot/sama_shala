@@ -23,8 +23,7 @@ content="width=device-width, initial-scale=1.0"
 <div>
 <p class="etiqueta"><?= t("Mi cuenta") ?></p>
 <h1>
-<?= t("Hola,") ?>
-<?= escapar($_SESSION["usuario"]["nombre"]) ?>
+<?= t("Hola,") ?> <?= escapar($_SESSION["usuario"]["nombre"]) ?>
 </h1>
 <p>
 <?= t("Gestiona tus datos, reservas y paquetes desde aquí.") ?>

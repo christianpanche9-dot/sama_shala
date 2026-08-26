@@ -126,8 +126,7 @@ required
 >
 </div>
 <button type="submit" class="boton boton-bloque">
-<?= t('Confirmar compra de') ?>
-<?= formatear_precio(
+<?= t('Confirmar compra de') ?> <?= formatear_precio(
 (float) $paquete['precio']
 ) ?>
 </button>

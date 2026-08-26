@@ -131,8 +131,7 @@ name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
 <title>
-<?= escapar($sesion['actividad']) ?>
-<?= t('| Sama Shala') ?>
+<?= escapar($sesion['actividad']) ?> <?= t('| Sama Shala') ?>
 </title>
 <link rel="stylesheet" href="estilos.css">
 <link rel="icon" type="image/png" sizes="32x32" href="imagenes/favicon-32x32.png">
@@ -205,9 +204,7 @@ $sesion['hora_fin']
 <div class="dato">
 <span><?= t('Duración') ?></span>
 <strong>
-<?= (int)
-$sesion['duracion_real'] ?>
-<?= t('minutos') ?>
+<?= (int) $sesion['duracion_real'] ?> <?= t('minutos') ?>
 </strong>
 </div>
 <div class="dato">

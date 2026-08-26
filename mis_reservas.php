@@ -186,8 +186,7 @@ t(ucfirst($reserva["estado"]))
     $reserva["estado"] === "confirmada"
 ): ?>
 <p class="codigo-reserva">
-<?= t('Código:') ?>
-<?= escapar(
+<?= t('Código:') ?> <?= escapar(
 $reserva["codigo_reserva"]
 ) ?>
 </p>

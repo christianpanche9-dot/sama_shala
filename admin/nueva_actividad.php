@@ -358,8 +358,7 @@ su aforo máximo.
 <?php foreach ($meses_calendario as $mes_info): ?>
 <div class="calendario-mes">
 <p class="calendario-mes-titulo">
-<?= escapar(texto_mes($mes_info['mes'])) ?>
-<?= $mes_info['anio'] ?>
+<?= escapar(texto_mes($mes_info['mes'])) ?> <?= $mes_info['anio'] ?>
 </p>
 <div class="calendario-mes-cabecera">
 <?php for ($d = 1; $d <= 7; $d++): ?>

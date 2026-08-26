@@ -113,8 +113,7 @@ name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
 <title>
-<?= escapar($actividad['nombre']) ?>
-<?= t('| Sama Shala') ?>
+<?= escapar($actividad['nombre']) ?> <?= t('| Sama Shala') ?>
 </title>
 <link rel="stylesheet" href="estilos.css">
 <link rel="icon" type="image/png" sizes="32x32" href="imagenes/favicon-32x32.png">
@@ -172,9 +171,7 @@ $actividad['descripcion']
 </p>
 <p>
 <strong><?= t('Duración habitual:') ?></strong>
-<?= (int)
-$actividad['duracion_minutos'] ?>
-<?= t('minutos') ?>
+<?= (int) $actividad['duracion_minutos'] ?> <?= t('minutos') ?>
 </p>
 <a
 class="enlace-volver"
@@ -262,8 +259,7 @@ $sesion['profesor']
 </p>
 <p>
 <strong><?= t('Aforo:') ?></strong>
-<?= $aforo ?>
-<?= t('persona') ?>
+<?= $aforo ?> <?= t('persona') ?>
 </p>
 <div class="barra-ocupacion">
 <div
@@ -273,17 +269,13 @@ style="width:
 ></div>
 </div>
 <small>
-<?= $reservas ?>
-<?= t('de') ?>
-<?= $aforo ?>
-<?= t('plazas ocupadas') ?>
+<?= $reservas ?> <?= t('de') ?> <?= $aforo ?> <?= t('plazas ocupadas') ?>
 </small>
 </div>
 <div class="acciones-sesion">
 <?php if ($plazas > 0): ?>
 <span class="plazas-disponibles">
-<?= $plazas ?>
-<?= t('plazas disponibles') ?>
+<?= $plazas ?> <?= t('plazas disponibles') ?>
 </span>
 <?php else: ?>
 <span class="sesion-completa">
