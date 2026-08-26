@@ -434,6 +434,17 @@ var(--sombra-tarjeta-suave);
 .tarjeta-informativa {
 padding: 24px;
 }
+.lista-condiciones {
+display: flex;
+flex-direction: column;
+gap: 14px;
+padding-left: 22px;
+color: var(--color-texto);
+line-height: 1.5;
+}
+.lista-condiciones li {
+padding-left: 6px;
+}
 .tarjeta-actividad,
 .tarjeta-profesor {
 overflow: hidden;

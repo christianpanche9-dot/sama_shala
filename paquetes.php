@@ -84,6 +84,15 @@ $paquete['id_tipo_paquete'] ?>"
 <?php endwhile; ?>
 </div>
 <?php endif; ?>
+<h2 class="titulo-todas-actividades"><?= t('Condiciones de uso') ?></h2>
+<div class="tarjeta-informativa">
+<ol class="lista-condiciones">
+<li><?= t('Los paquetes tienen una duración de 1 mes.') ?></li>
+<li><?= t('Los paquetes son para el uso de las clases de yoga; otras actividades como eventos y terapias tienen un costo aparte de los paquetes de clases.') ?></li>
+<li><?= t('Las clases son intransferibles a otro usuario.') ?></li>
+<li><?= t('Tienes hasta 15 minutos antes de que comience la clase para cancelar tu reserva.') ?></li>
+</ol>
+</div>
 </main>
 <?php require_once __DIR__ . '/pie.php'; ?>
 </body>
