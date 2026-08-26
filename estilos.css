@@ -513,6 +513,61 @@ background-color: var(--color-azul);
 color: var(--color-verde-oscuro);
 font-weight: 700;
 }
+.tarjeta-paquete {
+position: relative;
+display: flex;
+flex-direction: column;
+overflow: visible;
+border-top: 5px solid var(--color-verde-oscuro);
+transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.tarjeta-paquete:hover {
+transform: translateY(-6px);
+border-color: var(--color-verde-oscuro);
+box-shadow: 0 18px 34px var(--sombra-tarjeta-suave);
+}
+.tarjeta-paquete .contenido-tarjeta {
+display: flex;
+flex: 1;
+flex-direction: column;
+gap: 8px;
+}
+.insignia-paquete {
+width: fit-content;
+}
+.precio-paquete {
+margin: 6px 0 0;
+color: var(--color-verde-oscuro);
+font-size: 3rem;
+font-weight: 800;
+line-height: 1;
+}
+.validez-paquete {
+margin: 0 0 12px;
+color: var(--color-texto-tenue);
+font-size: 0.9rem;
+}
+.tarjeta-paquete .boton {
+margin-top: auto;
+}
+.tarjeta-paquete-destacada {
+border-top-color: var(--color-marron-oscuro);
+box-shadow: 0 14px 30px var(--sombra-tarjeta-suave);
+}
+.etiqueta-destacada {
+position: absolute;
+top: -14px;
+right: 24px;
+padding: 6px 14px;
+color: white;
+background-color: var(--color-marron-oscuro);
+border-radius: 999px;
+box-shadow: 0 6px 14px var(--sombra-tarjeta-suave);
+font-size: 0.75rem;
+font-weight: 700;
+letter-spacing: 0.04em;
+text-transform: uppercase;
+}
 .sin-sesiones {
 color: var(--color-texto-tenue);
 font-style: italic;

@@ -228,6 +228,7 @@ return [
 'Paquetes de clases' => 'Class packages',
 'Compra un paquete y utilízalo para reservar las sesiones que quieras mientras tenga usos disponibles.' => 'Buy a package and use it to book as many sessions as you like while it has uses left.',
 'No hay paquetes disponibles en este momento.' => 'No packages available right now.',
+'Más popular' => 'Most popular',
 'Condiciones de uso' => 'Terms of use',
 'Los paquetes tienen una duración de 1 mes.' => 'Packages are valid for 1 month.',
 'Los paquetes son para el uso de las clases de yoga; otras actividades como eventos y terapias tienen un costo aparte de los paquetes de clases.' => 'Packages are for use on yoga classes; other activities such as events and therapies have a separate cost from the class packages.',

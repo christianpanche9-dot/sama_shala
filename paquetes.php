@@ -17,6 +17,13 @@ $id_tenant = idTenantActual();
 $stmt->bind_param('i', $id_tenant);
 $stmt->execute();
 $resultado = $stmt->get_result();
+$paquetes = $resultado->fetch_all(MYSQLI_ASSOC);
+$paquetes_multiclase = array_values(
+array_filter($paquetes, fn ($p) => (int) $p['numero_usos'] > 1)
+);
+$id_paquete_destacado = count($paquetes_multiclase) >= 3
+? (int) $paquetes_multiclase[intdiv(count($paquetes_multiclase), 2)]['id_tipo_paquete']
+: null;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -47,41 +54,46 @@ content="width=device-width, initial-scale=1.0"
 </p>
 </div>
 </div>
-<?php if ($resultado->num_rows === 0): ?>
+<?php if (count($paquetes) === 0): ?>
 <div class="mensaje mensaje-aviso">
 <?= t('No hay paquetes disponibles en este momento.') ?>
 </div>
 <?php else: ?>
-<div class="rejilla-actividades">
-<?php while (
-$paquete = $resultado->fetch_assoc()
-): ?>
-<article class="tarjeta-actividad">
+<div class="rejilla-actividades rejilla-paquetes">
+<?php foreach ($paquetes as $paquete):
+$es_clase_suelta = (int) $paquete['numero_usos'] === 1;
+$es_destacado = $id_paquete_destacado !== null
+&& (int) $paquete['id_tipo_paquete'] === $id_paquete_destacado;
+?>
+<article class="tarjeta-actividad tarjeta-paquete<?= $es_destacado ? ' tarjeta-paquete-destacada' : '' ?>">
+<?php if ($es_destacado): ?>
+<span class="etiqueta-destacada"><?= t('Más popular') ?></span>
+<?php endif; ?>
 <div class="contenido-tarjeta">
 <h2>
 <?= escapar($paquete['nombre']) ?>
 </h2>
-<p class="dato-destacado">
-<?= (int) $paquete['numero_usos'] ?> <?= (int) $paquete['numero_usos'] === 1 ? t('clase') : t('clases') ?>
-</p>
-<p>
-<?= t('Válido durante 1 mes desde la compra.') ?>
-</p>
-<p class="numero-plazas">
+<span class="insignia insignia-paquete">
+<?= (int) $paquete['numero_usos'] ?> <?= $es_clase_suelta ? t('clase') : t('clases') ?>
+</span>
+<p class="precio-paquete">
 <?= formatear_precio(
 (float) $paquete['precio']
 ) ?>
 </p>
+<p class="validez-paquete">
+<?= t('Válido durante 1 mes desde la compra.') ?>
+</p>
 <a
-class="boton"
+class="boton boton-bloque"
 href="comprar_paquete.php?id=<?= (int)
 $paquete['id_tipo_paquete'] ?>"
 >
-<?= (int) $paquete['numero_usos'] === 1 ? t('Comprar clase') : t('Comprar este paquete') ?>
+<?= $es_clase_suelta ? t('Comprar clase') : t('Comprar este paquete') ?>
 </a>
 </div>
 </article>
-<?php endwhile; ?>
+<?php endforeach; ?>
 </div>
 <?php endif; ?>
 <h2 class="titulo-todas-actividades"><?= t('Condiciones de uso') ?></h2>
