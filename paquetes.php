@@ -85,6 +85,7 @@ $es_destacado = $id_paquete_destacado !== null
 <p class="validez-paquete">
 <?= t('Válido durante 1 mes desde la compra.') ?>
 </p>
+<div class="envoltorio-boton-paquete">
 <a
 class="boton boton-bloque enlace-comprar-paquete desactivado"
 aria-disabled="true"
@@ -93,6 +94,10 @@ $paquete['id_tipo_paquete'] ?>"
 >
 <?= $es_clase_suelta ? t('Comprar clase') : t('Comprar este paquete') ?>
 </a>
+<span class="aviso-boton-desactivado">
+<?= t('Marca la casilla de condiciones para continuar.') ?>
+</span>
+</div>
 </div>
 </article>
 <?php endforeach; ?>

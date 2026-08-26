@@ -245,6 +245,7 @@ return [
 'Condiciones de uso' => 'Terms of use',
 'He leído y acepto las condiciones de uso.' => 'I have read and accept the terms of use.',
 'Debes aceptar las condiciones de uso para continuar.' => 'You must accept the terms of use to continue.',
+'Marca la casilla de condiciones para continuar.' => 'Check the terms checkbox to continue.',
 'Los paquetes tienen una duración de 1 mes.' => 'Packages are valid for 1 month.',
 'Los paquetes son para el uso de las clases de yoga; otras actividades como eventos y terapias tienen un costo aparte de los paquetes de clases.' => 'Packages are for use on yoga classes; other activities such as events and therapies have a separate cost from the class packages.',
 'Las clases son intransferibles a otro usuario.' => 'Classes are non-transferable to another user.',

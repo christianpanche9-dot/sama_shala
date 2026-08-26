@@ -1751,9 +1751,44 @@ background-color: var(--color-verde-claro);
 border-radius: 12px;
 }
 .boton.desactivado {
-cursor: default;
+cursor: not-allowed;
 opacity: 0.55;
+}
+.envoltorio-boton-paquete {
+position: relative;
+}
+.aviso-boton-desactivado {
+position: absolute;
+top: calc(100% + 8px);
+left: 50%;
+z-index: 5;
+width: max-content;
+max-width: 220px;
+padding: 8px 12px;
+color: white;
+background-color: var(--color-verde-oscuro);
+border-radius: 8px;
+font-size: 0.8rem;
+font-weight: 600;
+text-align: center;
+opacity: 0;
 pointer-events: none;
+transform: translateX(-50%) translateY(-4px);
+transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.aviso-boton-desactivado::after {
+content: '';
+position: absolute;
+bottom: 100%;
+left: 50%;
+border: 6px solid transparent;
+border-bottom-color: var(--color-verde-oscuro);
+transform: translateX(-50%);
+}
+.boton.desactivado:hover ~ .aviso-boton-desactivado,
+.boton.desactivado:focus-visible ~ .aviso-boton-desactivado {
+opacity: 1;
+transform: translateX(-50%) translateY(0);
 }
 .resumen-reserva {
 max-width: 700px;
