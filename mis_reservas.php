@@ -36,99 +36,35 @@ s.hora_inicio DESC
 $stmt_reservas = $conexion->prepare($sql_reservas);
 $stmt_reservas->bind_param("i", $id_usuario);
 $stmt_reservas->execute();
-$reservas = $stmt_reservas->get_result();
-$sql_espera = "
-SELECT
-le.id_espera,
-le.fecha_solicitud,
-le.estado,
-s.id_sesion,
-s.fecha,
-s.hora_inicio,
-s.hora_fin,
-a.nombre AS actividad,
-e.nombre AS espacio,
-(
-SELECT COUNT(*)
-FROM lista_espera anterior
-WHERE anterior.id_sesion = le.id_sesion
-AND anterior.estado = 'esperando'
-AND (
-anterior.fecha_solicitud
-< le.fecha_solicitud
-OR (
-anterior.fecha_solicitud
-= le.fecha_solicitud
-AND anterior.id_espera
-<= le.id_espera
+$todas_las_reservas = $stmt_reservas->get_result()->fetch_all(MYSQLI_ASSOC);
+$ahora = new DateTime();
+$reservas_activas = [];
+$reservas_historial = [];
+foreach ($todas_las_reservas as $reserva) {
+$inicio_sesion = new DateTime(
+$reserva["fecha"] . " " . $reserva["hora_inicio"]
+);
+$es_historial =
+$reserva["estado"] === "cancelada" ||
+$reserva["estado_sesion"] === "cancelada" ||
+$inicio_sesion <= $ahora;
+if ($es_historial) {
+$reservas_historial[] = $reserva;
+} else {
+$reservas_activas[] = $reserva;
+}
+}
+usort(
+$reservas_activas,
+fn ($a, $b) => strcmp(
+$a["fecha"] . $a["hora_inicio"],
+$b["fecha"] . $b["hora_inicio"]
 )
-)
-) AS posicion
-FROM lista_espera le
-INNER JOIN sesiones s
-ON le.id_sesion = s.id_sesion
-INNER JOIN actividades a
-ON s.id_actividad = a.id_actividad
-INNER JOIN espacios e
-ON s.id_espacio = e.id_espacio
-WHERE le.id_usuario = ?
-AND le.estado = 'esperando'
-ORDER BY
-s.fecha ASC,
-s.hora_inicio ASC
-";
-$stmt_espera = $conexion->prepare($sql_espera);
-$stmt_espera->bind_param("i", $id_usuario);
-$stmt_espera->execute();
-$lista_espera = $stmt_espera->get_result();
-$mensaje = $_GET["mensaje"] ?? "";
-?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
->
-<title><?= t('Mis reservas') ?></title>
-<link rel="stylesheet" href="<?= urlEstilos() ?>">
-<link rel="icon" type="image/png" sizes="32x32" href="imagenes/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="imagenes/favicon-16x16.png">
-<link rel="apple-touch-icon" href="imagenes/apple-touch-icon.png">
-<link rel="shortcut icon" href="imagenes/favicon.ico">
-</head>
-<body>
-<?php require "menu.php"; ?>
-<main class="contenedor">
-<h1><?= t('Mis reservas') ?></h1>
-<?php if ($mensaje === "confirmada"): ?>
-<div class="mensaje mensaje-exito">
-<?= t('La reserva se ha confirmado correctamente.') ?>
-</div>
-<?php elseif ($mensaje === "espera"): ?>
-<div class="mensaje mensaje-aviso">
-<?= t('La sesión está completa. Te hemos añadido a la lista de espera.') ?>
-</div>
-<?php elseif ($mensaje === "cancelada"): ?>
-<div class="mensaje mensaje-exito">
-<?= t('La reserva se ha cancelado.') ?>
-</div>
-<?php endif; ?>
-<section>
-<h2><?= t('Reservas') ?></h2>
-<?php if ($reservas->num_rows === 0): ?>
-    <p><?= t('Todavía no tienes reservas.') ?></p>
-<?php else: ?>
-<div class="rejilla-reservas">
-<?php while (
-$reserva = $reservas->fetch_assoc()
-): ?>
-<?php
+);
+function tarjeta_reserva(array $reserva): void
+{
 $inicio = new DateTime(
-$reserva["fecha"] .
-" " .
-$reserva["hora_inicio"]
+$reserva["fecha"] . " " . $reserva["hora_inicio"]
 );
 $puede_cancelar =
 $reserva["estado"] === "confirmada" &&
@@ -212,7 +148,95 @@ class="boton peligro"
 </form>
 <?php endif; ?>
 </article>
-<?php endwhile; ?>
+<?php
+}
+$sql_espera = "
+SELECT
+le.id_espera,
+le.fecha_solicitud,
+le.estado,
+s.id_sesion,
+s.fecha,
+s.hora_inicio,
+s.hora_fin,
+a.nombre AS actividad,
+e.nombre AS espacio,
+(
+SELECT COUNT(*)
+FROM lista_espera anterior
+WHERE anterior.id_sesion = le.id_sesion
+AND anterior.estado = 'esperando'
+AND (
+anterior.fecha_solicitud
+< le.fecha_solicitud
+OR (
+anterior.fecha_solicitud
+= le.fecha_solicitud
+AND anterior.id_espera
+<= le.id_espera
+)
+)
+) AS posicion
+FROM lista_espera le
+INNER JOIN sesiones s
+ON le.id_sesion = s.id_sesion
+INNER JOIN actividades a
+ON s.id_actividad = a.id_actividad
+INNER JOIN espacios e
+ON s.id_espacio = e.id_espacio
+WHERE le.id_usuario = ?
+AND le.estado = 'esperando'
+ORDER BY
+s.fecha ASC,
+s.hora_inicio ASC
+";
+$stmt_espera = $conexion->prepare($sql_espera);
+$stmt_espera->bind_param("i", $id_usuario);
+$stmt_espera->execute();
+$lista_espera = $stmt_espera->get_result();
+$mensaje = $_GET["mensaje"] ?? "";
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+>
+<title><?= t('Mis reservas') ?></title>
+<link rel="stylesheet" href="<?= urlEstilos() ?>">
+<link rel="icon" type="image/png" sizes="32x32" href="imagenes/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="imagenes/favicon-16x16.png">
+<link rel="apple-touch-icon" href="imagenes/apple-touch-icon.png">
+<link rel="shortcut icon" href="imagenes/favicon.ico">
+</head>
+<body>
+<?php require "menu.php"; ?>
+<main class="contenedor">
+<h1><?= t('Mis reservas') ?></h1>
+<?php if ($mensaje === "confirmada"): ?>
+<div class="mensaje mensaje-exito">
+<?= t('La reserva se ha confirmado correctamente.') ?>
+</div>
+<?php elseif ($mensaje === "espera"): ?>
+<div class="mensaje mensaje-aviso">
+<?= t('La sesión está completa. Te hemos añadido a la lista de espera.') ?>
+</div>
+<?php elseif ($mensaje === "cancelada"): ?>
+<div class="mensaje mensaje-exito">
+<?= t('La reserva se ha cancelado.') ?>
+</div>
+<?php endif; ?>
+<section>
+<h2><?= t('Reservas') ?></h2>
+<?php if (count($reservas_activas) === 0): ?>
+    <p><?= t('Todavía no tienes reservas.') ?></p>
+<?php else: ?>
+<div class="rejilla-reservas">
+<?php foreach ($reservas_activas as $reserva): ?>
+<?php tarjeta_reserva($reserva); ?>
+<?php endforeach; ?>
 </div>
 <?php endif; ?>
 </section>
@@ -253,6 +277,21 @@ $espera["hora_inicio"],
 </p>
 </article>
 <?php endwhile; ?>
+</div>
+<?php endif; ?>
+</section>
+
+<section>
+<h2><?= t('Historial de reservas') ?></h2>
+<?php if (count($reservas_historial) === 0): ?>
+<p>
+<?= t('Todavía no tienes reservas en tu historial.') ?>
+</p>
+<?php else: ?>
+<div class="rejilla-reservas">
+<?php foreach ($reservas_historial as $reserva): ?>
+<?php tarjeta_reserva($reserva); ?>
+<?php endforeach; ?>
 </div>
 <?php endif; ?>
 </section>

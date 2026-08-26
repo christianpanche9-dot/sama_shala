@@ -297,6 +297,8 @@ return [
 'Lista de espera' => 'Waitlist',
 'No estás esperando plaza en ninguna sesión.' => 'You are not waiting for a spot in any session.',
 'Posición:' => 'Position:',
+'Historial de reservas' => 'Booking history',
+'Todavía no tienes reservas en tu historial.' => 'You don\'t have any bookings in your history yet.',
 'Mi lista de espera' => 'My waitlist',
 'No estás en lista de espera de ninguna actividad.' => 'You are not on the waitlist for any activity.',
 'Esperando' => 'Waiting',
