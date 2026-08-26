@@ -61,6 +61,18 @@ $a["fecha"] . $a["hora_inicio"],
 $b["fecha"] . $b["hora_inicio"]
 )
 );
+$historial_por_mes = [];
+foreach ($reservas_historial as $reserva) {
+$clave_mes = substr($reserva["fecha"], 0, 7);
+if (!isset($historial_por_mes[$clave_mes])) {
+$historial_por_mes[$clave_mes] = [];
+}
+$historial_por_mes[$clave_mes][] = $reserva;
+}
+$meses_por_pagina_historial = 3;
+$total_paginas_historial = (int) ceil(
+count($historial_por_mes) / $meses_por_pagina_historial
+);
 function tarjeta_reserva(array $reserva, bool $colapsable = false): void
 {
 $inicio = new DateTime(
@@ -303,12 +315,89 @@ $espera["hora_inicio"],
 <p>
 <?= t('Todavía no tienes reservas en tu historial.') ?>
 </p>
-<?php else: ?>
+<?php elseif (count($historial_por_mes) === 1): ?>
 <div class="rejilla-reservas">
 <?php foreach ($reservas_historial as $reserva): ?>
 <?php tarjeta_reserva($reserva, true); ?>
 <?php endforeach; ?>
 </div>
+<?php else: ?>
+<?php $indice_mes_historial = 0; ?>
+<?php foreach ($historial_por_mes as $clave_mes => $reservas_del_mes): ?>
+<?php
+$fecha_mes = DateTime::createFromFormat('Y-m-d', $clave_mes . '-01');
+$pagina_mes = intdiv($indice_mes_historial, $meses_por_pagina_historial);
+?>
+<div class="grupo-historial-mes" data-pagina="<?= $pagina_mes ?>">
+<h3 class="titulo-mes-historial">
+<?= escapar(texto_mes((int) $fecha_mes->format('n'))) ?> <?= $fecha_mes->format('Y') ?>
+</h3>
+<div class="rejilla-reservas">
+<?php foreach ($reservas_del_mes as $reserva): ?>
+<?php tarjeta_reserva($reserva, true); ?>
+<?php endforeach; ?>
+</div>
+</div>
+<?php $indice_mes_historial++; ?>
+<?php endforeach; ?>
+<?php if ($total_paginas_historial > 1): ?>
+<div class="paginacion-sesiones">
+<button
+type="button"
+class="boton-mes"
+id="pagina-historial-anterior"
+aria-label="<?= t('Meses anteriores') ?>"
+disabled
+>
+←
+</button>
+<span id="indicador-pagina-historial">
+1 / <?= $total_paginas_historial ?>
+</span>
+<button
+type="button"
+class="boton-mes"
+id="pagina-historial-siguiente"
+aria-label="<?= t('Meses siguientes') ?>"
+>
+→
+</button>
+</div>
+<script>
+(function () {
+var grupos = document.querySelectorAll('.grupo-historial-mes');
+var totalPaginas = <?= $total_paginas_historial ?>;
+var paginaActual = 0;
+var indicador = document.getElementById('indicador-pagina-historial');
+var btnAnterior = document.getElementById('pagina-historial-anterior');
+var btnSiguiente = document.getElementById('pagina-historial-siguiente');
+function actualizar() {
+grupos.forEach(function (grupo) {
+grupo.style.display =
+parseInt(grupo.dataset.pagina, 10) === paginaActual
+? ''
+: 'none';
+});
+indicador.textContent = (paginaActual + 1) + ' / ' + totalPaginas;
+btnAnterior.disabled = paginaActual === 0;
+btnSiguiente.disabled = paginaActual === totalPaginas - 1;
+}
+btnAnterior.addEventListener('click', function () {
+if (paginaActual > 0) {
+paginaActual--;
+actualizar();
+}
+});
+btnSiguiente.addEventListener('click', function () {
+if (paginaActual < totalPaginas - 1) {
+paginaActual++;
+actualizar();
+}
+});
+actualizar();
+})();
+</script>
+<?php endif; ?>
 <?php endif; ?>
 </section>
 </main>

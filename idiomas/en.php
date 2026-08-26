@@ -118,6 +118,8 @@ return [
 'Mes siguiente' => 'Next month',
 'Sesiones anteriores' => 'Previous sessions',
 'Siguientes sesiones' => 'Next sessions',
+'Meses anteriores' => 'Previous months',
+'Meses siguientes' => 'Next months',
 'El identificador de la sesión no es válido.' => 'The session identifier is not valid.',
 'El identificador no es válido.' => 'The identifier is not valid.',
 'La sesión solicitada no existe.' => 'The requested session does not exist.',

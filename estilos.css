@@ -1856,6 +1856,15 @@ margin-top: 14px;
 padding-top: 14px;
 border-top: 1px solid var(--color-borde);
 }
+.grupo-historial-mes {
+margin-bottom: 2rem;
+}
+.titulo-mes-historial {
+margin: 0 0 1rem;
+padding-bottom: 10px;
+border-bottom: 1px solid var(--color-borde);
+font-size: 1.3rem;
+}
 .codigo-reserva {
 padding: 0.8rem;
 color: var(--color-verde-oscuro);
