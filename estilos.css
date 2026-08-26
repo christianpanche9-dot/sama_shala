@@ -765,6 +765,120 @@ cursor: not-allowed;
 color: var(--color-texto-tenue);
 background-color: var(--color-fondo);
 }
+.vista-calendario-movil {
+display: none;
+}
+.calendario-mes-publico {
+overflow: hidden;
+background-color: white;
+border: 1px solid var(--color-borde);
+border-radius: 14px;
+}
+.calendario-publico-cabecera {
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+background-color: var(--color-verde-oscuro);
+}
+.calendario-publico-cabecera span {
+padding: 12px 4px;
+color: white;
+font-size: 0.75rem;
+font-weight: 700;
+text-align: center;
+text-transform: uppercase;
+}
+.calendario-publico-grilla {
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+}
+.dia-calendario-publico {
+display: flex;
+min-height: 120px;
+padding: 8px;
+flex-direction: column;
+gap: 6px;
+border-right: 1px solid var(--color-borde);
+border-bottom: 1px solid var(--color-borde);
+}
+.dia-calendario-publico-vacio {
+background-color: var(--color-fondo);
+}
+.dia-calendario-publico-numero {
+font-weight: 700;
+}
+.dia-calendario-publico-pasado {
+background-color: var(--color-fondo);
+}
+.dia-calendario-publico-pasado .dia-calendario-publico-numero {
+color: var(--color-texto-tenue);
+}
+.dia-calendario-publico-hoy {
+background-color: var(--color-verde-claro);
+box-shadow: inset 0 0 0 2px var(--color-verde-oscuro);
+}
+.dia-calendario-publico-hoy .dia-calendario-publico-numero {
+display: inline-flex;
+width: 22px;
+height: 22px;
+align-items: center;
+justify-content: center;
+color: white;
+background-color: var(--color-verde-oscuro);
+border-radius: 999px;
+font-size: 0.8rem;
+}
+.sesiones-dia-calendario {
+display: flex;
+flex-direction: column;
+gap: 4px;
+overflow-y: auto;
+}
+.sesion-calendario-chip {
+display: flex;
+padding: 4px 6px;
+flex-direction: column;
+color: var(--color-verde-oscuro);
+background-color: var(--color-azul-claro);
+border-left: 3px solid var(--color-azul);
+border-radius: 6px;
+text-decoration: none;
+line-height: 1.25;
+transition: background-color 0.2s ease;
+}
+.sesion-calendario-chip:hover {
+background-color: var(--color-azul);
+}
+.sesion-calendario-chip-clase {
+background-color: var(--color-verde-claro);
+border-left-color: var(--color-verde-oscuro);
+}
+.sesion-calendario-chip-clase:hover {
+background-color: var(--color-verde);
+}
+.sesion-calendario-chip-evento {
+background-color: var(--color-marron-claro);
+border-left-color: var(--color-marron-oscuro);
+}
+.sesion-calendario-chip-evento:hover {
+background-color: var(--color-marron);
+}
+.sesion-calendario-chip-terapia {
+background-color: var(--color-azul-claro);
+border-left-color: var(--color-azul);
+}
+.sesion-calendario-chip-terapia:hover {
+background-color: var(--color-azul);
+}
+.sesion-calendario-hora {
+font-size: 0.7rem;
+font-weight: 700;
+}
+.sesion-calendario-nombre {
+overflow: hidden;
+font-size: 0.75rem;
+text-overflow: ellipsis;
+white-space: nowrap;
+}
 .campo {
 display: grid;
 min-width: 210px;
@@ -927,6 +1041,12 @@ color: var(--color-verde-oscuro);
 font-weight: 700;
 }
 @media (max-width: 850px) {
+.vista-calendario-escritorio {
+display: none;
+}
+.vista-calendario-movil {
+display: block;
+}
 .detalle-cabecera,
 .ficha-sesion {
 grid-template-columns: 1fr;

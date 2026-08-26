@@ -59,6 +59,7 @@ s.hora_fin,
 a.id_actividad,
 a.nombre AS actividad,
 a.nivel,
+a.tipo,
 COALESCE(
 NULLIF(p.username, ''),
 CONCAT(p.nombre, ' ', p.apellidos)
@@ -80,6 +81,8 @@ $resultado = $stmt->get_result();
 while ($sesion = $resultado->fetch_assoc()) {
 $sesiones_por_dia[$sesion['fecha']][] = $sesion;
 }
+
+$semanas_mes = generar_calendario_mes($anio, $mes);
 
 $fecha_activa = $primer_dia_mes_visible == $primer_dia_mes_actual
 ? clone $hoy
@@ -173,6 +176,59 @@ aria-label="<?= t('Mes siguiente') ?>"
 →
 </a>
 </div>
+<?php if (empty($sesiones_por_dia) || array_sum(array_map('count', $sesiones_por_dia)) === 0): ?>
+<div class="mensaje mensaje-aviso">
+<?= t('No hay sesiones programadas este mes.') ?>
+</div>
+<?php endif; ?>
+<div class="vista-calendario-escritorio">
+<div class="calendario-mes-publico">
+<div class="calendario-publico-cabecera">
+<?php for ($d = 1; $d <= 7; $d++): ?>
+<span><?= escapar(texto_dia_semana_abreviado($d)) ?></span>
+<?php endfor; ?>
+</div>
+<div class="calendario-publico-grilla">
+<?php foreach ($semanas_mes as $semana): ?>
+<?php foreach ($semana as $dia): ?>
+<?php if ($dia === null): ?>
+<div class="dia-calendario-publico dia-calendario-publico-vacio">
+</div>
+<?php else: ?>
+<?php
+$clave_dia = $dia->format('Y-m-d');
+$es_hoy = $clave_dia === $hoy->format('Y-m-d');
+$es_pasado = $dia < $hoy;
+?>
+<div class="dia-calendario-publico<?= $es_hoy ? ' dia-calendario-publico-hoy' : '' ?><?= $es_pasado ? ' dia-calendario-publico-pasado' : '' ?>">
+<span class="dia-calendario-publico-numero">
+<?= (int) $dia->format('j') ?>
+</span>
+<?php if (!empty($sesiones_por_dia[$clave_dia])): ?>
+<div class="sesiones-dia-calendario">
+<?php foreach ($sesiones_por_dia[$clave_dia] as $sesion_dia): ?>
+<a
+class="sesion-calendario-chip sesion-calendario-chip-<?= escapar($sesion_dia['tipo']) ?>"
+href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
+>
+<span class="sesion-calendario-hora">
+<?= escapar(formatear_hora($sesion_dia['hora_inicio'])) ?>
+</span>
+<span class="sesion-calendario-nombre">
+<?= escapar($sesion_dia['actividad']) ?>
+</span>
+</a>
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
+</div>
+<?php endif; ?>
+<?php endforeach; ?>
+<?php endforeach; ?>
+</div>
+</div>
+</div>
+<div class="vista-calendario-movil">
 <p class="navegacion-semana-titulo" id="etiqueta-semana-activa">
 <?= etiqueta_semana_de($fecha_activa) ?>
 </p>
@@ -230,6 +286,7 @@ href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
 <?php endif; ?>
 </div>
 <?php endforeach; ?>
+</div>
 </div>
 <script>
 (function () {
