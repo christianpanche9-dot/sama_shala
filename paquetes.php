@@ -62,7 +62,7 @@ $paquete = $resultado->fetch_assoc()
 <?= escapar($paquete['nombre']) ?>
 </h2>
 <p class="dato-destacado">
-<?= (int) $paquete['numero_usos'] ?> <?= t('clases') ?>
+<?= (int) $paquete['numero_usos'] ?> <?= (int) $paquete['numero_usos'] === 1 ? t('clase') : t('clases') ?>
 </p>
 <p>
 <?= t('Válido durante 1 mes desde la compra.') ?>
@@ -77,7 +77,7 @@ class="boton"
 href="comprar_paquete.php?id=<?= (int)
 $paquete['id_tipo_paquete'] ?>"
 >
-<?= t('Comprar este paquete') ?>
+<?= (int) $paquete['numero_usos'] === 1 ? t('Comprar clase') : t('Comprar este paquete') ?>
 </a>
 </div>
 </article>
