@@ -204,7 +204,7 @@ $sesion['hora_fin']
 <div class="dato">
 <span><?= t('Duración') ?></span>
 <strong>
-<?= (int) $sesion['duracion_real'] ?> <?= t('minutos') ?>
+<?= (int) $sesion['duracion_real'] ?> <?= (int) $sesion['duracion_real'] === 1 ? t('minuto') : t('minutos') ?>
 </strong>
 </div>
 <div class="dato">
@@ -274,7 +274,7 @@ texto_estado_sesion(
 <?= $plazas ?>
 </p>
 <p>
-    <?= t('plazas disponibles de') ?> <?= $aforo ?>
+    <?= $plazas === 1 ? t('plaza disponible de') : t('plazas disponibles de') ?> <?= $aforo ?>
 </p>
 
 <div class="barra-ocupacion">
@@ -286,7 +286,7 @@ style="width:
 </div>
 <p>
     <?= $reservas ?>
- <?= t('reservas confirmadas') ?>
+ <?= $reservas === 1 ? t('reserva confirmada') : t('reservas confirmadas') ?>
 </p>
 <?php if ($sesion_terminada): ?>
 

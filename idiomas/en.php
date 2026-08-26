@@ -83,6 +83,7 @@ return [
 'No se han encontrado actividades con los filtros seleccionados.' => 'No activities found with the selected filters.',
 'Duración' => 'Duration',
 'minutos' => 'minutes',
+'minuto' => 'minute',
 'Ver detalles' => 'View details',
 'Sin imagen' => 'No image',
 'Duración habitual:' => 'Usual duration:',
@@ -100,6 +101,7 @@ return [
 'Ver actividad' => 'View activity',
 'de' => 'of',
 'plazas disponibles de' => 'spots available out of',
+'plaza disponible de' => 'spot available out of',
 'Sesión completa' => 'Session full',
 'Ver sesión' => 'View session',
 
@@ -129,6 +131,7 @@ return [
 'Observaciones:' => 'Notes:',
 'plazas ocupadas' => 'spots taken',
 'reservas confirmadas' => 'confirmed bookings',
+'reserva confirmada' => 'confirmed booking',
 'próximas sesiones' => 'upcoming sessions',
 'próxima sesión' => 'upcoming session',
 'Esta sesión ya ha finalizado.' => 'This session has already finished.',
