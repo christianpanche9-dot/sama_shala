@@ -3,70 +3,93 @@ require_once __DIR__ . '/conexion.php';
 require_once __DIR__ . '/funciones.php';
 
 $hoy = new DateTime('today');
-$primer_dia_mes_actual = new DateTime($hoy->format('Y-m-01'));
 
-$mes = filter_input(
-INPUT_GET,
-'mes',
-FILTER_VALIDATE_INT,
-['options' => ['min_range' => 1, 'max_range' => 12]]
-);
-$anio = filter_input(
-INPUT_GET,
-'anio',
-FILTER_VALIDATE_INT,
-['options' => ['min_range' => 2020, 'max_range' => 2100]]
-);
-if (!$mes || !$anio) {
-$mes = (int) $hoy->format('n');
-$anio = (int) $hoy->format('Y');
+$fecha_solicitada = trim($_GET['fecha'] ?? '');
+if ($fecha_solicitada !== '' && fecha_valida($fecha_solicitada)) {
+$inicio_semana = new DateTime($fecha_solicitada);
+} else {
+$inicio_semana = clone $hoy;
 }
-$primer_dia_mes_visible = new DateTime(
-sprintf('%04d-%02d-01', $anio, $mes)
-);
-if ($primer_dia_mes_visible < $primer_dia_mes_actual) {
-$mes = (int) $hoy->format('n');
-$anio = (int) $hoy->format('Y');
-$primer_dia_mes_visible = clone $primer_dia_mes_actual;
+if ($inicio_semana < $hoy) {
+$inicio_semana = clone $hoy;
 }
 
-$mes_anterior = $mes === 1 ? 12 : $mes - 1;
-$anio_mes_anterior = $mes === 1 ? $anio - 1 : $anio;
-$mes_siguiente = $mes === 12 ? 1 : $mes + 1;
-$anio_mes_siguiente = $mes === 12 ? $anio + 1 : $anio;
-$primer_dia_mes_anterior = new DateTime(
-sprintf('%04d-%02d-01', $anio_mes_anterior, $mes_anterior)
-);
-$mostrar_mes_anterior = $primer_dia_mes_anterior >= $primer_dia_mes_actual;
-
-$fecha_inicio_mes = $primer_dia_mes_visible->format('Y-m-01');
-$fecha_fin_mes = $primer_dia_mes_visible->format('Y-m-t');
+$dias_semana = [];
+$sesiones_por_dia = [];
+for ($i = 0; $i < 7; $i++) {
+$dia = (clone $inicio_semana)->modify("+$i day");
+$dias_semana[] = $dia;
+$sesiones_por_dia[$dia->format('Y-m-d')] = [];
+}
+$fecha_inicio_rango = $dias_semana[0]->format('Y-m-d');
+$fecha_fin_rango = $dias_semana[6]->format('Y-m-d');
 
 $sql = "
 SELECT
+s.id_sesion,
 s.fecha,
 s.hora_inicio,
 s.hora_fin,
 a.id_actividad,
 a.nombre AS actividad,
-a.tipo
+a.nivel,
+COALESCE(
+NULLIF(p.username, ''),
+CONCAT(p.nombre, ' ', p.apellidos)
+) AS profesor
 FROM sesiones AS s
 INNER JOIN actividades AS a
 ON s.id_actividad = a.id_actividad
+INNER JOIN profesores AS p
+ON s.id_profesor = p.id_profesor
 WHERE a.activa = 1
 AND s.estado IN ('programada', 'completa')
 AND s.fecha BETWEEN ? AND ?
 ORDER BY s.fecha, s.hora_inicio
 ";
 $stmt = $conexion->prepare($sql);
-$stmt->bind_param('ss', $fecha_inicio_mes, $fecha_fin_mes);
+$stmt->bind_param('ss', $fecha_inicio_rango, $fecha_fin_rango);
 $stmt->execute();
 $resultado = $stmt->get_result();
-$sesiones_por_dia = [];
 while ($sesion = $resultado->fetch_assoc()) {
 $sesiones_por_dia[$sesion['fecha']][] = $sesion;
 }
-$semanas_mes = generar_calendario_mes($anio, $mes);
+
+$mes_semana = (int) $inicio_semana->format('n');
+$anio_semana = (int) $inicio_semana->format('Y');
+$mes_anterior = $mes_semana === 1 ? 12 : $mes_semana - 1;
+$anio_mes_anterior = $mes_semana === 1 ? $anio_semana - 1 : $anio_semana;
+$mes_siguiente = $mes_semana === 12 ? 1 : $mes_semana + 1;
+$anio_mes_siguiente = $mes_semana === 12 ? $anio_semana + 1 : $anio_semana;
+$primer_dia_mes_anterior = new DateTime(
+sprintf('%04d-%02d-01', $anio_mes_anterior, $mes_anterior)
+);
+$ultimo_dia_mes_anterior = (clone $primer_dia_mes_anterior)
+->modify('last day of this month');
+$mostrar_mes_anterior = $ultimo_dia_mes_anterior >= $hoy;
+$destino_mes_anterior = $primer_dia_mes_anterior < $hoy
+? clone $hoy
+: $primer_dia_mes_anterior;
+$destino_mes_siguiente = new DateTime(
+sprintf('%04d-%02d-01', $anio_mes_siguiente, $mes_siguiente)
+);
+
+$semana_anterior = (clone $inicio_semana)->modify('-7 day');
+$semana_siguiente = (clone $inicio_semana)->modify('+7 day');
+$mostrar_semana_anterior = $semana_anterior >= $hoy;
+
+if ($dias_semana[0]->format('n') === $dias_semana[6]->format('n')) {
+$etiqueta_semana =
+$dias_semana[0]->format('j') . ' - ' .
+$dias_semana[6]->format('j') . ' ' .
+t('de') . ' ' . escapar(texto_mes((int) $dias_semana[0]->format('n')));
+} else {
+$etiqueta_semana =
+$dias_semana[0]->format('j') . ' ' . t('de') . ' ' .
+escapar(texto_mes((int) $dias_semana[0]->format('n'))) . ' - ' .
+$dias_semana[6]->format('j') . ' ' . t('de') . ' ' .
+escapar(texto_mes((int) $dias_semana[6]->format('n')));
+}
 
 $sql_profesores = "
 SELECT
@@ -119,7 +142,7 @@ content="width=device-width, initial-scale=1.0"
 <?php if ($mostrar_mes_anterior): ?>
 <a
 class="boton-mes"
-href="sesiones.php?mes=<?= $mes_anterior ?>&anio=<?= $anio_mes_anterior ?>"
+href="sesiones.php?fecha=<?= $destino_mes_anterior->format('Y-m-d') ?>"
 aria-label="<?= t('Mes anterior') ?>"
 >
 ←
@@ -130,66 +153,115 @@ aria-label="<?= t('Mes anterior') ?>"
 </span>
 <?php endif; ?>
 <span class="navegacion-mes-titulo">
-<?= escapar(texto_mes($mes)) ?> <?= $anio ?>
+<?= escapar(texto_mes($mes_semana)) ?> <?= $anio_semana ?>
 </span>
 <a
 class="boton-mes"
-href="sesiones.php?mes=<?= $mes_siguiente ?>&anio=<?= $anio_mes_siguiente ?>"
+href="sesiones.php?fecha=<?= $destino_mes_siguiente->format('Y-m-d') ?>"
 aria-label="<?= t('Mes siguiente') ?>"
 >
 →
 </a>
 </div>
-<?php if (empty($sesiones_por_dia)): ?>
-<div class="mensaje mensaje-aviso">
-<?= t('No hay sesiones programadas este mes.') ?>
-</div>
-<?php endif; ?>
-<div class="calendario-mes-publico">
-<div class="calendario-publico-cabecera">
-<?php for ($d = 1; $d <= 7; $d++): ?>
-<span><?= escapar(texto_dia_semana_abreviado($d)) ?></span>
-<?php endfor; ?>
-</div>
-<div class="calendario-publico-grilla">
-<?php foreach ($semanas_mes as $semana): ?>
-<?php foreach ($semana as $dia): ?>
-<?php if ($dia === null): ?>
-<div class="dia-calendario-publico dia-calendario-publico-vacio">
-</div>
-<?php else: ?>
-<?php
-$clave_dia = $dia->format('Y-m-d');
-$es_hoy = $clave_dia === $hoy->format('Y-m-d');
-$es_pasado = $dia < $hoy;
-?>
-<div class="dia-calendario-publico<?= $es_hoy ? ' dia-calendario-publico-hoy' : '' ?><?= $es_pasado ? ' dia-calendario-publico-pasado' : '' ?>">
-<span class="dia-calendario-publico-numero">
-<?= (int) $dia->format('j') ?>
-</span>
-<?php if (!empty($sesiones_por_dia[$clave_dia])): ?>
-<div class="sesiones-dia-calendario">
-<?php foreach ($sesiones_por_dia[$clave_dia] as $sesion_dia): ?>
+<div class="navegacion-semana">
+<?php if ($mostrar_semana_anterior): ?>
 <a
-class="sesion-calendario-chip sesion-calendario-chip-<?= escapar($sesion_dia['tipo']) ?>"
+class="boton-mes"
+href="sesiones.php?fecha=<?= $semana_anterior->format('Y-m-d') ?>"
+aria-label="<?= t('Semana anterior') ?>"
+>
+←
+</a>
+<?php else: ?>
+<span class="boton-mes boton-mes-deshabilitado" aria-hidden="true">
+←
+</span>
+<?php endif; ?>
+<span class="navegacion-semana-titulo">
+<?= $etiqueta_semana ?>
+</span>
+<a
+class="boton-mes"
+href="sesiones.php?fecha=<?= $semana_siguiente->format('Y-m-d') ?>"
+aria-label="<?= t('Semana siguiente') ?>"
+>
+→
+</a>
+</div>
+<div class="calendario-semana">
+<?php foreach ($dias_semana as $indice => $dia): ?>
+<button
+type="button"
+class="dia-semana-boton<?= $indice === 0 ? ' activo' : '' ?>"
+data-fecha="<?= $dia->format('Y-m-d') ?>"
+>
+<span class="dia-semana-abrev">
+<?= escapar(
+texto_dia_semana_abreviado(
+(int) $dia->format('N')
+)
+) ?>
+</span>
+<span class="dia-semana-numero">
+<?= $dia->format('j') ?>
+</span>
+</button>
+<?php endforeach; ?>
+</div>
+<div class="dias-actividades">
+<?php foreach ($dias_semana as $indice => $dia): ?>
+<?php $clave_dia = $dia->format('Y-m-d'); ?>
+<div
+class="dia-actividades<?= $indice === 0 ? ' activo' : '' ?>"
+data-fecha="<?= $clave_dia ?>"
+>
+<?php if (empty($sesiones_por_dia[$clave_dia])): ?>
+<p class="sin-sesiones">
+<?= t('No hay actividades programadas ese día.') ?>
+</p>
+<?php else: ?>
+<?php foreach (
+$sesiones_por_dia[$clave_dia] as $sesion_dia
+): ?>
+<a
+class="item-actividad-dia"
 href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
 >
-<span class="sesion-calendario-hora">
-<?= escapar(formatear_hora($sesion_dia['hora_inicio'])) ?>
+<span class="item-actividad-hora">
+<?= escapar(formatear_hora($sesion_dia['hora_inicio'])) ?> – <?= escapar(formatear_hora($sesion_dia['hora_fin'])) ?>
 </span>
-<span class="sesion-calendario-nombre">
+<span class="item-actividad-nombre">
 <?= escapar($sesion_dia['actividad']) ?>
+</span>
+<span class="item-actividad-detalle">
+<?= escapar($sesion_dia['profesor']) ?> · <?= escapar(texto_nivel($sesion_dia['nivel'])) ?>
 </span>
 </a>
 <?php endforeach; ?>
-</div>
 <?php endif; ?>
 </div>
-<?php endif; ?>
-<?php endforeach; ?>
 <?php endforeach; ?>
 </div>
-</div>
+<script>
+(function () {
+const botonesDias = document.querySelectorAll(".dia-semana-boton");
+const panelesDias = document.querySelectorAll(".dia-actividades");
+botonesDias.forEach(function (boton) {
+boton.addEventListener("click", function () {
+const fecha = boton.getAttribute("data-fecha");
+botonesDias.forEach(function (b) {
+b.classList.toggle("activo", b === boton);
+});
+panelesDias.forEach(function (panel) {
+panel.classList.toggle(
+"activo",
+panel.getAttribute("data-fecha") === fecha
+);
+});
+});
+});
+})();
+</script>
 <?php if (!empty($profesores)): ?>
 <h2 class="titulo-todas-actividades">
 <?= t('Conoce a nuestros profesores') ?>
