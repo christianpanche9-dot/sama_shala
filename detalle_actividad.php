@@ -319,7 +319,8 @@ aria-label="<?= t('Siguientes sesiones') ?>"
 </div>
 <script>
 (function () {
-var tarjetas = document.querySelectorAll('#lista-sesiones [data-pagina]');
+var lista = document.getElementById('lista-sesiones');
+var tarjetas = lista.querySelectorAll('[data-pagina]');
 var totalPaginas = <?= $total_paginas_sesiones ?>;
 var paginaActual = 0;
 var indicador = document.getElementById('indicador-pagina-sesiones');
@@ -340,12 +341,14 @@ btnAnterior.addEventListener('click', function () {
 if (paginaActual > 0) {
 paginaActual--;
 actualizar();
+lista.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 });
 btnSiguiente.addEventListener('click', function () {
 if (paginaActual < totalPaginas - 1) {
 paginaActual++;
 actualizar();
+lista.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 });
 actualizar();

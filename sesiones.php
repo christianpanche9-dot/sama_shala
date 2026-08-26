@@ -396,12 +396,14 @@ btnAnterior.addEventListener("click", function () {
 if (paginaActual > 0) {
 paginaActual--;
 actualizar();
+panel.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 });
 btnSiguiente.addEventListener("click", function () {
 if (paginaActual < totalPaginas - 1) {
 paginaActual++;
 actualizar();
+panel.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 });
 actualizar();
