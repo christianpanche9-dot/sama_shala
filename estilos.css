@@ -1038,6 +1038,41 @@ padding: 28px;
 position: sticky;
 top: 20px;
 }
+.diseno-paquetes {
+display: grid;
+grid-template-columns: 1fr 340px;
+gap: 28px;
+align-items: start;
+}
+.panel-condiciones h2 {
+margin-bottom: 18px;
+font-size: 1.5rem;
+}
+.panel-condiciones .lista-condiciones {
+margin-bottom: 22px;
+padding-left: 20px;
+font-size: 0.92rem;
+}
+.casilla-condiciones {
+display: flex;
+padding-top: 18px;
+align-items: flex-start;
+gap: 10px;
+border-top: 1px solid var(--color-borde);
+font-weight: 700;
+line-height: 1.4;
+cursor: pointer;
+}
+.casilla-condiciones input {
+width: 18px;
+height: 18px;
+margin-top: 2px;
+accent-color: var(--color-verde-oscuro);
+flex-shrink: 0;
+}
+.aviso-condiciones {
+margin: 14px 0 0;
+}
 .numero-plazas {
 margin: 5px 0;
 color: var(--color-verde-oscuro);
@@ -1114,7 +1149,8 @@ display: none;
 display: block;
 }
 .detalle-cabecera,
-.ficha-sesion {
+.ficha-sesion,
+.diseno-paquetes {
 grid-template-columns: 1fr;
 }
 .navegacion-mes {
@@ -1607,6 +1643,7 @@ gap: 1.5rem;
 .boton.desactivado {
 cursor: default;
 opacity: 0.55;
+pointer-events: none;
 }
 .resumen-reserva {
 max-width: 700px;

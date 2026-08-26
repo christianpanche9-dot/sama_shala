@@ -59,6 +59,7 @@ content="width=device-width, initial-scale=1.0"
 <?= t('No hay paquetes disponibles en este momento.') ?>
 </div>
 <?php else: ?>
+<div class="diseno-paquetes">
 <div class="rejilla-actividades rejilla-paquetes">
 <?php foreach ($paquetes as $paquete):
 $es_clase_suelta = (int) $paquete['numero_usos'] === 1;
@@ -85,7 +86,8 @@ $es_destacado = $id_paquete_destacado !== null
 <?= t('Válido durante 1 mes desde la compra.') ?>
 </p>
 <a
-class="boton boton-bloque"
+class="boton boton-bloque enlace-comprar-paquete desactivado"
+aria-disabled="true"
 href="comprar_paquete.php?id=<?= (int)
 $paquete['id_tipo_paquete'] ?>"
 >
@@ -95,17 +97,52 @@ $paquete['id_tipo_paquete'] ?>"
 </article>
 <?php endforeach; ?>
 </div>
-<?php endif; ?>
-<h2 class="titulo-todas-actividades"><?= t('Condiciones de uso') ?></h2>
-<div class="tarjeta-informativa">
+<aside class="panel-reserva panel-condiciones">
+<h2><?= t('Condiciones de uso') ?></h2>
 <ol class="lista-condiciones">
 <li><?= t('Los paquetes tienen una duración de 1 mes.') ?></li>
 <li><?= t('Los paquetes son para el uso de las clases de yoga; otras actividades como eventos y terapias tienen un costo aparte de los paquetes de clases.') ?></li>
 <li><?= t('Las clases son intransferibles a otro usuario.') ?></li>
 <li><?= t('Tienes hasta 15 minutos antes de que comience la clase para cancelar tu reserva.') ?></li>
 </ol>
+<label class="casilla-condiciones">
+<input type="checkbox" id="check-condiciones">
+<span><?= t('He leído y acepto las condiciones de uso.') ?></span>
+</label>
+<p class="mensaje mensaje-error aviso-condiciones" id="aviso-condiciones" hidden>
+<?= t('Debes aceptar las condiciones de uso para continuar.') ?>
+</p>
+</aside>
 </div>
+<?php endif; ?>
 </main>
+<script>
+(function () {
+var casilla = document.getElementById('check-condiciones');
+var aviso = document.getElementById('aviso-condiciones');
+var enlaces = document.querySelectorAll('.enlace-comprar-paquete');
+if (!casilla) { return; }
+function actualizarEstado() {
+var aceptado = casilla.checked;
+enlaces.forEach(function (enlace) {
+enlace.classList.toggle('desactivado', !aceptado);
+enlace.setAttribute('aria-disabled', String(!aceptado));
+});
+if (aceptado) { aviso.hidden = true; }
+}
+casilla.addEventListener('change', actualizarEstado);
+enlaces.forEach(function (enlace) {
+enlace.addEventListener('click', function (evento) {
+if (!casilla.checked) {
+evento.preventDefault();
+aviso.hidden = false;
+aviso.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+});
+});
+actualizarEstado();
+})();
+</script>
 <?php require_once __DIR__ . '/pie.php'; ?>
 </body>
 </html>
