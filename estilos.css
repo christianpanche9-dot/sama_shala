@@ -422,6 +422,7 @@ font-size: 1.8rem;
 .tarjeta-informativa,
 .tarjeta-actividad,
 .tarjeta-sesion,
+.tarjeta-profesor,
 .panel-reserva,
 .informacion-sesion {
 background-color: white;
@@ -433,7 +434,8 @@ var(--sombra-tarjeta-suave);
 .tarjeta-informativa {
 padding: 24px;
 }
-.tarjeta-actividad {
+.tarjeta-actividad,
+.tarjeta-profesor {
 overflow: hidden;
 }
 .imagen-actividad {
@@ -450,6 +452,31 @@ background-color: var(--color-blanco-hueso);
 }
 .contenido-tarjeta {
 padding: 24px;
+}
+.rejilla-profesores {
+display: grid;
+margin-top: 30px;
+grid-template-columns:
+repeat(3, minmax(0, 1fr));
+gap: 24px;
+}
+.imagen-profesor {
+width: 100%;
+height: 240px;
+object-fit: cover;
+}
+.contenido-tarjeta-profesor {
+padding: 20px;
+}
+.contenido-tarjeta-profesor h3 {
+margin: 0 0 10px;
+color: var(--color-verde-oscuro);
+font-size: 1.2rem;
+}
+.contenido-tarjeta-profesor p {
+color: var(--color-texto-tenue);
+font-size: 0.9rem;
+line-height: 1.6;
 }
 .metadatos {
 display: flex;
@@ -1057,7 +1084,8 @@ gap: 8px 18px;
 }
 .rejilla-ventajas,
 .rejilla-actividades,
-.rejilla-top-actividades {
+.rejilla-top-actividades,
+.rejilla-profesores {
 grid-template-columns: 1fr 1fr;
 }
 .tarjeta-sesion {
@@ -1142,7 +1170,8 @@ justify-content: center;
 .rejilla-ventajas,
 .rejilla-actividades,
 .rejilla-datos,
-.rejilla-top-actividades {
+.rejilla-top-actividades,
+.rejilla-profesores {
 grid-template-columns: 1fr;
 }
 .seccion-tipo-actividad,

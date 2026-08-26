@@ -17,6 +17,18 @@ header('Location: profesores.php?error=no_encontrado');
 exit;
 }
 
+$sql_actual = "SELECT imagen FROM profesores WHERE id_profesor = ?";
+$stmt_actual = $conexion->prepare($sql_actual);
+$stmt_actual->bind_param('i', $id_profesor);
+$stmt_actual->execute();
+$profesor_actual = $stmt_actual->get_result()->fetch_assoc();
+$stmt_actual->close();
+if (!$profesor_actual) {
+header('Location: profesores.php?error=no_encontrado');
+exit;
+}
+$imagen_actual = $profesor_actual['imagen'];
+
 $nombre = trim($_POST['nombre'] ?? '');
 $apellidos = trim($_POST['apellidos'] ?? '');
 $username = trim($_POST['username'] ?? '');
@@ -68,12 +80,33 @@ if ($resultado_comprobar->num_rows > 0) {
 header("Location: editar_profesor.php?id_profesor=$id_profesor&error=email");
 exit;
 }
+$resultado_imagen = procesar_imagen_subida(
+'imagen',
+__DIR__ . '/../imagenes/profesores',
+'profesor'
+);
+if (!$resultado_imagen['ok']) {
+header("Location: editar_profesor.php?id_profesor=$id_profesor&error=datos");
+exit;
+}
+if ($resultado_imagen['archivo'] !== null) {
+if (
+!empty($imagen_actual) &&
+file_exists(__DIR__ . '/../imagenes/profesores/' . $imagen_actual)
+) {
+unlink(__DIR__ . '/../imagenes/profesores/' . $imagen_actual);
+}
+$imagen = $resultado_imagen['archivo'];
+} else {
+$imagen = $imagen_actual;
+}
 $username = $username === '' ? null : $username;
 $sql = "
 UPDATE profesores SET
 nombre = ?,
 apellidos = ?,
 username = ?,
+imagen = ?,
 email = ?,
 telefono = ?,
 especialidad = ?,
@@ -84,10 +117,11 @@ WHERE id_profesor = ?
 $stmt =
 $conexion->prepare($sql);
 $stmt->bind_param(
-'sssssssii',
+'ssssssssii',
 $nombre,
 $apellidos,
 $username,
+$imagen,
 $email,
 $telefono,
 $especialidad,

@@ -18,6 +18,7 @@ id_profesor,
 nombre,
 apellidos,
 username,
+imagen,
 email,
 telefono,
 especialidad,
@@ -79,6 +80,7 @@ Ya existe otro profesor con ese correo.
 class="formulario-admin"
 action="actualizar_profesor.php"
 method="post"
+enctype="multipart/form-data"
 >
 <input
 type="hidden"
@@ -156,6 +158,28 @@ maxlength="180"
 value="<?= escapar($profesor['especialidad']) ?>"
 required
 >
+</div>
+<div class="campo campo-completo">
+<label for="imagen">
+Foto del profesor
+</label>
+<?php if (!empty($profesor['imagen'])): ?>
+<img
+class="miniatura-imagen-actual"
+src="../imagenes/profesores/<?= escapar($profesor['imagen']) ?>"
+alt=""
+>
+<?php endif; ?>
+<input
+type="file"
+id="imagen"
+name="imagen"
+accept="image/jpeg,image/png,image/webp"
+>
+<small>
+Deja este campo vacío para mantener la foto actual.
+JPG, PNG o WEBP, máximo 5 MB.
+</small>
 </div>
 <div class="campo campo-completo">
 <label for="resena">

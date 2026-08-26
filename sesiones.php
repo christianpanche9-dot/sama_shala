@@ -67,6 +67,21 @@ while ($sesion = $resultado->fetch_assoc()) {
 $sesiones_por_dia[$sesion['fecha']][] = $sesion;
 }
 $semanas_mes = generar_calendario_mes($anio, $mes);
+
+$sql_profesores = "
+SELECT
+id_profesor,
+nombre,
+apellidos,
+username,
+imagen,
+resena
+FROM profesores
+WHERE activo = 1
+ORDER BY apellidos, nombre
+";
+$resultado_profesores = $conexion->query($sql_profesores);
+$profesores = $resultado_profesores->fetch_all(MYSQLI_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -175,6 +190,40 @@ href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
 <?php endforeach; ?>
 </div>
 </div>
+<?php if (!empty($profesores)): ?>
+<h2 class="titulo-todas-actividades">
+<?= t('Conoce a nuestros profesores') ?>
+</h2>
+<div class="rejilla-profesores">
+<?php foreach ($profesores as $profesor): ?>
+<article class="tarjeta-profesor">
+<?php if (!empty($profesor['imagen'])): ?>
+<img
+class="imagen-profesor"
+src="imagenes/profesores/<?= escapar($profesor['imagen']) ?>"
+alt="<?= escapar($profesor['nombre']) ?>"
+>
+<?php else: ?>
+<div class="imagen-sin-contenido">
+<?= t('Sin imagen') ?>
+</div>
+<?php endif; ?>
+<div class="contenido-tarjeta-profesor">
+<h3>
+<?= escapar(
+!empty($profesor['username'])
+? $profesor['username']
+: $profesor['nombre'] . ' ' . $profesor['apellidos']
+) ?>
+</h3>
+<?php if (!empty($profesor['resena'])): ?>
+<p><?= escapar($profesor['resena']) ?></p>
+<?php endif; ?>
+</div>
+</article>
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
 </main>
 <?php require_once __DIR__ . '/pie.php'; ?>
 </body>

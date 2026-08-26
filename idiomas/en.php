@@ -23,6 +23,7 @@ return [
 'Noviembre' => 'November',
 'Diciembre' => 'December',
 'Calendario' => 'Calendar',
+'Conoce a nuestros profesores' => 'Meet our teachers',
 'Paquetes' => 'Packages',
 'Registrarse' => 'Sign up',
 'Administración' => 'Admin',

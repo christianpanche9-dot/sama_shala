@@ -56,27 +56,39 @@ if ($resultado_comprobar->num_rows > 0) {
 header('Location: nuevo_profesor.php?error=email');
 exit;
 }
+$resultado_imagen = procesar_imagen_subida(
+'imagen',
+__DIR__ . '/../imagenes/profesores',
+'profesor'
+);
+if (!$resultado_imagen['ok']) {
+header('Location: nuevo_profesor.php?error=datos');
+exit;
+}
+$imagen = $resultado_imagen['archivo'];
 $username = $username === '' ? null : $username;
 $sql_insertar = "
 INSERT INTO profesores (
 nombre,
 apellidos,
 username,
+imagen,
 email,
 telefono,
 especialidad,
 resena,
 activo
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 ";
 $stmt_insertar =
 $conexion->prepare($sql_insertar);
 $stmt_insertar->bind_param(
-'sssssssi',
+'ssssssssi',
 $nombre,
 $apellidos,
 $username,
+$imagen,
 $email,
 $telefono,
 $especialidad,

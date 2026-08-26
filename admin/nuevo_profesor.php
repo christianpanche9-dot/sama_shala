@@ -44,6 +44,7 @@ Ya existe un profesor con ese correo.
 class="formulario-admin"
 action="guardar_profesor.php"
 method="post"
+enctype="multipart/form-data"
 >
 <div class="campo">
 <label for="nombre">Nombre</label>
@@ -110,6 +111,21 @@ name="especialidad"
 maxlength="180"
 required
 >
+</div>
+<div class="campo campo-completo">
+<label for="imagen">
+Foto del profesor
+</label>
+<input
+type="file"
+id="imagen"
+name="imagen"
+accept="image/jpeg,image/png,image/webp"
+>
+<small>
+JPG, PNG o WEBP, máximo 5 MB. Se optimiza
+automáticamente para no ralentizar la web.
+</small>
 </div>
 <div class="campo campo-completo">
 <label for="resena">

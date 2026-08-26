@@ -31,9 +31,22 @@ header('Location: profesores.php?error=en_uso');
 exit;
 }
 
+$sql_imagen = "SELECT imagen FROM profesores WHERE id_profesor = ?";
+$stmt_imagen = $conexion->prepare($sql_imagen);
+$stmt_imagen->bind_param('i', $id_profesor);
+$stmt_imagen->execute();
+$fila_imagen = $stmt_imagen->get_result()->fetch_assoc();
+$imagen_profesor = $fila_imagen['imagen'] ?? '';
+
 $sql = "DELETE FROM profesores WHERE id_profesor = ?";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param('i', $id_profesor);
 $stmt->execute();
+if (
+!empty($imagen_profesor) &&
+file_exists(__DIR__ . '/../imagenes/profesores/' . $imagen_profesor)
+) {
+unlink(__DIR__ . '/../imagenes/profesores/' . $imagen_profesor);
+}
 header('Location: profesores.php?mensaje=eliminado');
 exit;
