@@ -1000,6 +1000,29 @@ font-weight: 700;
 .ficha-sesion {
 grid-template-columns: 1fr;
 }
+.navegacion-mes {
+gap: 16px;
+}
+.navegacion-mes-titulo {
+min-width: 170px;
+font-size: 1.4rem;
+}
+.dia-calendario-publico {
+min-height: 100px;
+padding: 6px;
+gap: 4px;
+}
+.calendario-publico-cabecera span {
+padding: 8px 2px;
+font-size: 0.68rem;
+}
+.dia-calendario-publico-numero {
+font-size: 0.9rem;
+}
+.sesion-calendario-hora,
+.sesion-calendario-nombre {
+font-size: 0.68rem;
+}
 .panel-horario-paquete {
 flex-direction: column;
 flex-basis: 100%;
