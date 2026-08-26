@@ -1620,25 +1620,97 @@ color: var(--color-azul);
 font-weight: 700;
 }
 .panel-cuenta {
-margin: 2rem 0;
-padding: 1.5rem;
+margin: 0.5rem 0 3rem;
+padding: 2rem;
 background: var(--color-azul-claro);
 border-left: 5px solid var(--color-verde-oscuro);
-border-radius: 10px;
+border-radius: 14px;
+}
+.panel-cuenta-cabecera {
+display: flex;
+margin-bottom: 22px;
+align-items: center;
+gap: 16px;
+}
+.avatar-cuenta {
+display: flex;
+width: 56px;
+height: 56px;
+flex-shrink: 0;
+align-items: center;
+justify-content: center;
+color: white;
+background-color: var(--color-verde-oscuro);
+border-radius: 999px;
+font-family: var(--fuente-titulares);
+font-size: 1.6rem;
+font-weight: 700;
+}
+.panel-cuenta-cabecera h2 {
+margin: 0;
+}
+.panel-cuenta-subtitulo {
+margin: 2px 0 0;
+color: var(--color-texto-tenue);
+font-size: 0.9rem;
+}
+.panel-cuenta dl {
+display: grid;
+margin: 0;
+grid-template-columns: max-content 1fr;
+gap: 14px 24px;
 }
 .panel-cuenta dt {
-margin-top: 1rem;
-color: var(--color-verde-oscuro);
+margin: 0;
+color: var(--color-texto-tenue);
 font-weight: 700;
 }
 .panel-cuenta dd {
-margin: 0.25rem 0 0;
+margin: 0;
+color: var(--color-verde-oscuro);
+font-weight: 700;
+}
+.titulo-opciones-cuenta {
+margin: 0 0 20px;
+font-size: 1.5rem;
 }
 .opciones-cuenta {
 display: grid;
 grid-template-columns:
 repeat(auto-fit, minmax(240px, 1fr));
 gap: 1.5rem;
+margin-bottom: 1rem;
+}
+.opciones-cuenta .tarjeta {
+display: flex;
+flex-direction: column;
+padding: 28px;
+gap: 8px;
+background-color: white;
+border: 1px solid var(--color-borde);
+border-radius: 14px;
+box-shadow: 0 8px 22px var(--sombra-tarjeta-suave);
+transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.opciones-cuenta .tarjeta:hover {
+transform: translateY(-5px);
+box-shadow: 0 16px 32px var(--sombra-tarjeta-suave);
+}
+.opciones-cuenta .tarjeta p {
+flex: 1;
+margin: 0 0 8px;
+color: var(--color-texto-tenue);
+}
+.icono-tarjeta-cuenta {
+display: flex;
+width: 48px;
+height: 48px;
+margin-bottom: 6px;
+align-items: center;
+justify-content: center;
+color: var(--color-verde-oscuro);
+background-color: var(--color-verde-claro);
+border-radius: 12px;
 }
 .boton.desactivado {
 cursor: default;

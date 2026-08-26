@@ -217,6 +217,9 @@ return [
 // mi_cuenta.php
 'Hola,' => 'Hi,',
 'Mis datos' => 'My details',
+'Gestiona tus datos, reservas y paquetes desde aquí.' => 'Manage your details, bookings and packages here.',
+'Información de tu perfil' => 'Your profile information',
+'Accesos rápidos' => 'Quick access',
 'Consulta tus próximas actividades y tu historial.' => 'Check your upcoming activities and your history.',
 'Ver mis reservas' => 'View my bookings',
 'Consulta tus paquetes y los usos disponibles.' => 'Check your packages and remaining uses.',
