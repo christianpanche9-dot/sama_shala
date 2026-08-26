@@ -17,7 +17,7 @@ name="viewport"
 content="width=device-width, initial-scale=1.0"
 >
 <title><?= t("Iniciar sesión") ?></title>
-<link rel="stylesheet" href="estilos.css">
+<link rel="stylesheet" href="<?= urlEstilos() ?>">
 <link rel="icon" type="image/png" sizes="32x32" href="imagenes/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="imagenes/favicon-16x16.png">
 <link rel="apple-touch-icon" href="imagenes/apple-touch-icon.png">

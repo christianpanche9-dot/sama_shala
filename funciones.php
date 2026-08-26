@@ -11,6 +11,12 @@ ENT_QUOTES,
 "UTF-8"
 );
 }
+function urlEstilos(string $prefijo = ''): string
+{
+$ruta = __DIR__ . '/estilos.css';
+$version = file_exists($ruta) ? filemtime($ruta) : time();
+return $prefijo . 'estilos.css?v=' . $version;
+}
 function idiomaActual(): string
 {
 $idioma = $_SESSION["idioma"] ?? "es";

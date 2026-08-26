@@ -17,7 +17,7 @@ http_response_code(403);
 <title>Acceso denegado</title>
 <link
 rel="stylesheet"
-href="../estilos.css"
+href="<?= urlEstilos('../') ?>"
 >
 </head>
 <body>
