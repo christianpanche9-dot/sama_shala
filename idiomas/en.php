@@ -116,6 +116,8 @@ return [
 'No hay sesiones programadas este mes.' => 'No sessions scheduled this month.',
 'Mes anterior' => 'Previous month',
 'Mes siguiente' => 'Next month',
+'Sesiones anteriores' => 'Previous sessions',
+'Siguientes sesiones' => 'Next sessions',
 'El identificador de la sesión no es válido.' => 'The session identifier is not valid.',
 'El identificador no es válido.' => 'The identifier is not valid.',
 'La sesión solicitada no existe.' => 'The requested session does not exist.',

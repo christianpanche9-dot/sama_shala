@@ -814,22 +814,48 @@ color: var(--color-verde-oscuro);
 background-color: white;
 border: 1px solid var(--color-borde);
 border-radius: 999px;
+font: inherit;
 font-size: 1.1rem;
 text-decoration: none;
+cursor: pointer;
 transition: background-color 0.2s ease, color 0.2s ease;
 }
 .boton-mes:hover {
 color: white;
 background-color: var(--color-verde-oscuro);
 }
-.boton-mes-deshabilitado {
+.boton-mes-deshabilitado,
+.boton-mes:disabled {
 color: var(--color-texto-tenue);
 background-color: var(--color-fondo);
 cursor: not-allowed;
 }
-.boton-mes-deshabilitado:hover {
+.boton-mes-deshabilitado:hover,
+.boton-mes:disabled:hover {
 color: var(--color-texto-tenue);
 background-color: var(--color-fondo);
+}
+.paginacion-sesiones,
+.paginacion-sesiones-dia {
+display: flex;
+margin-top: 24px;
+align-items: center;
+justify-content: center;
+gap: 16px;
+}
+.paginacion-sesiones-dia {
+margin-top: 16px;
+}
+.paginacion-sesiones span,
+.paginacion-sesiones-dia span {
+color: var(--color-texto-tenue);
+font-weight: 700;
+font-size: 0.9rem;
+}
+.boton-mes-pequeno {
+width: 32px;
+height: 32px;
+font-size: 0.85rem;
 }
 .vista-calendario-movil {
 display: none;

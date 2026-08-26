@@ -103,6 +103,11 @@ $id_actividad
 $stmt_sesiones->execute();
 $resultado_sesiones =
 $stmt_sesiones->get_result();
+$sesiones_actividad = $resultado_sesiones->fetch_all(MYSQLI_ASSOC);
+$sesiones_por_pagina = 5;
+$total_paginas_sesiones = (int) ceil(
+count($sesiones_actividad) / $sesiones_por_pagina
+);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -184,20 +189,16 @@ href="actividades.php"
 </section>
 <section class="contenedor seccion">
 <h2><?= t('Próximas sesiones') ?></h2>
-<?php if (
-    $resultado_sesiones->num_rows === 0
-): ?>
+<?php if (count($sesiones_actividad) === 0): ?>
 
 <div class="mensaje mensaje-aviso">
 <?= t('Esta actividad todavía no tiene próximas sesiones disponibles.') ?>
 </div>
 <?php else: ?>
-<div class="lista-sesiones">
-<?php while (
-$sesion =
-$resultado_sesiones->fetch_assoc()
-): ?>
+<div class="lista-sesiones" id="lista-sesiones">
+<?php foreach ($sesiones_actividad as $indice_sesion => $sesion): ?>
 <?php
+$pagina_sesion = intdiv($indice_sesion, $sesiones_por_pagina);
 $plazas = (int)
 $sesion['plazas_disponibles'];
 $reservas = (int)
@@ -210,7 +211,7 @@ $reservas,
 $aforo
 );
 ?>
-<article class="tarjeta-sesion">
+<article class="tarjeta-sesion" data-pagina="<?= $pagina_sesion ?>">
 <div class="fecha-sesion">
 <span class="fecha-principal">
 <?= escapar(
@@ -291,8 +292,66 @@ $sesion['id_sesion'] ?>"
 </a>
 </div>
 </article>
-<?php endwhile; ?>
+<?php endforeach; ?>
 </div>
+<?php if ($total_paginas_sesiones > 1): ?>
+<div class="paginacion-sesiones">
+<button
+type="button"
+class="boton-mes"
+id="pagina-sesiones-anterior"
+aria-label="<?= t('Sesiones anteriores') ?>"
+disabled
+>
+←
+</button>
+<span id="indicador-pagina-sesiones">
+1 / <?= $total_paginas_sesiones ?>
+</span>
+<button
+type="button"
+class="boton-mes"
+id="pagina-sesiones-siguiente"
+aria-label="<?= t('Siguientes sesiones') ?>"
+>
+→
+</button>
+</div>
+<script>
+(function () {
+var tarjetas = document.querySelectorAll('#lista-sesiones [data-pagina]');
+var totalPaginas = <?= $total_paginas_sesiones ?>;
+var paginaActual = 0;
+var indicador = document.getElementById('indicador-pagina-sesiones');
+var btnAnterior = document.getElementById('pagina-sesiones-anterior');
+var btnSiguiente = document.getElementById('pagina-sesiones-siguiente');
+function actualizar() {
+tarjetas.forEach(function (tarjeta) {
+tarjeta.style.display =
+parseInt(tarjeta.dataset.pagina, 10) === paginaActual
+? ''
+: 'none';
+});
+indicador.textContent = (paginaActual + 1) + ' / ' + totalPaginas;
+btnAnterior.disabled = paginaActual === 0;
+btnSiguiente.disabled = paginaActual === totalPaginas - 1;
+}
+btnAnterior.addEventListener('click', function () {
+if (paginaActual > 0) {
+paginaActual--;
+actualizar();
+}
+});
+btnSiguiente.addEventListener('click', function () {
+if (paginaActual < totalPaginas - 1) {
+paginaActual++;
+actualizar();
+}
+});
+actualizar();
+})();
+</script>
+<?php endif; ?>
 <?php endif; ?>
 </section>
 </main>

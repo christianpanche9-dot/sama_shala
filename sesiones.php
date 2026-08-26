@@ -82,6 +82,8 @@ while ($sesion = $resultado->fetch_assoc()) {
 $sesiones_por_dia[$sesion['fecha']][] = $sesion;
 }
 
+$sesiones_por_pagina_dia = 5;
+
 $semanas_mes = generar_calendario_mes($anio, $mes);
 
 $fecha_activa = $primer_dia_mes_visible == $primer_dia_mes_actual
@@ -265,11 +267,18 @@ data-fecha="<?= $clave_dia ?>"
 <?= t('No hay actividades programadas ese día.') ?>
 </p>
 <?php else: ?>
+<?php
+$total_sesiones_dia = count($sesiones_por_dia[$clave_dia]);
+$total_paginas_dia = (int) ceil(
+$total_sesiones_dia / $sesiones_por_pagina_dia
+);
+?>
 <?php foreach (
-$sesiones_por_dia[$clave_dia] as $sesion_dia
+$sesiones_por_dia[$clave_dia] as $indice_sesion_dia => $sesion_dia
 ): ?>
 <a
 class="item-actividad-dia"
+data-pagina="<?= intdiv($indice_sesion_dia, $sesiones_por_pagina_dia) ?>"
 href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
 >
 <span class="item-actividad-hora">
@@ -283,6 +292,28 @@ href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
 </span>
 </a>
 <?php endforeach; ?>
+<?php if ($total_paginas_dia > 1): ?>
+<div class="paginacion-sesiones-dia">
+<button
+type="button"
+class="boton-mes boton-mes-pequeno pagina-dia-anterior"
+aria-label="<?= t('Sesiones anteriores') ?>"
+disabled
+>
+←
+</button>
+<span class="indicador-pagina-dia">
+1 / <?= $total_paginas_dia ?>
+</span>
+<button
+type="button"
+class="boton-mes boton-mes-pequeno pagina-dia-siguiente"
+aria-label="<?= t('Siguientes sesiones') ?>"
+>
+→
+</button>
+</div>
+<?php endif; ?>
 <?php endif; ?>
 </div>
 <?php endforeach; ?>
@@ -332,6 +363,48 @@ if (etiquetaSemana) {
 etiquetaSemana.textContent = calcularEtiquetaSemana(fecha);
 }
 });
+});
+
+panelesDias.forEach(function (panel) {
+const items = panel.querySelectorAll("[data-pagina]");
+const controles = panel.querySelector(".paginacion-sesiones-dia");
+if (!controles || items.length === 0) {
+return;
+}
+const totalPaginas = Math.max.apply(
+null,
+Array.from(items).map(function (item) {
+return parseInt(item.dataset.pagina, 10);
+})
+) + 1;
+const indicador = controles.querySelector(".indicador-pagina-dia");
+const btnAnterior = controles.querySelector(".pagina-dia-anterior");
+const btnSiguiente = controles.querySelector(".pagina-dia-siguiente");
+let paginaActual = 0;
+function actualizar() {
+items.forEach(function (item) {
+item.style.display =
+parseInt(item.dataset.pagina, 10) === paginaActual
+? ""
+: "none";
+});
+indicador.textContent = (paginaActual + 1) + " / " + totalPaginas;
+btnAnterior.disabled = paginaActual === 0;
+btnSiguiente.disabled = paginaActual === totalPaginas - 1;
+}
+btnAnterior.addEventListener("click", function () {
+if (paginaActual > 0) {
+paginaActual--;
+actualizar();
+}
+});
+btnSiguiente.addEventListener("click", function () {
+if (paginaActual < totalPaginas - 1) {
+paginaActual++;
+actualizar();
+}
+});
+actualizar();
 });
 })();
 </script>
