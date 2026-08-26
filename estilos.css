@@ -669,6 +669,14 @@ color: white;
 background-color: var(--color-verde-oscuro);
 border-color: var(--color-verde-oscuro);
 }
+.dia-semana-boton-pasado {
+color: var(--color-texto-tenue);
+background-color: var(--color-fondo);
+}
+.dia-semana-boton-pasado.activo {
+color: white;
+background-color: var(--color-verde-oscuro);
+}
 .dias-actividades {
 margin: 20px 0 0;
 }
@@ -724,15 +732,8 @@ font-size: 1.6rem;
 text-align: center;
 text-transform: capitalize;
 }
-.navegacion-semana {
-display: flex;
-margin: 0 0 24px;
-align-items: center;
-justify-content: center;
-gap: 24px;
-}
 .navegacion-semana-titulo {
-min-width: 200px;
+margin: 0 0 20px;
 color: var(--color-texto-tenue);
 font-weight: 700;
 text-align: center;

@@ -4,25 +4,51 @@ require_once __DIR__ . '/funciones.php';
 
 $hoy = new DateTime('today');
 
-$fecha_solicitada = trim($_GET['fecha'] ?? '');
-if ($fecha_solicitada !== '' && fecha_valida($fecha_solicitada)) {
-$inicio_semana = new DateTime($fecha_solicitada);
-} else {
-$inicio_semana = clone $hoy;
+$mes = filter_input(
+INPUT_GET,
+'mes',
+FILTER_VALIDATE_INT,
+['options' => ['min_range' => 1, 'max_range' => 12]]
+);
+$anio = filter_input(
+INPUT_GET,
+'anio',
+FILTER_VALIDATE_INT,
+['options' => ['min_range' => 2020, 'max_range' => 2100]]
+);
+if (!$mes || !$anio) {
+$mes = (int) $hoy->format('n');
+$anio = (int) $hoy->format('Y');
 }
-if ($inicio_semana < $hoy) {
-$inicio_semana = clone $hoy;
+$primer_dia_mes_visible = new DateTime(
+sprintf('%04d-%02d-01', $anio, $mes)
+);
+$primer_dia_mes_actual = new DateTime($hoy->format('Y-m-01'));
+if ($primer_dia_mes_visible < $primer_dia_mes_actual) {
+$mes = (int) $hoy->format('n');
+$anio = (int) $hoy->format('Y');
+$primer_dia_mes_visible = clone $primer_dia_mes_actual;
 }
 
-$dias_semana = [];
+$mes_anterior = $mes === 1 ? 12 : $mes - 1;
+$anio_mes_anterior = $mes === 1 ? $anio - 1 : $anio;
+$mes_siguiente = $mes === 12 ? 1 : $mes + 1;
+$anio_mes_siguiente = $mes === 12 ? $anio + 1 : $anio;
+$primer_dia_mes_anterior = new DateTime(
+sprintf('%04d-%02d-01', $anio_mes_anterior, $mes_anterior)
+);
+$mostrar_mes_anterior = $primer_dia_mes_anterior >= $primer_dia_mes_actual;
+
+$dias_mes = [];
 $sesiones_por_dia = [];
-for ($i = 0; $i < 7; $i++) {
-$dia = (clone $inicio_semana)->modify("+$i day");
-$dias_semana[] = $dia;
+$dias_en_mes = (int) $primer_dia_mes_visible->format('t');
+for ($d = 1; $d <= $dias_en_mes; $d++) {
+$dia = new DateTime(sprintf('%04d-%02d-%02d', $anio, $mes, $d));
+$dias_mes[] = $dia;
 $sesiones_por_dia[$dia->format('Y-m-d')] = [];
 }
-$fecha_inicio_rango = $dias_semana[0]->format('Y-m-d');
-$fecha_fin_rango = $dias_semana[6]->format('Y-m-d');
+$fecha_inicio_rango = $dias_mes[0]->format('Y-m-d');
+$fecha_fin_rango = $dias_mes[count($dias_mes) - 1]->format('Y-m-d');
 
 $sql = "
 SELECT
@@ -55,40 +81,24 @@ while ($sesion = $resultado->fetch_assoc()) {
 $sesiones_por_dia[$sesion['fecha']][] = $sesion;
 }
 
-$mes_semana = (int) $inicio_semana->format('n');
-$anio_semana = (int) $inicio_semana->format('Y');
-$mes_anterior = $mes_semana === 1 ? 12 : $mes_semana - 1;
-$anio_mes_anterior = $mes_semana === 1 ? $anio_semana - 1 : $anio_semana;
-$mes_siguiente = $mes_semana === 12 ? 1 : $mes_semana + 1;
-$anio_mes_siguiente = $mes_semana === 12 ? $anio_semana + 1 : $anio_semana;
-$primer_dia_mes_anterior = new DateTime(
-sprintf('%04d-%02d-01', $anio_mes_anterior, $mes_anterior)
-);
-$ultimo_dia_mes_anterior = (clone $primer_dia_mes_anterior)
-->modify('last day of this month');
-$mostrar_mes_anterior = $ultimo_dia_mes_anterior >= $hoy;
-$destino_mes_anterior = $primer_dia_mes_anterior < $hoy
+$fecha_activa = $primer_dia_mes_visible == $primer_dia_mes_actual
 ? clone $hoy
-: $primer_dia_mes_anterior;
-$destino_mes_siguiente = new DateTime(
-sprintf('%04d-%02d-01', $anio_mes_siguiente, $mes_siguiente)
-);
+: clone $primer_dia_mes_visible;
+$clave_fecha_activa = $fecha_activa->format('Y-m-d');
 
-$semana_anterior = (clone $inicio_semana)->modify('-7 day');
-$semana_siguiente = (clone $inicio_semana)->modify('+7 day');
-$mostrar_semana_anterior = $semana_anterior >= $hoy;
-
-if ($dias_semana[0]->format('n') === $dias_semana[6]->format('n')) {
-$etiqueta_semana =
-$dias_semana[0]->format('j') . ' - ' .
-$dias_semana[6]->format('j') . ' ' .
-t('de') . ' ' . escapar(texto_mes((int) $dias_semana[0]->format('n')));
-} else {
-$etiqueta_semana =
-$dias_semana[0]->format('j') . ' ' . t('de') . ' ' .
-escapar(texto_mes((int) $dias_semana[0]->format('n'))) . ' - ' .
-$dias_semana[6]->format('j') . ' ' . t('de') . ' ' .
-escapar(texto_mes((int) $dias_semana[6]->format('n')));
+function etiqueta_semana_de(DateTime $fecha): string
+{
+$dia_semana_iso = (int) $fecha->format('N');
+$lunes = (clone $fecha)->modify('-' . ($dia_semana_iso - 1) . ' day');
+$domingo = (clone $lunes)->modify('+6 day');
+if ($lunes->format('n') === $domingo->format('n')) {
+return $lunes->format('j') . ' - ' . $domingo->format('j') .
+' ' . t('de') . ' ' . escapar(texto_mes((int) $lunes->format('n')));
+}
+return $lunes->format('j') . ' ' . t('de') . ' ' .
+escapar(texto_mes((int) $lunes->format('n'))) . ' - ' .
+$domingo->format('j') . ' ' . t('de') . ' ' .
+escapar(texto_mes((int) $domingo->format('n')));
 }
 
 $sql_profesores = "
@@ -142,7 +152,7 @@ content="width=device-width, initial-scale=1.0"
 <?php if ($mostrar_mes_anterior): ?>
 <a
 class="boton-mes"
-href="sesiones.php?fecha=<?= $destino_mes_anterior->format('Y-m-d') ?>"
+href="sesiones.php?mes=<?= $mes_anterior ?>&anio=<?= $anio_mes_anterior ?>"
 aria-label="<?= t('Mes anterior') ?>"
 >
 ←
@@ -153,47 +163,26 @@ aria-label="<?= t('Mes anterior') ?>"
 </span>
 <?php endif; ?>
 <span class="navegacion-mes-titulo">
-<?= escapar(texto_mes($mes_semana)) ?> <?= $anio_semana ?>
+<?= escapar(texto_mes($mes)) ?> <?= $anio ?>
 </span>
 <a
 class="boton-mes"
-href="sesiones.php?fecha=<?= $destino_mes_siguiente->format('Y-m-d') ?>"
+href="sesiones.php?mes=<?= $mes_siguiente ?>&anio=<?= $anio_mes_siguiente ?>"
 aria-label="<?= t('Mes siguiente') ?>"
 >
 →
 </a>
 </div>
-<div class="navegacion-semana">
-<?php if ($mostrar_semana_anterior): ?>
-<a
-class="boton-mes"
-href="sesiones.php?fecha=<?= $semana_anterior->format('Y-m-d') ?>"
-aria-label="<?= t('Semana anterior') ?>"
->
-←
-</a>
-<?php else: ?>
-<span class="boton-mes boton-mes-deshabilitado" aria-hidden="true">
-←
-</span>
-<?php endif; ?>
-<span class="navegacion-semana-titulo">
-<?= $etiqueta_semana ?>
-</span>
-<a
-class="boton-mes"
-href="sesiones.php?fecha=<?= $semana_siguiente->format('Y-m-d') ?>"
-aria-label="<?= t('Semana siguiente') ?>"
->
-→
-</a>
-</div>
+<p class="navegacion-semana-titulo" id="etiqueta-semana-activa">
+<?= etiqueta_semana_de($fecha_activa) ?>
+</p>
 <div class="calendario-semana">
-<?php foreach ($dias_semana as $indice => $dia): ?>
+<?php foreach ($dias_mes as $dia): ?>
+<?php $clave_dia = $dia->format('Y-m-d'); ?>
 <button
 type="button"
-class="dia-semana-boton<?= $indice === 0 ? ' activo' : '' ?>"
-data-fecha="<?= $dia->format('Y-m-d') ?>"
+class="dia-semana-boton<?= $clave_dia === $clave_fecha_activa ? ' activo' : '' ?><?= $dia < $hoy ? ' dia-semana-boton-pasado' : '' ?>"
+data-fecha="<?= $clave_dia ?>"
 >
 <span class="dia-semana-abrev">
 <?= escapar(
@@ -209,10 +198,10 @@ texto_dia_semana_abreviado(
 <?php endforeach; ?>
 </div>
 <div class="dias-actividades">
-<?php foreach ($dias_semana as $indice => $dia): ?>
+<?php foreach ($dias_mes as $dia): ?>
 <?php $clave_dia = $dia->format('Y-m-d'); ?>
 <div
-class="dia-actividades<?= $indice === 0 ? ' activo' : '' ?>"
+class="dia-actividades<?= $clave_dia === $clave_fecha_activa ? ' activo' : '' ?>"
 data-fecha="<?= $clave_dia ?>"
 >
 <?php if (empty($sesiones_por_dia[$clave_dia])): ?>
@@ -244,8 +233,32 @@ href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
 </div>
 <script>
 (function () {
+const idioma = "<?= idiomaActual() === 'en' ? 'en' : 'es' ?>";
+const conectorDe = idioma === "en" ? "" : " " + <?= json_encode(t('de')) ?>;
 const botonesDias = document.querySelectorAll(".dia-semana-boton");
 const panelesDias = document.querySelectorAll(".dia-actividades");
+const etiquetaSemana = document.querySelector("#etiqueta-semana-activa");
+const boton = document.querySelector(".dia-semana-boton.activo");
+if (boton) {
+boton.scrollIntoView({ inline: "center", block: "nearest" });
+}
+
+function calcularEtiquetaSemana(fechaStr) {
+const fecha = new Date(fechaStr + "T00:00:00");
+const diaIso = (fecha.getDay() + 6) % 7;
+const lunes = new Date(fecha);
+lunes.setDate(fecha.getDate() - diaIso);
+const domingo = new Date(lunes);
+domingo.setDate(lunes.getDate() + 6);
+const formatoMes = new Intl.DateTimeFormat(idioma, { month: "long" });
+if (lunes.getMonth() === domingo.getMonth()) {
+return lunes.getDate() + " - " + domingo.getDate() +
+conectorDe + " " + formatoMes.format(lunes);
+}
+return lunes.getDate() + conectorDe + " " + formatoMes.format(lunes) +
+" - " + domingo.getDate() + conectorDe + " " + formatoMes.format(domingo);
+}
+
 botonesDias.forEach(function (boton) {
 boton.addEventListener("click", function () {
 const fecha = boton.getAttribute("data-fecha");
@@ -258,6 +271,9 @@ panel.classList.toggle(
 panel.getAttribute("data-fecha") === fecha
 );
 });
+if (etiquetaSemana) {
+etiquetaSemana.textContent = calcularEtiquetaSemana(fecha);
+}
 });
 });
 })();
