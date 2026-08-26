@@ -61,7 +61,7 @@ $a["fecha"] . $a["hora_inicio"],
 $b["fecha"] . $b["hora_inicio"]
 )
 );
-function tarjeta_reserva(array $reserva): void
+function tarjeta_reserva(array $reserva, bool $colapsable = false): void
 {
 $inicio = new DateTime(
 $reserva["fecha"] . " " . $reserva["hora_inicio"]
@@ -70,8 +70,20 @@ $puede_cancelar =
 $reserva["estado"] === "confirmada" &&
 $reserva["estado_sesion"] !== "cancelada" &&
 $inicio > (new DateTime())->modify("+15 minutes");
+$etiqueta = $colapsable ? 'details' : 'article';
 ?>
-<article class="tarjeta-reserva">
+<<?= $etiqueta ?> class="tarjeta-reserva">
+<?php if ($colapsable): ?>
+<summary class="resumen-tarjeta-reserva">
+<span class="resumen-reserva-fecha">
+<?= date("d/m/Y", strtotime($reserva["fecha"])) ?>
+</span>
+<span class="resumen-reserva-nombre">
+<?= escapar($reserva["actividad"]) ?>
+</span>
+</summary>
+<div class="detalle-tarjeta-reserva">
+<?php else: ?>
 <h3>
     <?= escapar(
         $reserva["actividad"]
@@ -79,6 +91,7 @@ $inicio > (new DateTime())->modify("+15 minutes");
 </h3>
 
 
+<?php endif; ?>
 <p>
 <strong><?= t('Fecha:') ?></strong>
 <?= date(
@@ -147,7 +160,10 @@ class="boton peligro"
 </button>
 </form>
 <?php endif; ?>
-</article>
+<?php if ($colapsable): ?>
+</div>
+<?php endif; ?>
+</<?= $etiqueta ?>>
 <?php
 }
 $sql_espera = "
@@ -290,7 +306,7 @@ $espera["hora_inicio"],
 <?php else: ?>
 <div class="rejilla-reservas">
 <?php foreach ($reservas_historial as $reserva): ?>
-<?php tarjeta_reserva($reserva); ?>
+<?php tarjeta_reserva($reserva, true); ?>
 <?php endforeach; ?>
 </div>
 <?php endif; ?>
