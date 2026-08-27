@@ -250,7 +250,7 @@ return [
 'Paquetes | Sama Shala' => 'Packages | Sama Shala',
 'Precios' => 'Pricing',
 'Paquetes de clases' => 'Class packages',
-'Compra un paquete y utilízalo para reservar las sesiones que quieras mientras tenga usos disponibles.' => 'Buy a package and use it to book as many sessions as you like while it has uses left.',
+'Compra un paquete y utilízalo para reservar las clases de yoga que quieras mientras tenga usos disponibles.' => 'Buy a package and use it to book as many yoga classes as you like while it has uses left.',
 'No hay paquetes disponibles en este momento.' => 'No packages available right now.',
 'Más popular' => 'Most popular',
 'Condiciones de uso' => 'Terms of use',

@@ -53,7 +53,7 @@ content="width=device-width, initial-scale=1.0"
 <div>
 <h1><?= t('Paquetes de clases') ?></h1>
 <p class="hero-texto">
-<?= t('Compra un paquete y utilízalo para reservar las sesiones que quieras mientras tenga usos disponibles.') ?>
+<?= t('Compra un paquete y utilízalo para reservar las clases de yoga que quieras mientras tenga usos disponibles.') ?>
 </p>
 </div>
 </div>
