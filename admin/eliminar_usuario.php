@@ -26,6 +26,7 @@ $sql_uso = "
 SELECT COUNT(*) AS total
 FROM reservas
 WHERE id_usuario = ?
+AND estado = 'confirmada'
 ";
 $stmt_uso = $conexion->prepare($sql_uso);
 $stmt_uso->bind_param('i', $id_usuario);

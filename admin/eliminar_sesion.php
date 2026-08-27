@@ -19,8 +19,8 @@ exit;
 
 $sql_uso = "
 SELECT
-(SELECT COUNT(*) FROM reservas WHERE id_sesion = ?) AS total_reservas,
-(SELECT COUNT(*) FROM lista_espera WHERE id_sesion = ?) AS total_espera
+(SELECT COUNT(*) FROM reservas WHERE id_sesion = ? AND estado = 'confirmada') AS total_reservas,
+(SELECT COUNT(*) FROM lista_espera WHERE id_sesion = ? AND estado = 'esperando') AS total_espera
 ";
 $stmt_uso = $conexion->prepare($sql_uso);
 $stmt_uso->bind_param("ii", $id_sesion, $id_sesion);
