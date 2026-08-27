@@ -70,9 +70,6 @@ $descuento_paquete = descuento_terapia_evento_paquete(
 );
 ?>
 <article class="tarjeta-actividad tarjeta-paquete<?= $es_destacado ? ' tarjeta-paquete-destacada' : '' ?>">
-<?php if ($es_destacado): ?>
-<span class="etiqueta-destacada"><?= t('Más popular') ?></span>
-<?php endif; ?>
 <div class="contenido-tarjeta">
 <h2>
 <?= escapar($paquete['nombre']) ?>
