@@ -35,6 +35,9 @@ Calendario
 <a href="reservas.php">
 Reservas
 </a>
+<a href="usuarios.php">
+Usuarios
+</a>
 <a href="paquetes.php">
 Paquetes
 </a>
