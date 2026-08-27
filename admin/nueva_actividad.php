@@ -102,20 +102,29 @@ required
 <option value="">
 Selecciona una categoría
 </option>
-<option value="Deporte">
-Deporte
+<option value="Yoga">
+Yoga
 </option>
-<option value="Bienestar">
-Bienestar
+<option value="Meditación">
+Meditación
 </option>
-<option value="Cultura">
-Cultura
+<option value="Sound Healing">
+Sound Healing
+</option>
+<option value="Ayurveda y terapias corporales">
+Ayurveda y terapias corporales
+</option>
+<option value="Arte y bienestar">
+Arte y bienestar
+</option>
+<option value="Comunidad">
+Comunidad
+</option>
+<option value="Retiros y experiencias">
+Retiros y experiencias
 </option>
 <option value="Formación">
 Formación
-</option>
-<option value="Ocio">
-Ocio
 </option>
 </select>
 </div>

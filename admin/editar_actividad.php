@@ -42,11 +42,14 @@ exit;
 }
 
 $categorias = [
-'Deporte',
-'Bienestar',
-'Cultura',
-'Formación',
-'Ocio'
+'Yoga',
+'Meditación',
+'Sound Healing',
+'Ayurveda y terapias corporales',
+'Arte y bienestar',
+'Comunidad',
+'Retiros y experiencias',
+'Formación'
 ];
 $tipos = [
 'clase' => 'Clase',

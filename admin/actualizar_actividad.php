@@ -45,11 +45,14 @@ $activa = isset($_POST['activa']) ? 1 : 0;
 $es_top = isset($_POST['es_top']) ? 1 : 0;
 $posicion_top = null;
 $categorias_validas = [
-'Deporte',
-'Bienestar',
-'Cultura',
-'Formación',
-'Ocio'
+'Yoga',
+'Meditación',
+'Sound Healing',
+'Ayurveda y terapias corporales',
+'Arte y bienestar',
+'Comunidad',
+'Retiros y experiencias',
+'Formación'
 ];
 $niveles_validos = [
 'inicial',
