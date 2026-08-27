@@ -25,6 +25,16 @@ s.fecha ASC,
 s.hora_inicio ASC
 ";
 $resultado = $conexion->query($sql);
+$sesiones = $resultado->fetch_all(MYSQLI_ASSOC);
+$sesiones_por_mes = [];
+foreach ($sesiones as $sesion) {
+$clave_mes = substr($sesion['fecha'], 0, 7);
+if (!isset($sesiones_por_mes[$clave_mes])) {
+$sesiones_por_mes[$clave_mes] = [];
+}
+$sesiones_por_mes[$clave_mes][] = $sesion;
+}
+$mes_actual = date('Y-m');
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -79,9 +89,20 @@ apuntes en lista de espera asociados.
 <a class="boton" href="nueva_sesion.php">
 Programar una sesión
 </a>
-<?php if ($resultado->num_rows === 0): ?>
+<?php if (count($sesiones) === 0): ?>
 <p>No existen sesiones programadas.</p>
 <?php else: ?>
+<?php foreach ($sesiones_por_mes as $clave_mes => $sesiones_del_mes): ?>
+<?php $fecha_mes = DateTime::createFromFormat('Y-m-d', $clave_mes . '-01'); ?>
+<details class="grupo-mes-admin" <?= $clave_mes === $mes_actual ? 'open' : '' ?>>
+<summary class="resumen-mes-admin">
+<span>
+<?= escapar(texto_mes((int) $fecha_mes->format('n'))) ?> <?= $fecha_mes->format('Y') ?>
+</span>
+<span class="contador-mes-admin">
+<?= count($sesiones_del_mes) ?> <?= count($sesiones_del_mes) === 1 ? 'sesión' : 'sesiones' ?>
+</span>
+</summary>
 <div class="tabla-responsive">
 <table class="tabla-admin">
     <thead>
@@ -97,9 +118,7 @@ Programar una sesión
 </tr>
 </thead>
 <tbody>
-<?php while (
-$sesion = $resultado->fetch_assoc()
-): ?>
+<?php foreach ($sesiones_del_mes as $sesion): ?>
 <tr>
 <td>
 <?= date(
@@ -171,10 +190,12 @@ Eliminar
 </form>
 </td>
 </tr>
-<?php endwhile; ?>
+<?php endforeach; ?>
 </tbody>
 </table>
 </div>
+</details>
+<?php endforeach; ?>
 <?php endif; ?>
 </main>
 </body>

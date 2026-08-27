@@ -1693,6 +1693,59 @@ display: flex;
 flex-wrap: wrap;
 gap: 8px;
 }
+.grupo-mes-admin {
+margin: 0 0 1.2rem;
+background: #ffffff;
+border: 1px solid var(--color-borde);
+border-radius: 14px;
+overflow: hidden;
+}
+.resumen-mes-admin {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 12px;
+padding: 16px 20px;
+color: var(--color-verde-oscuro);
+background-color: var(--color-azul-claro);
+cursor: pointer;
+list-style: none;
+font-family: var(--fuente-titulares);
+font-size: 1.15rem;
+}
+.resumen-mes-admin::-webkit-details-marker {
+display: none;
+}
+.resumen-mes-admin::after {
+content: '▾';
+flex-shrink: 0;
+transition: transform 0.2s ease;
+}
+.grupo-mes-admin[open] .resumen-mes-admin::after {
+transform: rotate(180deg);
+}
+.contador-mes-admin {
+color: var(--color-texto-tenue);
+font-family: var(--fuente-cuerpo);
+font-size: 0.9rem;
+font-weight: 700;
+white-space: nowrap;
+}
+.grupo-mes-admin .tabla-responsive {
+margin: 0;
+background: transparent;
+border: none;
+border-radius: 0;
+border-top: 1px solid var(--color-borde);
+}
+.grupo-mes-admin .tabla-admin th:first-child,
+.grupo-mes-admin .tabla-admin td:first-child {
+padding-left: 20px;
+}
+.grupo-mes-admin .tabla-admin th:last-child,
+.grupo-mes-admin .tabla-admin td:last-child {
+padding-right: 20px;
+}
 .boton-pequeno {
 padding: 6px 12px;
 font-size: 0.85rem;

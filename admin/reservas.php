@@ -101,7 +101,17 @@ $patron,
 $patron
 );
 $stmt->execute();
-$reservas = $stmt->get_result();
+$reservas = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$reservas_por_mes = [];
+foreach ($reservas as $reserva) {
+$clave_mes = substr($reserva['fecha'], 0, 7);
+if (!isset($reservas_por_mes[$clave_mes])) {
+$reservas_por_mes[$clave_mes] = [];
+}
+$reservas_por_mes[$clave_mes][] = $reserva;
+}
+$mes_actual = date('Y-m');
+$primer_mes = array_key_first($reservas_por_mes);
 $mensaje = $_GET["mensaje"] ?? "";
 ?>
 <!DOCTYPE html>
@@ -264,10 +274,21 @@ Limpiar
 </div>
 </div>
 </form>
-<?php if ($reservas->num_rows === 0): ?>
+<?php if (count($reservas) === 0): ?>
 <p>No se han encontrado reservas.</p>
 <?php else: ?>
-    <div class="tabla-responsive">
+<?php foreach ($reservas_por_mes as $clave_mes => $reservas_del_mes): ?>
+<?php $fecha_mes = DateTime::createFromFormat('Y-m-d', $clave_mes . '-01'); ?>
+<details class="grupo-mes-admin" <?= ($clave_mes === $mes_actual || $clave_mes === $primer_mes) ? 'open' : '' ?>>
+<summary class="resumen-mes-admin">
+<span>
+<?= escapar(texto_mes((int) $fecha_mes->format('n'))) ?> <?= $fecha_mes->format('Y') ?>
+</span>
+<span class="contador-mes-admin">
+<?= count($reservas_del_mes) ?> <?= count($reservas_del_mes) === 1 ? 'reserva' : 'reservas' ?>
+</span>
+</summary>
+<div class="tabla-responsive">
 <table class="tabla-admin">
 <thead>
 <tr>
@@ -280,10 +301,7 @@ Limpiar
 </tr>
 </thead>
 <tbody>
-<?php while (
-$reserva =
-$reservas->fetch_assoc()
-): ?>
+<?php foreach ($reservas_del_mes as $reserva): ?>
 <tr>
 <td>
 <?= date(
@@ -357,10 +375,12 @@ Ver sesión
 </a>
 </td>
 </tr>
-<?php endwhile; ?>
+<?php endforeach; ?>
 </tbody>
 </table>
 </div>
+</details>
+<?php endforeach; ?>
 <?php endif; ?>
 </main>
 </body>
