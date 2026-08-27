@@ -220,22 +220,19 @@ $sesiones_creadas = 0;
 $sesiones_omitidas = 0;
 $es_regular = isset($_POST['es_regular']);
 if ($es_regular) {
-$id_profesor_regular = filter_input(
-INPUT_POST,
-'id_profesor_regular',
+$id_profesor_regular = filter_var(
+$_POST['id_profesor_regular'] ?? '',
 FILTER_VALIDATE_INT
 );
-$id_espacio_regular = filter_input(
-INPUT_POST,
-'id_espacio_regular',
+$id_espacio_regular = filter_var(
+$_POST['id_espacio_regular'] ?? '',
 FILTER_VALIDATE_INT
 );
 $hora_inicio_regular = trim(
 $_POST['hora_inicio_regular'] ?? ''
 );
-$aforo_regular = filter_input(
-INPUT_POST,
-'aforo_regular',
+$aforo_regular = filter_var(
+$_POST['aforo_regular'] ?? '',
 FILTER_VALIDATE_INT
 );
 $fechas_regulares = $_POST['fechas_regulares'] ?? [];

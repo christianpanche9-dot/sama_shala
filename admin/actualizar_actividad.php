@@ -7,9 +7,8 @@ header('Location: actividades.php');
 exit;
 }
 
-$id_actividad = filter_input(
-INPUT_POST,
-'id_actividad',
+$id_actividad = filter_var(
+$_POST['id_actividad'] ?? '',
 FILTER_VALIDATE_INT
 );
 if (!$id_actividad) {
