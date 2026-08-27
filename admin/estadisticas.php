@@ -50,6 +50,23 @@ s.fecha DESC,
 s.hora_inicio DESC
 ";
 $resultado = $conexion->query($sql);
+$sesiones = $resultado->fetch_all(MYSQLI_ASSOC);
+$total_sesiones = count($sesiones);
+$total_confirmadas = 0;
+$total_canceladas = 0;
+$total_esperando = 0;
+$suma_ocupacion = 0;
+foreach ($sesiones as $sesion) {
+$total_confirmadas += (int) $sesion['confirmadas'];
+$total_canceladas += (int) $sesion['canceladas'];
+$total_esperando += (int) $sesion['esperando'];
+$suma_ocupacion += $sesion['aforo'] > 0
+? min(100, $sesion['confirmadas'] / $sesion['aforo'] * 100)
+: 0;
+}
+$ocupacion_media = $total_sesiones > 0
+? round($suma_ocupacion / $total_sesiones, 1)
+: 0;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -68,10 +85,41 @@ content="width=device-width, initial-scale=1.0"
 </head>
 <body>
 <?php require "menu_admin.php"; ?>
-<main class="contenedor">
+<main class="contenedor seccion">
+<div class="encabezado-pagina">
+<p class="etiqueta">
+Administración
+</p>
 <h1>Estadísticas de ocupación</h1>
+<p>
+Resumen de aforo, confirmaciones y asistencia de todas las sesiones.
+</p>
+</div>
+<?php if ($total_sesiones === 0): ?>
+<div class="mensaje mensaje-aviso">
+Todavía no hay sesiones para mostrar estadísticas.
+</div>
+<?php else: ?>
+<div class="rejilla-resumen-admin">
+<div class="tarjeta-resumen">
+<span>Sesiones</span>
+<strong><?= $total_sesiones ?></strong>
+</div>
+<div class="tarjeta-resumen">
+<span>Ocupación media</span>
+<strong><?= $ocupacion_media ?>%</strong>
+</div>
+<div class="tarjeta-resumen">
+<span>Confirmadas</span>
+<strong><?= $total_confirmadas ?></strong>
+</div>
+<div class="tarjeta-resumen">
+<span>En espera</span>
+<strong><?= $total_esperando ?></strong>
+</div>
+</div>
 <div class="tabla-responsive">
-<table>
+<table class="tabla-admin">
 <thead>
 <tr>
 <th>Sesión</th>
@@ -85,10 +133,7 @@ content="width=device-width, initial-scale=1.0"
 </tr>
 </thead>
 <tbody>
-<?php while (
-$sesion =
-$resultado->fetch_assoc()
-): ?>
+<?php foreach ($sesiones as $sesion): ?>
 <?php
 $ocupacion =
 $sesion["aforo"] > 0
@@ -165,10 +210,11 @@ $sesion["asistieron"] ?>
 $sesion["ausentes"] ?>
 </td>
 </tr>
-<?php endwhile; ?>
+<?php endforeach; ?>
 </tbody>
 </table>
 </div>
+<?php endif; ?>
 </main>
 </body>
 </html>
