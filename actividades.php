@@ -256,7 +256,7 @@ iframe.style.width = (alto * proporcion) + "px";
 
 window.onYouTubeIframeAPIReady = function () {
 reproductor = new YT.Player("video-fondo-hero", {
-videoId: "_arO3B50jlY",
+videoId: "OuNYTfJohwY",
 playerVars: {
 autoplay: 1,
 mute: 1,
