@@ -128,18 +128,29 @@ s.hora_fin,
 a.id_actividad,
 a.nombre AS actividad,
 a.nivel,
-COALESCE(
-NULLIF(p.username, ''),
-CONCAT(p.nombre, ' ', p.apellidos)
+GROUP_CONCAT(
+DISTINCT COALESCE(NULLIF(p.username, ''), CONCAT(p.nombre, ' ', p.apellidos))
+ORDER BY p.apellidos, p.nombre
+SEPARATOR ', '
 ) AS profesor
 FROM sesiones AS s
 INNER JOIN actividades AS a
 ON s.id_actividad = a.id_actividad
+INNER JOIN sesiones_profesores AS sp
+ON sp.id_sesion = s.id_sesion
 INNER JOIN profesores AS p
-ON s.id_profesor = p.id_profesor
+ON sp.id_profesor = p.id_profesor
 WHERE a.activa = 1
 AND s.estado IN ('programada', 'completa')
 AND s.fecha BETWEEN ? AND ?
+GROUP BY
+s.id_sesion,
+s.fecha,
+s.hora_inicio,
+s.hora_fin,
+a.id_actividad,
+a.nombre,
+a.nivel
 ORDER BY s.fecha, s.hora_inicio
 ";
 $stmt_semana = $conexion->prepare($sql_semana);
@@ -603,27 +614,11 @@ $actividad['nombre']
 </div>
 <?php endif; ?>
 <div class="contenido-tarjeta">
-<div class="metadatos">
-<span class="insignia">
-<?= escapar(
-$actividad['categoria']
-) ?>
-</span>
-<span class="insignia insignia-clara">
-<?= escapar(
-texto_tipo_actividad(
-$actividad['tipo']
-)
-) ?>
-</span>
-<span class="insignia insignia-clara">
-<?= escapar(
-texto_nivel(
-$actividad['nivel']
-)
-) ?>
-</span>
-</div>
+<p class="dato-destacado">
+<?= t('Categoría:') ?> <?= escapar($actividad['categoria']) ?>
+· <?= t('Tipo:') ?> <?= escapar(texto_tipo_actividad($actividad['tipo'])) ?>
+· <?= t('Nivel:') ?> <?= escapar(texto_nivel($actividad['nivel'])) ?>
+</p>
 <h2>
 <?= escapar(
 $actividad['nombre']

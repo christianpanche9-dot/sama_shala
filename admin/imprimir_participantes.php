@@ -16,16 +16,12 @@ s.fecha,
 s.hora_inicio,
 s.hora_fin,
 a.nombre AS actividad,
-e.nombre AS espacio,
-m.nombre AS profesor_nombre,
-m.apellidos AS profesor_apellidos
+e.nombre AS espacio
 FROM sesiones s
 INNER JOIN actividades a
 ON s.id_actividad = a.id_actividad
 INNER JOIN espacios e
 ON s.id_espacio = e.id_espacio
-INNER JOIN profesores m
-ON s.id_profesor = m.id_profesor
 WHERE s.id_sesion = ?
 ";
 $stmt_sesion =
@@ -42,6 +38,7 @@ $stmt_sesion->close();
 if (!$sesion) {
 exit("La sesión no existe.");
 }
+$profesores_sesion_impresion = profesoresDeSesion($conexion, $id_sesion);
 $sql = "
 SELECT
 u.nombre,
@@ -131,11 +128,7 @@ $sesion["hora_fin"],
 <p>
 <?= escapar($sesion["espacio"]) ?>
 ·
-<?= escapar(
-$sesion["profesor_nombre"] .
-" " .
-$sesion["profesor_apellidos"]
-) ?>
+<?= escapar(nombresProfesores($profesores_sesion_impresion)) ?>
 </p>
 </header>
 <table>

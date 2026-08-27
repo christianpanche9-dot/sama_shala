@@ -11,15 +11,29 @@ s.aforo,
 s.estado,
 a.nombre AS actividad,
 e.nombre AS espacio,
-m.nombre AS profesor_nombre,
-m.apellidos AS profesor_apellidos
+GROUP_CONCAT(
+CONCAT(m.nombre, ' ', m.apellidos)
+ORDER BY m.apellidos, m.nombre
+SEPARATOR ', '
+) AS profesores
 FROM sesiones s
 INNER JOIN actividades a
 ON s.id_actividad = a.id_actividad
 INNER JOIN espacios e
 ON s.id_espacio = e.id_espacio
+INNER JOIN sesiones_profesores sp
+ON sp.id_sesion = s.id_sesion
 INNER JOIN profesores m
-ON s.id_profesor = m.id_profesor
+ON sp.id_profesor = m.id_profesor
+GROUP BY
+s.id_sesion,
+s.fecha,
+s.hora_inicio,
+s.hora_fin,
+s.aforo,
+s.estado,
+a.nombre,
+e.nombre
 ORDER BY
 s.fecha ASC,
 s.hora_inicio ASC
@@ -111,7 +125,7 @@ Programar una sesión
 <th>Horario</th>
 <th>Actividad</th>
 <th>Espacio</th>
-<th>Profesor</th>
+<th>Profesores</th>
 <th>Aforo</th>
 <th>Estado</th>
 <th>Acciones</th>
@@ -153,9 +167,7 @@ $sesion["espacio"]
 
 <td>
 <?= htmlspecialchars(
-$sesion["profesor_nombre"] .
-" " .
-$sesion["profesor_apellidos"]
+$sesion["profesores"]
 ) ?>
 </td>
 <td>

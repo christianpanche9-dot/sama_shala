@@ -20,16 +20,12 @@ s.hora_fin,
 s.aforo,
 s.estado,
 a.nombre AS actividad,
-e.nombre AS espacio,
-m.nombre AS profesor_nombre,
-m.apellidos AS profesor_apellidos
+e.nombre AS espacio
 FROM sesiones s
 INNER JOIN actividades a
 ON s.id_actividad = a.id_actividad
 INNER JOIN espacios e
 ON s.id_espacio = e.id_espacio
-INNER JOIN profesores m
-ON s.id_profesor = m.id_profesor
 WHERE s.id_sesion = ?
 ";
 $stmt_sesion =
@@ -47,6 +43,7 @@ if (!$sesion) {
 http_response_code(404);
 exit("La sesión no existe.");
 }
+$profesores_sesion = profesoresDeSesion($conexion, $id_sesion);
 $sql_participantes = "
 SELECT
 r.id_reserva,
@@ -192,12 +189,8 @@ $sesion["hora_fin"],
 <?= escapar($sesion["espacio"]) ?>
 </p>
 <p>
-<strong>Profesor:</strong>
-<?= escapar(
-$sesion["profesor_nombre"] .
-" " .
-$sesion["profesor_apellidos"]
-) ?>
+<strong><?= count($profesores_sesion) === 1 ? 'Profesor:' : 'Profesores:' ?></strong>
+<?= escapar(nombresProfesores($profesores_sesion)) ?>
 </p>
 <p>
 <strong>Ocupación:</strong>

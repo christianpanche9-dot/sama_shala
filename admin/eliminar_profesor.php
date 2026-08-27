@@ -19,7 +19,7 @@ exit;
 
 $sql_uso = "
 SELECT COUNT(*) AS total
-FROM sesiones
+FROM sesiones_profesores
 WHERE id_profesor = ?
 ";
 $stmt_uso = $conexion->prepare($sql_uso);

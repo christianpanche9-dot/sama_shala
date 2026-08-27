@@ -23,8 +23,6 @@ a.nombre AS actividad,
 a.tipo AS tipo_actividad,
 a.precio AS precio_actividad,
 e.nombre AS espacio,
-m.nombre AS profesor_nombre,
-m.apellidos AS profesor_apellidos,
 (
 SELECT COUNT(*)
 FROM reservas r
@@ -36,8 +34,6 @@ INNER JOIN actividades a
 ON s.id_actividad = a.id_actividad
 INNER JOIN espacios e
 ON s.id_espacio = e.id_espacio
-INNER JOIN profesores m
-ON s.id_profesor = m.id_profesor
 WHERE s.id_sesion = ?
 ";
 $stmt = $conexion->prepare($sql);
@@ -50,6 +46,7 @@ if (!$sesion) {
 http_response_code(404);
 exit(t("La sesión no existe."));
 }
+$profesores_sesion_reserva = profesoresDeSesion($conexion, $id_sesion);
 $inicio = new DateTime(
 $sesion["fecha"] . " " . $sesion["hora_inicio"]
 );
@@ -155,12 +152,10 @@ content="width=device-width, initial-scale=1.0"
 <?= escapar($sesion["espacio"]) ?>
 </p>
 <p>
-<strong><?= t("Profesor:") ?></strong>
-<?= escapar(
-    $sesion["profesor_nombre"] .
-" " .
-$sesion["profesor_apellidos"]
-) ?>
+<strong>
+<?= count($profesores_sesion_reserva) === 1 ? t("Profesor:") : t("Profesores:") ?>
+</strong>
+<?= escapar(nombresProfesores($profesores_sesion_reserva)) ?>
 </p>
 <?php if ($plazas_disponibles > 0): ?>
 <div class="mensaje exito">

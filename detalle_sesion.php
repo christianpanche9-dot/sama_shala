@@ -37,12 +37,6 @@ e.nombre AS espacio,
 e.ubicacion,
 e.descripcion AS descripcion_espacio,
 e.aforo_maximo,
-CONCAT(
-m.nombre,
-' ',
-m.apellidos
-) AS profesor,
-m.especialidad,
 COUNT(r.id_reserva)
 AS reservas_confirmadas,
 GREATEST(
@@ -54,8 +48,6 @@ INNER JOIN actividades AS a
 ON s.id_actividad = a.id_actividad
 INNER JOIN espacios AS e
 ON s.id_espacio = e.id_espacio
-INNER JOIN profesores AS m
-ON s.id_profesor = m.id_profesor
 LEFT JOIN reservas AS r
 ON r.id_sesion = s.id_sesion
 AND r.estado = 'confirmada'
@@ -81,10 +73,7 @@ a.imagen,
 e.nombre,
 e.ubicacion,
 e.descripcion,
-e.aforo_maximo,
-m.nombre,
-m.apellidos,
-m.especialidad
+e.aforo_maximo
 ";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param(
@@ -98,6 +87,7 @@ if (!$sesion) {
 http_response_code(404);
 die(t('La sesión solicitada no existe.'));
 }
+$profesores_sesion = profesoresDeSesion($conexion, $id_sesion);
 $plazas =
 (int) $sesion['plazas_disponibles'];
 $reservas =
@@ -172,20 +162,6 @@ $sesion['id_actividad'] ?>"
 <?php endif; ?>
 <div class="ficha-sesion">
 <section class="informacion-sesion">
-<div class="metadatos">
-<span class="insignia">
-<?= escapar(
-$sesion['categoria']
-) ?>
-</span>
-<span class="insignia insignia-clara">
-<?= escapar(
-texto_nivel(
-$sesion['nivel']
-)
-) ?>
-</span>
-</div>
 <h1>
     <?= escapar($sesion['actividad']) ?>
 </h1>
@@ -196,6 +172,24 @@ $sesion['descripcion']
 ) ?>
 </p>
 <div class="rejilla-datos">
+<div class="dato">
+<span><?= t('Categoría') ?></span>
+<strong>
+<?= escapar($sesion['categoria']) ?>
+</strong>
+</div>
+<div class="dato">
+<span><?= t('Tipo') ?></span>
+<strong>
+<?= escapar(texto_tipo_actividad($sesion['tipo'])) ?>
+</strong>
+</div>
+<div class="dato">
+<span><?= t('Nivel') ?></span>
+<strong>
+<?= escapar(texto_nivel($sesion['nivel'])) ?>
+</strong>
+</div>
     <div class="dato">
 <span><?= t('Fecha') ?></span>
 <strong>
@@ -245,22 +239,21 @@ $sesion['ubicacion']
 </strong>
 </div>
 <div class="dato">
-<span><?= t('Profesor') ?></span>
+<span><?= count($profesores_sesion) === 1 ? t('Profesor') : t('Profesores') ?></span>
 <strong>
-<?= escapar(
-$sesion['profesor']
-) ?>
+<?= escapar(nombresProfesores($profesores_sesion)) ?>
 </strong>
 </div>
 </div>
 <?php if (
-    !empty($sesion['especialidad'])
+    count($profesores_sesion) === 1 &&
+    !empty($profesores_sesion[0]['especialidad'])
 ): ?>
 
 <p>
 <strong><?= t('Especialidad del profesor:') ?></strong>
 <?= escapar(
-$sesion['especialidad']
+$profesores_sesion[0]['especialidad']
 ) ?>
 </p>
 <?php endif; ?>

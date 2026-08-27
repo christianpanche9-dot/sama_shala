@@ -88,6 +88,11 @@ $stmt_profesores = $conexion->prepare($sql_profesores);
 $stmt_profesores->bind_param('i', $sesion['id_profesor']);
 $stmt_profesores->execute();
 $profesores = $stmt_profesores->get_result();
+
+$profesores_asignados = array_column(
+profesoresDeSesion($conexion, $id_sesion),
+'id_profesor'
+);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -198,26 +203,29 @@ $espacio['aforo_maximo'] ?>
 <?php endwhile; ?>
 </select>
 </div>
-<div class="campo">
-<label for="id_profesor">
-Profesor
+<div class="campo campo-completo">
+<label>
+Profesores
 </label>
-<select
-id="id_profesor"
-name="id_profesor"
-required
->
+<div class="lista-profesores-checkbox">
 <?php while (
 $profesor =
 $profesores->fetch_assoc()
 ): ?>
-<option
+<div class="campo-checkbox">
+<label>
+<input
+type="checkbox"
+name="profesores[]"
 value="<?= (int)
 $profesor['id_profesor'] ?>"
-<?= (int) $profesor['id_profesor'] === (int) $sesion['id_profesor']
-? 'selected'
-: '' ?>
+<?= in_array(
+(int) $profesor['id_profesor'],
+$profesores_asignados,
+true
+) ? 'checked' : '' ?>
 >
+<span>
 <?= escapar(
 $profesor['nombre'] . ' ' .
 $profesor['apellidos']
@@ -232,9 +240,14 @@ $profesor['especialidad']
 $profesor['especialidad']
 ) ?>
 <?php endif; ?>
-</option>
+</span>
+</label>
+</div>
 <?php endwhile; ?>
-</select>
+</div>
+<small>
+Selecciona uno o más profesores para esta sesión.
+</small>
 </div>
 <div class="campo">
 <label for="fecha">

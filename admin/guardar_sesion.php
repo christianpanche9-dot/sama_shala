@@ -12,11 +12,13 @@ INPUT_POST,
 "id_espacio",
 FILTER_VALIDATE_INT
 );
-$id_profesor = filter_input(
-INPUT_POST,
-"id_profesor",
-FILTER_VALIDATE_INT
-);
+$profesores_seleccionados = $_POST["profesores"] ?? [];
+if (!is_array($profesores_seleccionados)) {
+$profesores_seleccionados = [];
+}
+$profesores_seleccionados = array_values(array_unique(array_filter(
+array_map("intval", $profesores_seleccionados)
+)));
 $fecha = trim($_POST["fecha"] ?? "");
 $hora_inicio = trim($_POST["hora_inicio"] ?? "");
 $duracion = filter_input(
@@ -43,8 +45,8 @@ $errores[] = "Debes seleccionar una actividad válida.";
 if (!$id_espacio) {
 $errores[] = "Debes seleccionar un espacio válido.";
 }
-if (!$id_profesor) {
-$errores[] = "Debes seleccionar un profesor válido.";
+if (empty($profesores_seleccionados)) {
+$errores[] = "Debes seleccionar al menos un profesor.";
 }
 if ($fecha === "") {
     $errores[] = "Debes indicar una fecha.";
@@ -201,8 +203,9 @@ $stmt_espacio->close();
 |--------------------------------------------------------------------------
 */
 
-if ($id_profesor) {
-    $sql_profesor = "
+$profesores_datos = [];
+foreach ($profesores_seleccionados as $id_profesor_valido) {
+$sql_profesor = "
 SELECT id_profesor, nombre, apellidos
 FROM profesores
 WHERE id_profesor = ?
@@ -212,7 +215,7 @@ $stmt_profesor =
 $conexion->prepare($sql_profesor);
 $stmt_profesor->bind_param(
 "i",
-$id_profesor
+$id_profesor_valido
 );
 $stmt_profesor->execute();
 $resultado_profesor =
@@ -221,7 +224,9 @@ $profesor =
 $resultado_profesor->fetch_assoc();
 if (!$profesor) {
 $errores[] =
-"El profesor seleccionado no existe o está inactivo.";
+"Uno de los profesores seleccionados no existe o está inactivo.";
+} else {
+$profesores_datos[] = $profesor;
 }
 $stmt_profesor->close();
 }
@@ -292,12 +297,14 @@ s.hora_fin,
 a.nombre AS actividad,
 e.nombre AS espacio
 FROM sesiones s
+INNER JOIN sesiones_profesores sp
+ON sp.id_sesion = s.id_sesion
 INNER JOIN actividades a
 ON s.id_actividad = a.id_actividad
 INNER JOIN espacios e
 ON s.id_espacio = e.id_espacio
 WHERE s.fecha = ?
-AND s.id_profesor = ?
+AND sp.id_profesor = ?
 AND s.estado <> 'cancelada'
 AND s.hora_inicio < ?
 AND s.hora_fin > ?
@@ -305,10 +312,12 @@ LIMIT 1
 ";
 $stmt_conflicto_profesor =
 $conexion->prepare($sql_conflicto_profesor);
+foreach ($profesores_datos as $profesor_conflicto) {
+$id_profesor_conflicto = (int) $profesor_conflicto["id_profesor"];
 $stmt_conflicto_profesor->bind_param(
 "siss",
 $fecha,
-$id_profesor,
+$id_profesor_conflicto,
 $fin_comprobacion->format("H:i:s"),
 $inicio_comprobacion->format("H:i:s")
 );
@@ -319,7 +328,8 @@ if ($resultado_conflicto_profesor->num_rows > 0) {
 $conflicto =
 $resultado_conflicto_profesor->fetch_assoc();
 $errores[] =
-"El profesor ya tiene asignada la actividad \"" .
+htmlspecialchars($profesor_conflicto["nombre"] . " " . $profesor_conflicto["apellidos"]) .
+" ya tiene asignada la actividad \"" .
 htmlspecialchars($conflicto["actividad"]) .
 "\" en " .
 htmlspecialchars($conflicto["espacio"]) .
@@ -328,6 +338,7 @@ substr($conflicto["hora_inicio"], 0, 5) .
 " a " .
 substr($conflicto["hora_fin"], 0, 5) .
 ".";
+}
 }
 $stmt_conflicto_profesor->close();
 }
@@ -381,6 +392,9 @@ exit;
 | 8. Insertar la sesión
 |--------------------------------------------------------------------------
 */
+$id_profesor_principal = $profesores_seleccionados[0];
+$conexion->begin_transaction();
+try {
 $sql_insertar = "
 INSERT INTO sesiones (
 id_actividad,
@@ -401,21 +415,42 @@ $stmt_insertar->bind_param(
 "iiisssis",
 $id_actividad,
 $id_espacio,
-$id_profesor,
+$id_profesor_principal,
 $fecha,
 $hora_inicio,
 $hora_fin,
 $aforo,
 $observaciones
 );
-if ($stmt_insertar->execute()) {
+$stmt_insertar->execute();
+$id_sesion_creada = $conexion->insert_id;
 $stmt_insertar->close();
+
+$sql_insertar_profesores = "
+INSERT INTO sesiones_profesores (id_sesion, id_profesor)
+VALUES (?, ?)
+";
+$stmt_insertar_profesores =
+$conexion->prepare($sql_insertar_profesores);
+foreach ($profesores_seleccionados as $id_profesor_asignado) {
+$stmt_insertar_profesores->bind_param(
+"ii",
+$id_sesion_creada,
+$id_profesor_asignado
+);
+$stmt_insertar_profesores->execute();
+}
+$stmt_insertar_profesores->close();
+
+$conexion->commit();
 $conexion->close();
 header(
     "Location: sesiones.php?mensaje=sesion_creada"
 );
 exit;
-}
-$stmt_insertar->close();
+} catch (Throwable $error) {
+$conexion->rollback();
 $conexion->close();
 echo "No se ha podido guardar la sesión.";
+exit;
+}

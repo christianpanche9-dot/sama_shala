@@ -272,6 +272,12 @@ VALUES (?, ?, ?, ?, ?, ?, ?, 'programada')
 ";
 $stmt_insertar_sesion =
 $conexion->prepare($sql_insertar_sesion);
+$sql_insertar_sesion_profesor = "
+INSERT INTO sesiones_profesores (id_sesion, id_profesor)
+VALUES (?, ?)
+";
+$stmt_insertar_sesion_profesor =
+$conexion->prepare($sql_insertar_sesion_profesor);
 foreach ($fechas_regulares as $fecha_regular) {
 $fecha_regular = trim($fecha_regular);
 if (!fecha_valida($fecha_regular)) {
@@ -311,6 +317,13 @@ $hora_fin_sesion,
 $aforo_regular
 );
 if ($stmt_insertar_sesion->execute()) {
+$id_sesion_regular = $conexion->insert_id;
+$stmt_insertar_sesion_profesor->bind_param(
+'ii',
+$id_sesion_regular,
+$id_profesor_regular
+);
+$stmt_insertar_sesion_profesor->execute();
 $sesiones_creadas++;
 } else {
 $sesiones_omitidas++;
@@ -318,6 +331,7 @@ $sesiones_omitidas++;
 }
 $stmt_conflicto->close();
 $stmt_insertar_sesion->close();
+$stmt_insertar_sesion_profesor->close();
 }
 }
 header(

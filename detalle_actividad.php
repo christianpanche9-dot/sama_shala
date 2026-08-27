@@ -51,22 +51,24 @@ s.estado,
 s.observaciones,
 e.nombre AS espacio,
 e.ubicacion,
-CONCAT(
-m.nombre,
-' ',
-m.apellidos
+GROUP_CONCAT(
+DISTINCT CONCAT(m.nombre, ' ', m.apellidos)
+ORDER BY m.apellidos, m.nombre
+SEPARATOR ', '
 ) AS profesor,
-COUNT(r.id_reserva)
+COUNT(DISTINCT r.id_reserva)
 AS reservas_confirmadas,
 GREATEST(
-s.aforo - COUNT(r.id_reserva),
+s.aforo - COUNT(DISTINCT r.id_reserva),
 0
 ) AS plazas_disponibles
 FROM sesiones AS s
 INNER JOIN espacios AS e
 ON s.id_espacio = e.id_espacio
+INNER JOIN sesiones_profesores AS sp
+ON sp.id_sesion = s.id_sesion
 INNER JOIN profesores AS m
-ON s.id_profesor = m.id_profesor
+ON sp.id_profesor = m.id_profesor
 LEFT JOIN reservas AS r
 ON r.id_sesion = s.id_sesion
 AND r.estado = 'confirmada'
@@ -88,9 +90,7 @@ s.aforo,
 s.estado,
 s.observaciones,
 e.nombre,
-e.ubicacion,
-m.nombre,
-m.apellidos
+e.ubicacion
 ORDER BY
 s.fecha,
 s.hora_inicio
@@ -146,27 +146,6 @@ $actividad['nombre']
 <?php endif; ?>
 </div>
 <div>
-<div class="metadatos">
-<span class="insignia">
-    <?= escapar(
-$actividad['categoria']
-) ?>
-</span>
-<span class="insignia insignia-clara">
-<?= escapar(
-texto_tipo_actividad(
-$actividad['tipo']
-)
-) ?>
-</span>
-<span class="insignia insignia-clara">
-<?= escapar(
-texto_nivel(
-$actividad['nivel']
-)
-) ?>
-</span>
-</div>
 <h1>
 <?= escapar($actividad['nombre']) ?>
 </h1>
@@ -174,6 +153,18 @@ $actividad['nivel']
 <?= escapar(
 $actividad['descripcion']
 ) ?>
+</p>
+<p>
+<strong><?= t('Categoría:') ?></strong>
+<?= escapar($actividad['categoria']) ?>
+</p>
+<p>
+<strong><?= t('Tipo:') ?></strong>
+<?= escapar(texto_tipo_actividad($actividad['tipo'])) ?>
+</p>
+<p>
+<strong><?= t('Nivel:') ?></strong>
+<?= escapar(texto_nivel($actividad['nivel'])) ?>
 </p>
 <p>
 <strong><?= t('Duración habitual:') ?></strong>
@@ -263,7 +254,7 @@ $sesion['ubicacion']
 </p>
 <?php endif; ?>
 <p>
-<strong><?= t('Profesor:') ?></strong>
+<strong><?= str_contains($sesion['profesor'], ',') ? t('Profesores:') : t('Profesor:') ?></strong>
 <?= escapar(
 $sesion['profesor']
 ) ?>

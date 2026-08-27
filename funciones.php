@@ -200,6 +200,31 @@ $descuentos = [
 return $descuentos[$numero_usos] ?? 0;
 }
 
+function profesoresDeSesion(mysqli $conexion, int $id_sesion): array
+{
+$sql = "
+SELECT p.id_profesor, p.nombre, p.apellidos, p.especialidad
+FROM sesiones_profesores sp
+INNER JOIN profesores p ON sp.id_profesor = p.id_profesor
+WHERE sp.id_sesion = ?
+ORDER BY p.apellidos, p.nombre
+";
+$stmt = $conexion->prepare($sql);
+$stmt->bind_param('i', $id_sesion);
+$stmt->execute();
+$profesores = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+return $profesores;
+}
+
+function nombresProfesores(array $profesores): string
+{
+return implode(', ', array_map(
+fn ($profesor) => trim($profesor['nombre'] . ' ' . $profesor['apellidos']),
+$profesores
+));
+}
+
 function mejorDescuentoEventoTerapia(
 mysqli $conexion,
 int $id_usuario
