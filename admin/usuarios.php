@@ -193,10 +193,18 @@ strtotime($usuario['fecha_registro'])
 ) ?>
 </td>
 <td class="acciones-tabla">
-<a
-class="boton boton-secundario boton-pequeno"
-href="editar_usuario.php?id_usuario=<?= (int) $usuario['id_usuario'] ?>"
+<div class="menu-fila-acciones">
+<button
+type="button"
+class="boton-acciones-fila"
+aria-haspopup="true"
+aria-expanded="false"
 >
+Acciones
+<span class="flecha-menu-mas">▾</span>
+</button>
+<div class="menu-fila-desplegable">
+<a href="editar_usuario.php?id_usuario=<?= (int) $usuario['id_usuario'] ?>">
 Editar
 </a>
 <?php if ((int) $usuario['id_usuario'] === idUsuarioActual()): ?>
@@ -208,7 +216,7 @@ type="hidden"
 name="id_usuario"
 value="<?= (int) $usuario['id_usuario'] ?>"
 >
-<button class="boton boton-secundario boton-pequeno" type="submit">
+<button type="submit">
 <?= (int) $usuario['activo'] === 1
 ? 'Desactivar'
 : 'Activar' ?>
@@ -224,11 +232,13 @@ type="hidden"
 name="id_usuario"
 value="<?= (int) $usuario['id_usuario'] ?>"
 >
-<button class="boton peligro boton-pequeno" type="submit">
+<button type="submit" class="peligro-texto">
 Eliminar
 </button>
 </form>
 <?php endif; ?>
+</div>
+</div>
 </td>
 </tr>
 <?php endwhile; ?>
@@ -237,5 +247,55 @@ Eliminar
 </div>
 <?php endif; ?>
 </main>
+<script>
+(function () {
+var abiertos = [];
+function cerrarTodos() {
+abiertos.forEach(function (item) {
+item.desplegable.classList.remove("abierto");
+item.boton.classList.remove("abierto");
+item.boton.setAttribute("aria-expanded", "false");
+});
+}
+document.querySelectorAll(".menu-fila-acciones").forEach(function (contenedor) {
+var boton = contenedor.querySelector(".boton-acciones-fila");
+var desplegable = contenedor.querySelector(".menu-fila-desplegable");
+if (!boton || !desplegable) {
+return;
+}
+document.body.appendChild(desplegable);
+abiertos.push({ boton: boton, desplegable: desplegable, contenedor: contenedor });
+boton.addEventListener("click", function (evento) {
+evento.stopPropagation();
+var yaAbierto = desplegable.classList.contains("abierto");
+cerrarTodos();
+if (yaAbierto) {
+return;
+}
+var rect = boton.getBoundingClientRect();
+desplegable.style.top = rect.bottom + 6 + "px";
+desplegable.style.right = window.innerWidth - rect.right + "px";
+desplegable.classList.add("abierto");
+boton.classList.add("abierto");
+boton.setAttribute("aria-expanded", "true");
+});
+});
+document.addEventListener("click", function (evento) {
+var dentro = abiertos.some(function (item) {
+return item.contenedor.contains(evento.target) || item.desplegable.contains(evento.target);
+});
+if (!dentro) {
+cerrarTodos();
+}
+});
+document.addEventListener("keydown", function (evento) {
+if (evento.key === "Escape") {
+cerrarTodos();
+}
+});
+window.addEventListener("scroll", cerrarTodos, true);
+window.addEventListener("resize", cerrarTodos);
+})();
+</script>
 </body>
 </html>

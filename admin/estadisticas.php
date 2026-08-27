@@ -67,6 +67,16 @@ $suma_ocupacion += $sesion['aforo'] > 0
 $ocupacion_media = $total_sesiones > 0
 ? round($suma_ocupacion / $total_sesiones, 1)
 : 0;
+$sesiones_por_mes = [];
+foreach ($sesiones as $sesion) {
+$clave_mes = substr($sesion['fecha'], 0, 7);
+if (!isset($sesiones_por_mes[$clave_mes])) {
+$sesiones_por_mes[$clave_mes] = [];
+}
+$sesiones_por_mes[$clave_mes][] = $sesion;
+}
+$mes_actual = date('Y-m');
+$primer_mes = array_key_first($sesiones_por_mes);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -118,6 +128,17 @@ Todavía no hay sesiones para mostrar estadísticas.
 <strong><?= $total_esperando ?></strong>
 </div>
 </div>
+<?php foreach ($sesiones_por_mes as $clave_mes => $sesiones_del_mes): ?>
+<?php $fecha_mes = DateTime::createFromFormat('Y-m-d', $clave_mes . '-01'); ?>
+<details class="grupo-mes-admin" <?= ($clave_mes === $mes_actual || $clave_mes === $primer_mes) ? 'open' : '' ?>>
+<summary class="resumen-mes-admin">
+<span>
+<?= escapar(texto_mes((int) $fecha_mes->format('n'))) ?> <?= $fecha_mes->format('Y') ?>
+</span>
+<span class="contador-mes-admin">
+<?= count($sesiones_del_mes) ?> <?= count($sesiones_del_mes) === 1 ? 'sesión' : 'sesiones' ?>
+</span>
+</summary>
 <div class="tabla-responsive">
 <table class="tabla-admin">
 <thead>
@@ -133,7 +154,7 @@ Todavía no hay sesiones para mostrar estadísticas.
 </tr>
 </thead>
 <tbody>
-<?php foreach ($sesiones as $sesion): ?>
+<?php foreach ($sesiones_del_mes as $sesion): ?>
 <?php
 $ocupacion =
 $sesion["aforo"] > 0
@@ -214,6 +235,8 @@ $sesion["ausentes"] ?>
 </tbody>
 </table>
 </div>
+</details>
+<?php endforeach; ?>
 <?php endif; ?>
 </main>
 </body>
