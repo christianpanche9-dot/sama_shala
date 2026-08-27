@@ -47,6 +47,9 @@ Estadísticas
 <a href="../index.php">
 Ver web pública
 </a>
+<a href="../logout.php">
+Salir
+</a>
 <div class="menu-mas" id="menu-mas-admin">
 <button
 type="button"

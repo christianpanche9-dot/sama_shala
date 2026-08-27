@@ -89,18 +89,35 @@ los profesores y los horarios del centro.
 </strong>
 </a>
 </div>
-<div class="grupo-botones">
-<a class="boton" href="nueva_actividad.php">
-Nueva actividad
+<div class="rejilla-acciones-admin">
+<a class="boton-accion-admin" href="nueva_actividad.php">
+<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+<path d="M3 12h4l2.5-7 4 14 2.5-7H21"/>
+</svg>
+<span>Nueva actividad</span>
 </a>
-<a class="boton" href="nuevo_espacio.php">
-Nuevo espacio
+<a class="boton-accion-admin" href="nuevo_espacio.php">
+<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+<path d="M4 11 12 4l8 7"/>
+<path d="M6 10v9a1 1 0 0 0 1 1h3v-6h4v6h3a1 1 0 0 0 1-1v-9"/>
+</svg>
+<span>Nuevo espacio</span>
 </a>
-<a class="boton" href="nuevo_profesor.php">
-Nuevo profesor
+<a class="boton-accion-admin" href="nuevo_profesor.php">
+<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="12" cy="8" r="4"/>
+<path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>
+</svg>
+<span>Nuevo profesor</span>
 </a>
-<a class="boton" href="nueva_sesion.php">
-Programar sesión
+<a class="boton-accion-admin" href="nueva_sesion.php">
+<svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+<rect x="3" y="5" width="18" height="16" rx="2"/>
+<path d="M3 10h18"/>
+<path d="M8 3v4M16 3v4"/>
+<path d="M12 14v5M9.5 16.5h5"/>
+</svg>
+<span>Programar sesión</span>
 </a>
 </div>
 </main>
