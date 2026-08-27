@@ -71,6 +71,20 @@ $plazas_disponibles = max(
 $pago_con_precio_fijo =
 $sesion["tipo_actividad"] !== "clase" &&
 $sesion["precio_actividad"] !== null;
+$descuento_usuario = null;
+$precio_final = null;
+if ($pago_con_precio_fijo) {
+$descuento_usuario = mejorDescuentoEventoTerapia(
+$conexion,
+idUsuarioActual()
+);
+$precio_final = $descuento_usuario !== null
+? precio_con_descuento(
+(float) $sesion["precio_actividad"],
+$descuento_usuario["descuento"]
+)
+: (float) $sesion["precio_actividad"];
+}
 $paquetes_disponibles = [];
 if (!$pago_con_precio_fijo) {
 $sql_paquetes = "
@@ -183,10 +197,26 @@ value="<?= $sesion["id_sesion"] ?>"
 <fieldset class="campo-completo">
 <legend><?= t("Precio de esta sesión") ?></legend>
 <p class="precio-sesion">
+<?php if ($descuento_usuario !== null): ?>
+<span class="precio-tachado">
+<?= formatear_precio((float) $sesion["precio_actividad"]) ?>
+</span>
+<strong><?= formatear_precio($precio_final) ?></strong>
+<?php else: ?>
 <strong>
 <?= formatear_precio((float) $sesion["precio_actividad"]) ?>
 </strong>
+<?php endif; ?>
 </p>
+<?php if ($descuento_usuario !== null): ?>
+<div class="mensaje mensaje-exito">
+<?= sprintf(
+t("Tienes un %d%% de descuento en este evento o terapia gracias a tu paquete %s."),
+$descuento_usuario["descuento"],
+escapar($descuento_usuario["nombre_paquete"])
+) ?>
+</div>
+<?php endif; ?>
 <p>
 <?= t("Esta sesión se paga con este precio fijo. No admite pago con paquetes ni clase suelta.") ?>
 </p>
@@ -224,7 +254,7 @@ required
 <button type="submit" class="boton">
 <?= sprintf(
 t("Pagar %s y confirmar"),
-formatear_precio((float) $sesion["precio_actividad"])
+formatear_precio($precio_final)
 ) ?>
 </button>
 <?php else: ?>

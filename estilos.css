@@ -468,7 +468,7 @@ padding: 24px;
 display: grid;
 margin-top: 30px;
 grid-template-columns:
-repeat(3, minmax(0, 1fr));
+repeat(auto-fit, minmax(280px, 1fr));
 gap: 24px;
 }
 .imagen-profesor {
@@ -546,6 +546,15 @@ line-height: 1;
 margin: 0 0 12px;
 color: var(--color-texto-tenue);
 font-size: 0.9rem;
+}
+.descuento-paquete {
+margin: 0 0 12px;
+padding: 8px 12px;
+color: var(--color-verde-oscuro);
+background-color: var(--color-verde-claro);
+border-radius: 8px;
+font-size: 0.85rem;
+font-weight: 700;
 }
 .tarjeta-paquete .boton {
 margin-top: auto;
@@ -1113,6 +1122,12 @@ font-size: 1.1rem;
 .precio-sesion strong {
 color: var(--color-verde-oscuro);
 font-size: 1.6rem;
+}
+.precio-tachado {
+margin-right: 8px;
+color: var(--color-texto-tenue);
+font-size: 1.1rem;
+text-decoration: line-through;
 }
 .rejilla-datos {
 display: grid;

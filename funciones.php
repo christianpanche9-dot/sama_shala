@@ -200,6 +200,51 @@ $descuentos = [
 return $descuentos[$numero_usos] ?? 0;
 }
 
+function mejorDescuentoEventoTerapia(
+mysqli $conexion,
+int $id_usuario
+): ?array {
+$sql = "
+SELECT
+bc.id_paquete_cliente,
+tb.nombre AS nombre_paquete,
+tb.numero_usos
+FROM paquetes_clientes bc
+INNER JOIN tipos_paquete tb
+ON bc.id_tipo_paquete = tb.id_tipo_paquete
+WHERE bc.id_usuario = ?
+AND bc.estado = 'activo'
+AND (
+bc.fecha_caducidad IS NULL
+OR bc.fecha_caducidad >= CURDATE()
+)
+";
+$stmt = $conexion->prepare($sql);
+$stmt->bind_param('i', $id_usuario);
+$stmt->execute();
+$paquetes = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt->close();
+$mejor = null;
+foreach ($paquetes as $paquete) {
+$descuento = descuento_terapia_evento_paquete(
+(int) $paquete['numero_usos']
+);
+if ($descuento > 0 && ($mejor === null || $descuento > $mejor['descuento'])) {
+$mejor = [
+'id_paquete_cliente' => (int) $paquete['id_paquete_cliente'],
+'nombre_paquete' => $paquete['nombre_paquete'],
+'descuento' => $descuento
+];
+}
+}
+return $mejor;
+}
+
+function precio_con_descuento(float $precio, int $descuento_porcentaje): float
+{
+return round($precio * (1 - $descuento_porcentaje / 100), 2);
+}
+
 function calcular_porcentaje_ocupacion(
 int $reservas,
 int $aforo

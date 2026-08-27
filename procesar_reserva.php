@@ -96,7 +96,16 @@ throw new Exception(
 t("Introduce los datos de pago.")
 );
 }
-$precio_pagado = (float) $actividad["precio"];
+$descuento_usuario = mejorDescuentoEventoTerapia(
+$conexion,
+$id_usuario
+);
+$precio_pagado = $descuento_usuario !== null
+? precio_con_descuento(
+(float) $actividad["precio"],
+$descuento_usuario["descuento"]
+)
+: (float) $actividad["precio"];
 $metodo_pago_simulado = "simulado";
 $referencia_pago = "SIM-" . strtoupper(bin2hex(random_bytes(8)));
 }

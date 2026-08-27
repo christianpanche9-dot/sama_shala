@@ -65,6 +65,9 @@ content="width=device-width, initial-scale=1.0"
 $es_clase_suelta = (int) $paquete['numero_usos'] === 1;
 $es_destacado = $id_paquete_destacado !== null
 && (int) $paquete['id_tipo_paquete'] === $id_paquete_destacado;
+$descuento_paquete = descuento_terapia_evento_paquete(
+(int) $paquete['numero_usos']
+);
 ?>
 <article class="tarjeta-actividad tarjeta-paquete<?= $es_destacado ? ' tarjeta-paquete-destacada' : '' ?>">
 <?php if ($es_destacado): ?>
@@ -85,6 +88,14 @@ $es_destacado = $id_paquete_destacado !== null
 <p class="validez-paquete">
 <?= t('Válido durante 1 mes desde la compra.') ?>
 </p>
+<?php if ($descuento_paquete > 0): ?>
+<p class="descuento-paquete">
+<?= sprintf(
+t('%d%% de descuento en eventos y terapias.'),
+$descuento_paquete
+) ?>
+</p>
+<?php endif; ?>
 <div class="envoltorio-boton-paquete">
 <a
 class="boton boton-bloque enlace-comprar-paquete desactivado"
@@ -103,12 +114,14 @@ $paquete['id_tipo_paquete'] ?>"
 <?php endforeach; ?>
 </div>
 <aside class="panel-reserva panel-condiciones">
-<h2><?= t('Condiciones de uso') ?></h2>
+<h2><?= t('Condiciones de uso de los paquetes') ?></h2>
 <ol class="lista-condiciones">
-<li><?= t('Los paquetes tienen una duración de 1 mes.') ?></li>
-<li><?= t('Los paquetes son para el uso de las clases de yoga; otras actividades como eventos y terapias tienen un costo aparte de los paquetes de clases.') ?></li>
-<li><?= t('Las clases son intransferibles a otro usuario.') ?></li>
-<li><?= t('Tienes hasta 15 minutos antes de que comience la clase para cancelar tu reserva.') ?></li>
+<li><strong><?= t('Vigencia:') ?></strong> <?= t('30 días desde tu primera clase.') ?></li>
+<li><strong><?= t('Clases:') ?></strong> <?= t('válido para cualquiera de nuestras clases regulares de Yoga y Meditación.') ?></li>
+<li><strong><?= t('Horarios:') ?></strong> <?= t('elige entre los horarios disponibles, de lunes a sábado.') ?></li>
+<li><strong><?= t('Uso:') ?></strong> <?= t('personal e intransferible.') ?></li>
+<li><strong><?= t('Cancelaciones:') ?></strong> <?= t('hasta 15 minutos antes de la clase.') ?></li>
+<li><strong><?= t('Beneficios:') ?></strong> <?= t('5%, 10% o 20% de descuento en eventos y terapias, según tu paquete.') ?></li>
 </ol>
 <label class="casilla-condiciones">
 <input type="checkbox" id="check-condiciones">

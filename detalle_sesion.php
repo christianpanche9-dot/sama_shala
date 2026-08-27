@@ -121,6 +121,17 @@ $puede_reservarse =
 && $plazas > 0;
 $usuario_autenticado = usuarioAutenticado();
 $error_reserva = trim($_GET['error'] ?? '');
+$descuento_usuario = null;
+if (
+$usuario_autenticado &&
+$sesion['tipo'] !== 'clase' &&
+$sesion['precio'] !== null
+) {
+$descuento_usuario = mejorDescuentoEventoTerapia(
+$conexion,
+idUsuarioActual()
+);
+}
 
 $lista_espera =
     !$sesion_terminada &&
@@ -282,8 +293,31 @@ texto_estado_sesion(
 <?php if ($sesion['tipo'] !== 'clase' && $sesion['precio'] !== null): ?>
 <p class="precio-sesion">
 <?= t('Precio:') ?>
+<?php if ($descuento_usuario !== null): ?>
+<span class="precio-tachado">
+<?= formatear_precio((float) $sesion['precio']) ?>
+</span>
+<strong>
+<?= formatear_precio(
+precio_con_descuento(
+(float) $sesion['precio'],
+$descuento_usuario['descuento']
+)
+) ?>
+</strong>
+<?php else: ?>
 <strong><?= formatear_precio((float) $sesion['precio']) ?></strong>
+<?php endif; ?>
 </p>
+<?php if ($descuento_usuario !== null): ?>
+<div class="mensaje mensaje-exito">
+<?= sprintf(
+t('Tienes un %d%% de descuento en este evento o terapia gracias a tu paquete %s.'),
+$descuento_usuario['descuento'],
+escapar($descuento_usuario['nombre_paquete'])
+) ?>
+</div>
+<?php endif; ?>
 <?php endif; ?>
 <h2><?= t('Disponibilidad') ?></h2>
 <p class="numero-plazas">
