@@ -20,6 +20,17 @@ ON bc.id_usuario = u.id_usuario
 ORDER BY bc.fecha_compra DESC
 ";
 $resultado = $conexion->query($sql);
+$pagos = $resultado->fetch_all(MYSQLI_ASSOC);
+$pagos_por_mes = [];
+foreach ($pagos as $pago) {
+$clave_mes = substr($pago['fecha_compra'], 0, 7);
+if (!isset($pagos_por_mes[$clave_mes])) {
+$pagos_por_mes[$clave_mes] = [];
+}
+$pagos_por_mes[$clave_mes][] = $pago;
+}
+$mes_actual = date('Y-m');
+$primer_mes = array_key_first($pagos_por_mes);
 $sql_total = "
 SELECT COALESCE(SUM(precio_pagado), 0) AS total
 FROM paquetes_clientes
@@ -60,11 +71,22 @@ Total ingresado (simulado):
 </p>
 </div>
 </div>
-<?php if ($resultado->num_rows === 0): ?>
+<?php if (count($pagos) === 0): ?>
 <div class="mensaje mensaje-aviso">
 Todavía no se ha comprado ningún paquete.
 </div>
 <?php else: ?>
+<?php foreach ($pagos_por_mes as $clave_mes => $pagos_del_mes): ?>
+<?php $fecha_mes = DateTime::createFromFormat('Y-m-d', $clave_mes . '-01'); ?>
+<details class="grupo-mes-admin" <?= ($clave_mes === $mes_actual || $clave_mes === $primer_mes) ? 'open' : '' ?>>
+<summary class="resumen-mes-admin">
+<span>
+<?= escapar(texto_mes((int) $fecha_mes->format('n'))) ?> <?= $fecha_mes->format('Y') ?>
+</span>
+<span class="contador-mes-admin">
+<?= count($pagos_del_mes) ?> <?= count($pagos_del_mes) === 1 ? 'pago' : 'pagos' ?>
+</span>
+</summary>
 <div class="tabla-responsive">
 <table class="tabla-admin">
 <thead>
@@ -79,7 +101,7 @@ Todavía no se ha comprado ningún paquete.
 </tr>
 </thead>
 <tbody>
-<?php while ($pago = $resultado->fetch_assoc()): ?>
+<?php foreach ($pagos_del_mes as $pago): ?>
 <tr>
 <td>
 <?= date(
@@ -108,10 +130,12 @@ strtotime($pago['fecha_compra'])
 <?= escapar(ucfirst($pago['estado'])) ?>
 </td>
 </tr>
-<?php endwhile; ?>
+<?php endforeach; ?>
 </tbody>
 </table>
 </div>
+</details>
+<?php endforeach; ?>
 <?php endif; ?>
 </main>
 </body>
