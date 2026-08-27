@@ -231,6 +231,13 @@ overflow: hidden;
 display: flex;
 align-items: center;
 }
+.hero-pequeno {
+min-height: 320px;
+padding: 40px 0;
+}
+.hero-pequeno h1 {
+margin: 0 0 14px;
+}
 .hero-video-fondo {
 position: absolute;
 inset: 0;
