@@ -206,9 +206,6 @@ Inactiva
 </select>
 </div>
 <div class="campo campo-acciones-filtro">
-<label class="etiqueta-invisible" aria-hidden="true">
-&nbsp;
-</label>
 <div class="acciones-filtro">
 <button type="submit" class="boton">
 Aplicar filtros
