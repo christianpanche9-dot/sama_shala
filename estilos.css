@@ -1982,22 +1982,23 @@ background: #b42318;
 background: #8f1c13;
 }
 .filtros {
-display: grid;
-grid-template-columns:
-repeat(auto-fit, minmax(180px, 1fr));
+display: flex;
+flex-wrap: wrap;
+align-items: flex-end;
 gap: 1rem;
-align-items: end;
 margin: 2rem 0;
 padding: 1.5rem;
 background: var(--color-azul-claro);
 border-radius: 14px;
 }
+.filtros .campo {
+flex: 1 1 180px;
+}
 .filtros .campo-acciones-filtro {
-grid-column: 1 / -1;
+flex: 0 1 auto;
 }
 .filtros .acciones-filtro {
 flex-wrap: nowrap;
-justify-content: flex-end;
 }
 .resumen-sesion-admin {
 margin: 1.5rem 0;
