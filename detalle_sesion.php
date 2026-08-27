@@ -28,6 +28,8 @@ a.id_actividad,
 a.nombre AS actividad,
 a.descripcion,
 a.categoria,
+a.tipo,
+a.precio,
 a.nivel,
 a.duracion_minutos,
 a.imagen,
@@ -71,6 +73,8 @@ a.id_actividad,
 a.nombre,
 a.descripcion,
 a.categoria,
+a.tipo,
+a.precio,
 a.nivel,
 a.duracion_minutos,
 a.imagen,
@@ -116,6 +120,7 @@ $puede_reservarse =
 && $sesion['estado'] === 'programada'
 && $plazas > 0;
 $usuario_autenticado = usuarioAutenticado();
+$error_reserva = trim($_GET['error'] ?? '');
 
 $lista_espera =
     !$sesion_terminada &&
@@ -149,6 +154,11 @@ $sesion['id_actividad'] ?>"
 >
 <?= t('← Volver a la actividad') ?>
 </a>
+<?php if ($error_reserva !== ''): ?>
+<div class="mensaje mensaje-error">
+<?= escapar($error_reserva) ?>
+</div>
+<?php endif; ?>
 <div class="ficha-sesion">
 <section class="informacion-sesion">
 <div class="metadatos">
@@ -269,6 +279,12 @@ texto_estado_sesion(
 )
 ) ?>
 </span>
+<?php if ($sesion['tipo'] !== 'clase' && $sesion['precio'] !== null): ?>
+<p class="precio-sesion">
+<?= t('Precio:') ?>
+<strong><?= formatear_precio((float) $sesion['precio']) ?></strong>
+</p>
+<?php endif; ?>
 <h2><?= t('Disponibilidad') ?></h2>
 <p class="numero-plazas">
 <?= $plazas ?>

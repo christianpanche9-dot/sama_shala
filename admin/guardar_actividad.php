@@ -9,6 +9,7 @@ $nombre = trim($_POST['nombre'] ?? '');
 $descripcion = trim($_POST['descripcion'] ?? '');
 $categoria = trim($_POST['categoria'] ?? '');
 $tipo = trim($_POST['tipo'] ?? '');
+$precio = trim($_POST['precio'] ?? '');
 $nivel = trim($_POST['nivel'] ?? '');
 $duracion = $_POST['duracion_minutos'] ?? '';
 $activa = isset($_POST['activa']) ? 1 : 0;
@@ -55,6 +56,23 @@ $tipos_validos,
 true
 )) {
 $errores[] = 'El tipo no es válido.';
+}
+if ($tipo === 'clase') {
+$precio = null;
+} else {
+$precio = filter_var(
+$precio,
+FILTER_VALIDATE_FLOAT,
+[
+'options' => [
+'min_range' => 0.01
+]
+]
+);
+if ($precio === false) {
+$errores[] =
+'El precio es obligatorio para eventos y terapias, y debe ser mayor que 0.';
+}
 }
 if (!in_array(
 $nivel,
@@ -165,6 +183,7 @@ nombre,
 descripcion,
 categoria,
 tipo,
+precio,
 nivel,
 duracion_minutos,
 imagen,
@@ -173,15 +192,16 @@ es_top,
 posicion_top,
 imagen_banner_top
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param(
-'sssssisiiis',
+'ssssdsisiiis',
 $nombre,
 $descripcion,
 $categoria,
 $tipo,
+$precio,
 $nivel,
 $duracion,
 $imagen,

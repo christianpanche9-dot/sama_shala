@@ -17,6 +17,7 @@ nombre,
 descripcion,
 categoria,
 tipo,
+precio,
 nivel,
 duracion_minutos,
 imagen
@@ -178,6 +179,15 @@ $actividad['descripcion']
 <strong><?= t('Duración habitual:') ?></strong>
 <?= (int) $actividad['duracion_minutos'] ?> <?= (int) $actividad['duracion_minutos'] === 1 ? t('minuto') : t('minutos') ?>
 </p>
+<?php if ($actividad['tipo'] !== 'clase' && $actividad['precio'] !== null): ?>
+<p>
+<strong><?= t('Precio:') ?></strong>
+<?= formatear_precio((float) $actividad['precio']) ?>
+</p>
+<div class="mensaje mensaje-aviso">
+<?= t('Esta actividad se paga con el precio indicado al reservar. No admite pago con paquetes ni clase suelta.') ?>
+</div>
+<?php endif; ?>
 <a
 class="enlace-volver"
 href="actividades.php"

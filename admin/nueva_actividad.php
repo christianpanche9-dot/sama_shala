@@ -135,6 +135,23 @@ Terapia
 </option>
 </select>
 </div>
+<div class="campo bloque-precio-actividad" id="bloque-precio-actividad">
+<label for="precio">
+Precio
+</label>
+<input
+type="number"
+id="precio"
+name="precio"
+min="0"
+step="0.01"
+>
+<small>
+Precio fijo de este evento o terapia. Se paga
+directamente al reservar, no admite paquetes ni
+clase suelta.
+</small>
+</div>
 <div class="campo">
 <label for="nivel">
 Nivel
@@ -409,6 +426,20 @@ class="entrada-dia-calendario"
 </main>
 <script>
 (function () {
+const selectTipo = document.querySelector("#tipo");
+const bloquePrecio = document.querySelector("#bloque-precio-actividad");
+const campoPrecio = document.querySelector("#precio");
+if (selectTipo && bloquePrecio) {
+function actualizarBloquePrecio() {
+const visible = selectTipo.value !== "clase";
+bloquePrecio.classList.toggle("visible", visible);
+if (campoPrecio) {
+campoPrecio.required = visible;
+}
+}
+selectTipo.addEventListener("change", actualizarBloquePrecio);
+actualizarBloquePrecio();
+}
 const casillaTop = document.querySelector("#es_top");
 const bloqueTop = document.querySelector("#bloque-top");
 const selectPosicionTop = document.querySelector("#posicion_top");

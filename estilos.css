@@ -1106,6 +1106,14 @@ font-size: 4rem;
 font-weight: 800;
 line-height: 1;
 }
+.precio-sesion {
+margin: 10px 0;
+font-size: 1.1rem;
+}
+.precio-sesion strong {
+color: var(--color-verde-oscuro);
+font-size: 1.6rem;
+}
 .rejilla-datos {
 display: grid;
 margin: 25px 0;
@@ -1574,12 +1582,16 @@ font-weight: 700;
 padding: 0 6px;
 }
 .bloque-regular,
-.bloque-top {
+.bloque-top,
+.bloque-precio-actividad {
 display: none;
 }
 .bloque-regular.visible,
 .bloque-top.visible {
 display: block;
+}
+.bloque-precio-actividad.visible {
+display: grid;
 }
 .bloque-banner-top {
 display: none;

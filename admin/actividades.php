@@ -32,6 +32,7 @@ id_actividad,
 nombre,
 categoria,
 tipo,
+precio,
 nivel,
 duracion_minutos,
 activa
@@ -229,6 +230,7 @@ Limpiar
 <th>Actividad</th>
 <th>Categoría</th>
 <th>Tipo</th>
+<th>Precio</th>
 <th>Nivel</th>
 <th>Duración</th>
 <th>Estado</th>
@@ -252,6 +254,12 @@ $actividad = $resultado->fetch_assoc()
 <?= escapar(
 texto_tipo_actividad($actividad['tipo'])
 ) ?>
+</td>
+
+<td>
+<?= $actividad['precio'] !== null
+? formatear_precio((float) $actividad['precio'])
+: '—' ?>
 </td>
 
 <td>

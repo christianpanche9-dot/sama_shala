@@ -20,6 +20,8 @@ s.hora_fin,
 s.aforo,
 s.estado,
 a.nombre AS actividad,
+a.tipo AS tipo_actividad,
+a.precio AS precio_actividad,
 e.nombre AS espacio,
 m.nombre AS profesor_nombre,
 m.apellidos AS profesor_apellidos,
@@ -66,6 +68,11 @@ $plazas_disponibles = max(
 (int) $sesion["aforo"] -
 (int) $sesion["plazas_ocupadas"]
 );
+$pago_con_precio_fijo =
+$sesion["tipo_actividad"] !== "clase" &&
+$sesion["precio_actividad"] !== null;
+$paquetes_disponibles = [];
+if (!$pago_con_precio_fijo) {
 $sql_paquetes = "
 SELECT
 bc.id_paquete_cliente,
@@ -93,6 +100,7 @@ $paquetes_disponibles = $stmt_paquetes
 ->get_result()
 ->fetch_all(MYSQLI_ASSOC);
 $stmt_paquetes->close();
+}
 $conexion->close();
 ?>
 <!DOCTYPE html>
@@ -166,6 +174,60 @@ type="hidden"
 name="id_sesion"
 value="<?= $sesion["id_sesion"] ?>"
 >
+<?php if ($plazas_disponibles <= 0): ?>
+<button type="submit" class="boton">
+<?= t("Confirmar solicitud") ?>
+</button>
+<?php elseif ($pago_con_precio_fijo): ?>
+<input type="hidden" name="metodo_pago" value="evento">
+<fieldset class="campo-completo">
+<legend><?= t("Precio de esta sesión") ?></legend>
+<p class="precio-sesion">
+<strong>
+<?= formatear_precio((float) $sesion["precio_actividad"]) ?>
+</strong>
+</p>
+<p>
+<?= t("Esta sesión se paga con este precio fijo. No admite pago con paquetes ni clase suelta.") ?>
+</p>
+</fieldset>
+<fieldset class="campo-completo">
+<legend><?= t("Pago simulado") ?></legend>
+<p>
+<?= t("Este proyecto no cobra dinero real: al confirmar se registra el pago directamente como pagado.") ?>
+</p>
+<div class="campo">
+<label for="titular">
+<?= t("Nombre del titular") ?>
+</label>
+<input
+type="text"
+id="titular"
+name="titular"
+maxlength="150"
+required
+>
+</div>
+<div class="campo">
+<label for="tarjeta">
+<?= t("Número de tarjeta (simulado)") ?>
+</label>
+<input
+type="text"
+id="tarjeta"
+name="tarjeta"
+maxlength="30"
+required
+>
+</div>
+</fieldset>
+<button type="submit" class="boton">
+<?= sprintf(
+t("Pagar %s y confirmar"),
+formatear_precio((float) $sesion["precio_actividad"])
+) ?>
+</button>
+<?php else: ?>
 <fieldset class="campo-completo">
 <legend><?= t("¿Cómo quieres pagar esta clase?") ?></legend>
 <label class="opcion-pago">
@@ -191,6 +253,7 @@ value="paquete:<?= (int) $paquete["id_paquete_cliente"] ?>"
 <button type="submit" class="boton">
 <?= t("Confirmar solicitud") ?>
 </button>
+<?php endif; ?>
 </form>
 </section>
 </main>

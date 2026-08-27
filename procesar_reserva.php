@@ -19,6 +19,11 @@ exit;
 $metodo_pago_enviado = trim($_POST["metodo_pago"] ?? "suelta");
 $tipo_pago = "suelta";
 $id_paquete_cliente = null;
+$precio_pagado = null;
+$metodo_pago_simulado = null;
+$referencia_pago = null;
+$titular_pago = trim($_POST["titular"] ?? "");
+$tarjeta_pago = trim($_POST["tarjeta"] ?? "");
 if (str_starts_with($metodo_pago_enviado, "paquete:")) {
 $tipo_pago = "paquete";
 $id_paquete_cliente = filter_var(
@@ -34,6 +39,8 @@ urlencode("El paquete seleccionado no es válido.")
 );
 exit;
 }
+} elseif ($metodo_pago_enviado === "evento") {
+$tipo_pago = "evento";
 }
 try {
 $conexion->begin_transaction();
@@ -46,6 +53,7 @@ $conexion->begin_transaction();
 $sql_sesion = "
 SELECT
 id_sesion,
+id_actividad,
 fecha,
 hora_inicio,
 aforo,
@@ -62,6 +70,35 @@ $sesion = $resultado_sesion->fetch_assoc();
 $stmt_sesion->close();
 if (!$sesion) {
 throw new Exception(t("La sesión no existe."));
+}
+$sql_actividad = "
+SELECT tipo, precio
+FROM actividades
+WHERE id_actividad = ?
+";
+$stmt_actividad = $conexion->prepare($sql_actividad);
+$stmt_actividad->bind_param("i", $sesion["id_actividad"]);
+$stmt_actividad->execute();
+$actividad = $stmt_actividad->get_result()->fetch_assoc();
+$stmt_actividad->close();
+if ($tipo_pago === "evento") {
+if (
+!$actividad ||
+$actividad["tipo"] === "clase" ||
+$actividad["precio"] === null
+) {
+throw new Exception(
+t("Esta sesión no admite el pago con precio fijo.")
+);
+}
+if ($titular_pago === "" || $tarjeta_pago === "") {
+throw new Exception(
+t("Introduce los datos de pago.")
+);
+}
+$precio_pagado = (float) $actividad["precio"];
+$metodo_pago_simulado = "simulado";
+$referencia_pago = "SIM-" . strtoupper(bin2hex(random_bytes(8)));
 }
 if (
 !in_array(
@@ -258,16 +295,22 @@ asistencia = 'pendiente',
 fecha_reserva = NOW(),
 codigo_reserva = ?,
 id_paquete_cliente = ?,
-tipo_pago = ?
+tipo_pago = ?,
+precio_pagado = ?,
+metodo_pago = ?,
+referencia_pago = ?
 WHERE id_reserva = ?
 ";
 $stmt_guardar =
 $conexion->prepare($sql_guardar);
 $stmt_guardar->bind_param(
-"sisi",
+"sisdssi",
 $codigo_reserva,
 $id_paquete_cliente,
 $tipo_pago,
+$precio_pagado,
+$metodo_pago_simulado,
+$referencia_pago,
 $reserva_anterior["id_reserva"]
 );
 } else {
@@ -277,11 +320,17 @@ id_sesion,
 id_usuario,
 id_paquete_cliente,
 tipo_pago,
+precio_pagado,
+metodo_pago,
+referencia_pago,
 estado,
 asistencia,
 codigo_reserva
 )
 VALUES (
+?,
+?,
+?,
 ?,
 ?,
 ?,
@@ -294,11 +343,14 @@ VALUES (
 $stmt_guardar =
 $conexion->prepare($sql_guardar);
 $stmt_guardar->bind_param(
-"iiiss",
+"iiisdsss",
 $id_sesion,
 $id_usuario,
 $id_paquete_cliente,
 $tipo_pago,
+$precio_pagado,
+$metodo_pago_simulado,
+$referencia_pago,
 $codigo_reserva
 );
 }

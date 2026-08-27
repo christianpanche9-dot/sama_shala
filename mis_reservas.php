@@ -14,6 +14,7 @@ r.estado,
 r.asistencia,
 r.codigo_reserva,
 r.tipo_pago,
+r.precio_pagado,
 s.id_sesion,
 s.fecha,
 s.hora_inicio,
@@ -139,9 +140,15 @@ t(ucfirst($reserva["estado"]))
 </p>
 <p>
 <strong><?= t('Pago:') ?></strong>
-<?= $reserva["tipo_pago"] === "paquete"
-? t("Con paquete")
-: t("Clase suelta") ?>
+<?php if ($reserva["tipo_pago"] === "paquete"): ?>
+<?= t("Con paquete") ?>
+<?php elseif ($reserva["tipo_pago"] === "evento"): ?>
+<?= $reserva["precio_pagado"] !== null
+? formatear_precio((float) $reserva["precio_pagado"])
+: t("Precio fijo") ?>
+<?php else: ?>
+<?= t("Clase suelta") ?>
+<?php endif; ?>
 </p>
 <?php if (
     $reserva["estado"] === "confirmada"
