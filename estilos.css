@@ -1992,7 +1992,10 @@ background: var(--color-azul-claro);
 border-radius: 14px;
 }
 .filtros .campo {
-flex: 0 1 auto;
+flex: 1 1 180px;
+}
+.filtros .campo-acciones-filtro {
+flex: 0 0 auto;
 }
 .filtros .acciones-filtro {
 flex-wrap: nowrap;
