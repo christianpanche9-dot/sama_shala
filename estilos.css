@@ -387,6 +387,9 @@ background-color: var(--color-marron-claro);
 .seccion-tipo-terapia {
 background-color: var(--color-azul-claro);
 }
+.seccion-tipo-taller {
+background-color: var(--color-blanco-hueso);
+}
 .seccion-tipo-actividad h3 {
 margin-bottom: 26px;
 color: var(--color-verde-oscuro);

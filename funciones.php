@@ -100,7 +100,8 @@ function texto_tipo_actividad(string $tipo): string
 $tipos = [
 'clase' => 'Clase',
 'evento' => 'Evento',
-'terapia' => 'Terapia'
+'terapia' => 'Terapia',
+'taller' => 'Taller'
 ];
 return t($tipos[$tipo] ?? ucfirst($tipo));
 }

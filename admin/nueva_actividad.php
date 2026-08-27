@@ -142,6 +142,9 @@ Evento
 <option value="terapia">
 Terapia
 </option>
+<option value="taller">
+Taller
+</option>
 </select>
 </div>
 <div class="campo bloque-precio-actividad" id="bloque-precio-actividad">

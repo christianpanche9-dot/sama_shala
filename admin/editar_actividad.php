@@ -54,7 +54,8 @@ $categorias = [
 $tipos = [
 'clase' => 'Clase',
 'evento' => 'Evento',
-'terapia' => 'Terapia'
+'terapia' => 'Terapia',
+'taller' => 'Taller'
 ];
 $niveles = [
 'inicial' => 'Inicial',

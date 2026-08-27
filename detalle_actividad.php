@@ -155,14 +155,6 @@ $actividad['descripcion']
 ) ?>
 </p>
 <p>
-<strong><?= t('Categoría:') ?></strong>
-<?= escapar($actividad['categoria']) ?>
-</p>
-<p>
-<strong><?= t('Tipo:') ?></strong>
-<?= escapar(texto_tipo_actividad($actividad['tipo'])) ?>
-</p>
-<p>
 <strong><?= t('Nivel:') ?></strong>
 <?= escapar(texto_nivel($actividad['nivel'])) ?>
 </p>

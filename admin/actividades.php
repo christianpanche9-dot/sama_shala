@@ -6,7 +6,7 @@ $buscar = trim($_GET['buscar'] ?? '');
 $categoria = trim($_GET['categoria'] ?? '');
 $tipo = trim($_GET['tipo'] ?? '');
 $estado = trim($_GET['estado'] ?? '');
-$tipos_permitidos = ['clase', 'evento', 'terapia'];
+$tipos_permitidos = ['clase', 'evento', 'terapia', 'taller'];
 $estados_permitidos = ['', 'activa', 'inactiva'];
 if (!in_array($tipo, $tipos_permitidos, true)) {
 $tipo = '';

@@ -34,7 +34,11 @@ SELECT
 r.fecha_reserva AS fecha_pago,
 CONCAT(u.nombre, ' ', u.apellidos) AS cliente,
 a.nombre AS concepto,
-CASE a.tipo WHEN 'terapia' THEN 'Terapia' ELSE 'Evento' END AS tipo_registro,
+CASE a.tipo
+WHEN 'terapia' THEN 'Terapia'
+WHEN 'taller' THEN 'Taller'
+ELSE 'Evento'
+END AS tipo_registro,
 r.precio_pagado,
 r.metodo_pago,
 r.referencia_pago,

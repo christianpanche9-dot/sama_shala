@@ -13,7 +13,8 @@ $niveles_permitidos = [
 $tipos_permitidos = [
 'clase',
 'evento',
-'terapia'
+'terapia',
+'taller'
 ];
 if (
 $nivel !== '' &&
@@ -578,7 +579,8 @@ boton.setAttribute("aria-expanded", abierto ? "true" : "false");
 $actividades_por_tipo = [
 'clase' => [],
 'evento' => [],
-'terapia' => []
+'terapia' => [],
+'taller' => []
 ];
 while ($actividad = $resultado->fetch_assoc()) {
 $actividades_por_tipo[$actividad['tipo']][] = $actividad;
@@ -586,7 +588,8 @@ $actividades_por_tipo[$actividad['tipo']][] = $actividad;
 $titulos_tipo = [
 'clase' => t('Clases'),
 'evento' => t('Eventos'),
-'terapia' => t('Terapias')
+'terapia' => t('Terapias'),
+'taller' => t('Talleres')
 ];
 ?>
 <?php foreach ($actividades_por_tipo as $tipo_actual => $actividades_tipo): ?>
@@ -615,9 +618,7 @@ $actividad['nombre']
 <?php endif; ?>
 <div class="contenido-tarjeta">
 <p class="dato-destacado">
-<?= t('Categoría:') ?> <?= escapar($actividad['categoria']) ?>
-· <?= t('Tipo:') ?> <?= escapar(texto_tipo_actividad($actividad['tipo'])) ?>
-· <?= t('Nivel:') ?> <?= escapar(texto_nivel($actividad['nivel'])) ?>
+<?= t('Nivel:') ?> <?= escapar(texto_nivel($actividad['nivel'])) ?>
 </p>
 <h2>
 <?= escapar(

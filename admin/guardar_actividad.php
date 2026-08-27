@@ -34,7 +34,8 @@ $niveles_validos = [
 $tipos_validos = [
 'clase',
 'evento',
-'terapia'
+'terapia',
+'taller'
 ];
 $errores = [];
 if ($nombre === '') {
