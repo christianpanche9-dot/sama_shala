@@ -1992,6 +1992,13 @@ padding: 1.5rem;
 background: var(--color-azul-claro);
 border-radius: 14px;
 }
+.filtros .campo-acciones-filtro {
+grid-column: 1 / -1;
+}
+.filtros .acciones-filtro {
+flex-wrap: nowrap;
+justify-content: flex-end;
+}
 .resumen-sesion-admin {
 margin: 1.5rem 0;
 padding: 1.5rem;

@@ -127,6 +127,11 @@ Administrador
 </option>
 </select>
 </div>
+<div class="campo campo-acciones-filtro">
+<label class="etiqueta-invisible" aria-hidden="true">
+&nbsp;
+</label>
+<div class="acciones-filtro">
 <button type="submit" class="boton">
 Aplicar filtros
 </button>
@@ -136,6 +141,8 @@ class="boton boton-secundario"
 >
 Limpiar
 </a>
+</div>
+</div>
 </form>
 <?php if ($usuarios->num_rows === 0): ?>
 <p>No se han encontrado usuarios.</p>

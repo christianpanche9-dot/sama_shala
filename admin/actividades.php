@@ -2,6 +2,30 @@
 require_once "seguridad_admin.php";
 require_once __DIR__ . '/../conexion.php';
 require_once __DIR__ . '/../funciones.php';
+$buscar = trim($_GET['buscar'] ?? '');
+$categoria = trim($_GET['categoria'] ?? '');
+$tipo = trim($_GET['tipo'] ?? '');
+$estado = trim($_GET['estado'] ?? '');
+$tipos_permitidos = ['clase', 'evento', 'terapia'];
+$estados_permitidos = ['', 'activa', 'inactiva'];
+if (!in_array($tipo, $tipos_permitidos, true)) {
+$tipo = '';
+}
+if (!in_array($estado, $estados_permitidos, true)) {
+$estado = '';
+}
+$activa_filtro = $estado === 'activa'
+? 1
+: ($estado === 'inactiva' ? 0 : -1);
+
+$sql_categorias = "
+SELECT DISTINCT categoria
+FROM actividades
+ORDER BY categoria
+";
+$categorias = $conexion->query($sql_categorias);
+
+$patron = '%' . $buscar . '%';
 $sql = "
 SELECT
 id_actividad,
@@ -12,9 +36,26 @@ nivel,
 duracion_minutos,
 activa
 FROM actividades
+WHERE (? = '' OR nombre LIKE ?)
+AND (? = '' OR categoria = ?)
+AND (? = '' OR tipo = ?)
+AND (? = -1 OR activa = ?)
 ORDER BY nombre
 ";
-$resultado = $conexion->query($sql);
+$stmt = $conexion->prepare($sql);
+$stmt->bind_param(
+'ssssssii',
+$buscar,
+$patron,
+$categoria,
+$categoria,
+$tipo,
+$tipo,
+$activa_filtro,
+$activa_filtro
+);
+$stmt->execute();
+$resultado = $stmt->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -89,6 +130,101 @@ No se puede eliminar la actividad porque tiene sesiones asociadas.
 Desactívala si no quieres que se siga ofreciendo.
 </div>
 <?php endif; ?>
+<form method="get" class="filtros">
+<div class="campo">
+<label for="buscar">
+Nombre de la actividad
+</label>
+<input
+type="search"
+id="buscar"
+name="buscar"
+value="<?= escapar($buscar) ?>"
+placeholder="Buscar por nombre"
+>
+</div>
+<div class="campo">
+<label for="categoria">
+Categoría
+</label>
+<select id="categoria" name="categoria">
+<option value="">
+Todas
+</option>
+<?php while (
+$fila_categoria = $categorias->fetch_assoc()
+): ?>
+<option
+value="<?= escapar($fila_categoria['categoria']) ?>"
+<?= $categoria === $fila_categoria['categoria']
+? 'selected'
+: '' ?>
+>
+<?= escapar($fila_categoria['categoria']) ?>
+</option>
+<?php endwhile; ?>
+</select>
+</div>
+<div class="campo">
+<label for="tipo">
+Tipo
+</label>
+<select id="tipo" name="tipo">
+<option value="">
+Todos
+</option>
+<?php foreach ($tipos_permitidos as $valor_tipo): ?>
+<option
+value="<?= escapar($valor_tipo) ?>"
+<?= $tipo === $valor_tipo ? 'selected' : '' ?>
+>
+<?= escapar(texto_tipo_actividad($valor_tipo)) ?>
+</option>
+<?php endforeach; ?>
+</select>
+</div>
+<div class="campo">
+<label for="estado">
+Estado
+</label>
+<select id="estado" name="estado">
+<option value="">
+Todos
+</option>
+<option
+value="activa"
+<?= $estado === 'activa' ? 'selected' : '' ?>
+>
+Activa
+</option>
+<option
+value="inactiva"
+<?= $estado === 'inactiva' ? 'selected' : '' ?>
+>
+Inactiva
+</option>
+</select>
+</div>
+<div class="campo campo-acciones-filtro">
+<label class="etiqueta-invisible" aria-hidden="true">
+&nbsp;
+</label>
+<div class="acciones-filtro">
+<button type="submit" class="boton">
+Aplicar filtros
+</button>
+<a
+href="actividades.php"
+class="boton boton-secundario"
+>
+Limpiar
+</a>
+</div>
+</div>
+</form>
+<?php if ($resultado->num_rows === 0): ?>
+<p>No se han encontrado actividades.</p>
+<?php else: ?>
 <div class="tabla-responsive">
 <table class="tabla-admin">
 <thead>
@@ -174,6 +310,7 @@ Eliminar
 </tbody>
 </table>
 </div>
+<?php endif; ?>
 </main>
 </body>
 </html>
