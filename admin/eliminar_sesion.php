@@ -34,9 +34,32 @@ header("Location: sesiones.php?error=en_uso");
 exit;
 }
 
+try {
+$conexion->begin_transaction();
+
+$sql_borrar_reservas = "DELETE FROM reservas WHERE id_sesion = ?";
+$stmt_borrar_reservas = $conexion->prepare($sql_borrar_reservas);
+$stmt_borrar_reservas->bind_param("i", $id_sesion);
+$stmt_borrar_reservas->execute();
+$stmt_borrar_reservas->close();
+
+$sql_borrar_espera = "DELETE FROM lista_espera WHERE id_sesion = ?";
+$stmt_borrar_espera = $conexion->prepare($sql_borrar_espera);
+$stmt_borrar_espera->bind_param("i", $id_sesion);
+$stmt_borrar_espera->execute();
+$stmt_borrar_espera->close();
+
 $sql = "DELETE FROM sesiones WHERE id_sesion = ?";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param("i", $id_sesion);
 $stmt->execute();
+$stmt->close();
+
+$conexion->commit();
+} catch (Throwable $error) {
+$conexion->rollback();
+header("Location: sesiones.php?error=en_uso");
+exit;
+}
 header("Location: sesiones.php?mensaje=sesion_eliminada");
 exit;
