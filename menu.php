@@ -50,6 +50,9 @@ aria-label="Abrir menú"
 <a href="paquetes.php">
 <?= t('Paquetes') ?>
 </a>
+<a href="tienda.php">
+<?= t('Tienda') ?>
+</a>
 <?php if (usuarioAutenticado()): ?>
 <?php if (usuarioEsAdmin()): ?>
 <a href="admin/index.php">

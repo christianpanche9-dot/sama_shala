@@ -106,6 +106,17 @@ $tipos = [
 return t($tipos[$tipo] ?? ucfirst($tipo));
 }
 
+function texto_categoria_producto(string $categoria): string
+{
+    $categorias = [
+        'bija' => 'Bija',
+        'ayurveda' => 'Ayurveda',
+        'fotografia' => 'Fotografía',
+        'angyoga' => 'Angyoga'
+    ];
+    return t($categorias[$categoria] ?? ucfirst($categoria));
+}
+
 function texto_dia_semana_abreviado(int $dia_semana): string
 {
 $dias = [
@@ -410,6 +421,45 @@ return [
 ];
 }
 return ['ok' => true, 'archivo' => $nombre_archivo];
+}
+
+function procesar_imagenes_multiples_subidas(
+    string $campo,
+    string $carpeta_destino,
+    string $prefijo_archivo = 'imagen',
+    int $ancho_maximo = 1600
+): array {
+    if (!isset($_FILES[$campo]['name']) || !is_array($_FILES[$campo]['name'])) {
+        return ['ok' => true, 'archivos' => []];
+    }
+    $archivos = [];
+    $total = count($_FILES[$campo]['name']);
+    for ($i = 0; $i < $total; $i++) {
+        if ($_FILES[$campo]['error'][$i] === UPLOAD_ERR_NO_FILE) {
+            continue;
+        }
+        $_FILES['__archivo_multiple_temporal__'] = [
+            'name' => $_FILES[$campo]['name'][$i],
+            'type' => $_FILES[$campo]['type'][$i],
+            'tmp_name' => $_FILES[$campo]['tmp_name'][$i],
+            'error' => $_FILES[$campo]['error'][$i],
+            'size' => $_FILES[$campo]['size'][$i]
+        ];
+        $resultado = procesar_imagen_subida(
+            '__archivo_multiple_temporal__',
+            $carpeta_destino,
+            $prefijo_archivo,
+            $ancho_maximo
+        );
+        unset($_FILES['__archivo_multiple_temporal__']);
+        if (!$resultado['ok']) {
+            return ['ok' => false, 'error' => $resultado['error'], 'archivos' => $archivos];
+        }
+        if ($resultado['archivo'] !== null) {
+            $archivos[] = $resultado['archivo'];
+        }
+    }
+    return ['ok' => true, 'archivos' => $archivos];
 }
 
 // Placeholder hasta conectar un proveedor de correo (el hosting no

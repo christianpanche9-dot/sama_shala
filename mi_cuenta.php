@@ -89,6 +89,21 @@ $_SESSION["usuario"]["email"]
 <?= t("Ver mis paquetes") ?>
 </a>
 </article>
+<article class="tarjeta">
+<span class="icono-tarjeta-cuenta">
+<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8">
+<path d="M6 8h12l-1 12H7L6 8Z"/>
+<path d="M9 8a3 3 0 0 1 6 0"/>
+</svg>
+</span>
+<h2><?= t("Mis compras") ?></h2>
+<p>
+    <?= t("Consulta los productos que has comprado en la tienda.") ?>
+</p>
+<a class="boton boton-bloque" href="mis_compras.php">
+<?= t("Ver mis compras") ?>
+</a>
+</article>
 </section>
 </main>
 <?php require_once __DIR__ . '/pie.php'; ?>

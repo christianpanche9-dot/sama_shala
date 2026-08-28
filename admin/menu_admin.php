@@ -41,6 +41,9 @@ Usuarios
 <a href="paquetes.php">
 Paquetes
 </a>
+<a href="productos.php">
+Tienda
+</a>
 <a href="pagos.php">
 Pagos
 </a>

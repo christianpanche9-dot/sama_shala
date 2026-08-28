@@ -48,6 +48,21 @@ INNER JOIN sesiones s ON r.id_sesion = s.id_sesion
 INNER JOIN actividades a ON s.id_actividad = a.id_actividad
 INNER JOIN usuarios u ON r.id_usuario = u.id_usuario
 WHERE r.tipo_pago = 'evento'
+
+UNION ALL
+
+SELECT
+cp.fecha_compra AS fecha_pago,
+CONCAT(u.nombre, ' ', u.apellidos) AS cliente,
+p.nombre AS concepto,
+'Producto' AS tipo_registro,
+cp.precio_pagado,
+cp.metodo_pago,
+cp.referencia_pago,
+cp.estado
+FROM compras_productos cp
+INNER JOIN productos p ON cp.id_producto = p.id_producto
+INNER JOIN usuarios u ON cp.id_usuario = u.id_usuario
 ) AS pagos_combinados
 ORDER BY fecha_pago DESC
 ";
@@ -66,7 +81,8 @@ $primer_mes = array_key_first($pagos_por_mes);
 $sql_total = "
 SELECT
 (SELECT COALESCE(SUM(precio_pagado), 0) FROM paquetes_clientes) +
-(SELECT COALESCE(SUM(precio_pagado), 0) FROM reservas WHERE tipo_pago = 'evento')
+(SELECT COALESCE(SUM(precio_pagado), 0) FROM reservas WHERE tipo_pago = 'evento') +
+(SELECT COALESCE(SUM(precio_pagado), 0) FROM compras_productos)
 AS total
 ";
 $total_ventas = (float) $conexion
