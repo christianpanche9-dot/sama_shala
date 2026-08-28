@@ -8,6 +8,7 @@ SELECT
 cp.id_compra,
 cp.fecha_compra,
 cp.talla_elegida,
+cp.cantidad,
 cp.precio_pagado,
 cp.referencia_pago,
 cp.estado,
@@ -73,6 +74,10 @@ content="width=device-width, initial-scale=1.0"
 <?= escapar($compra['talla_elegida']) ?>
 </p>
 <?php endif; ?>
+<p>
+<strong><?= t('Cantidad:') ?></strong>
+<?= (int) $compra['cantidad'] ?>
+</p>
 <p>
 <strong><?= t('Comprado:') ?></strong>
 <?= date(

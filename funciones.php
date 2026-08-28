@@ -117,6 +117,55 @@ function texto_categoria_producto(string $categoria): string
     return t($categorias[$categoria] ?? ucfirst($categoria));
 }
 
+function obtenerCarritoDetallado(mysqli $conexion, array $carrito): array
+{
+    $items = [];
+    $total = 0.0;
+    if (empty($carrito)) {
+        return ['items' => $items, 'total' => $total];
+    }
+    $ids_producto = array_values(array_unique(array_map(
+        fn ($entrada) => (int) $entrada['id_producto'],
+        $carrito
+    )));
+    $marcadores = implode(',', array_fill(0, count($ids_producto), '?'));
+    $sql = "
+        SELECT id_producto, nombre, imagen, precio
+        FROM productos
+        WHERE id_producto IN ($marcadores)
+        AND activo = 1
+    ";
+    $stmt = $conexion->prepare($sql);
+    $tipos = str_repeat('i', count($ids_producto));
+    $stmt->bind_param($tipos, ...$ids_producto);
+    $stmt->execute();
+    $productos = [];
+    foreach ($stmt->get_result()->fetch_all(MYSQLI_ASSOC) as $fila) {
+        $productos[(int) $fila['id_producto']] = $fila;
+    }
+    foreach ($carrito as $clave => $entrada) {
+        $id_producto = (int) $entrada['id_producto'];
+        $cantidad = (int) $entrada['cantidad'];
+        if (!isset($productos[$id_producto]) || $cantidad < 1) {
+            continue;
+        }
+        $producto = $productos[$id_producto];
+        $subtotal = (float) $producto['precio'] * $cantidad;
+        $items[] = [
+            'clave' => $clave,
+            'id_producto' => $id_producto,
+            'nombre' => $producto['nombre'],
+            'imagen' => $producto['imagen'],
+            'talla' => $entrada['talla'] ?? null,
+            'precio' => (float) $producto['precio'],
+            'cantidad' => $cantidad,
+            'subtotal' => $subtotal
+        ];
+        $total += $subtotal;
+    }
+    return ['items' => $items, 'total' => $total];
+}
+
 function texto_dia_semana_abreviado(int $dia_semana): string
 {
 $dias = [

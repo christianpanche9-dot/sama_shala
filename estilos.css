@@ -407,6 +407,125 @@ margin-top: -18px;
 margin-bottom: 26px;
 color: var(--color-texto-tenue);
 }
+.enlaces-categorias-tienda {
+display: flex;
+margin-top: 14px;
+gap: 10px;
+flex-wrap: wrap;
+}
+.enlaces-categorias-tienda a {
+padding: 6px 14px;
+color: var(--color-verde-oscuro);
+background-color: var(--color-verde-claro);
+border-radius: 999px;
+font-weight: 700;
+font-size: 0.9rem;
+text-decoration: none;
+transition: background-color 0.2s ease, color 0.2s ease;
+}
+.enlaces-categorias-tienda a:hover {
+color: white;
+background-color: var(--color-verde-oscuro);
+}
+.diseno-tienda {
+display: grid;
+grid-template-columns: 1fr 320px;
+gap: 28px;
+align-items: start;
+}
+.columna-productos-tienda .rejilla-actividades {
+grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.panel-carrito {
+position: sticky;
+top: 20px;
+padding: 24px;
+}
+.panel-carrito h2 {
+margin-bottom: 14px;
+font-size: 1.3rem;
+}
+.formulario-agregar-carrito {
+display: grid;
+margin-top: 10px;
+gap: 8px;
+}
+.formulario-agregar-carrito label {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 8px;
+font-size: 0.9rem;
+font-weight: 700;
+}
+.formulario-agregar-carrito input[type="number"] {
+width: 70px;
+padding: 6px 8px;
+border: 1px solid var(--color-borde);
+border-radius: 7px;
+font: inherit;
+}
+.lista-carrito {
+display: grid;
+gap: 14px;
+}
+.fila-carrito {
+display: flex;
+align-items: center;
+gap: 12px;
+padding-bottom: 14px;
+border-bottom: 1px solid var(--color-borde);
+}
+.miniatura-fila-carrito {
+flex-shrink: 0;
+width: 56px;
+height: 56px;
+object-fit: cover;
+border-radius: 8px;
+}
+.datos-fila-carrito {
+display: grid;
+flex: 1;
+gap: 3px;
+min-width: 0;
+font-size: 0.9rem;
+}
+.datos-fila-carrito span {
+color: var(--color-texto-tenue);
+font-size: 0.82rem;
+}
+.precio-fila-carrito {
+flex-shrink: 0;
+color: var(--color-verde-oscuro);
+font-weight: 700;
+white-space: nowrap;
+}
+.fila-carrito form {
+flex-shrink: 0;
+margin: 0;
+}
+.enlace-quitar-carrito {
+padding: 0;
+color: #8c2020;
+background: none;
+border: none;
+font-size: 0.8rem;
+font-weight: 700;
+text-decoration: underline;
+cursor: pointer;
+}
+.total-carrito {
+display: flex;
+justify-content: space-between;
+margin: 18px 0;
+padding-top: 14px;
+border-top: 1px solid var(--color-borde);
+font-size: 1.1rem;
+}
+.total-carrito strong {
+color: var(--color-verde-oscuro);
+font-size: 1.4rem;
+}
 .panel-producto h2 {
 margin-bottom: 16px;
 font-size: 1.3rem;
@@ -1260,11 +1379,15 @@ display: block;
 }
 .detalle-cabecera,
 .ficha-sesion,
-.diseno-paquetes {
+.diseno-paquetes,
+.diseno-tienda {
 grid-template-columns: 1fr;
 }
 .cabecera-producto-compra {
 flex-wrap: wrap;
+}
+.panel-carrito {
+position: static;
 }
 .navegacion-mes {
 gap: 16px;

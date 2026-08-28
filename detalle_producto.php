@@ -125,12 +125,41 @@ alt="<?= escapar($producto['nombre']) ?>"
 <p class="precio-sesion precio-sesion-producto">
 <strong><?= formatear_precio((float) $producto['precio']) ?></strong>
 </p>
-<a
-class="boton boton-bloque"
-href="comprar_producto.php?id=<?= (int) $producto['id_producto'] ?>"
->
+<?php if (($_GET['error'] ?? '') === 'talla'): ?>
+<div class="mensaje mensaje-error">
+<?= t('Selecciona una talla válida antes de comprar.') ?>
+</div>
+<?php endif; ?>
+<form action="carrito_agregar.php" method="post">
+<input type="hidden" name="id_producto" value="<?= (int) $producto['id_producto'] ?>">
+<input type="hidden" name="volver" value="comprar_producto.php">
+<?php if (!empty($tallas_producto)): ?>
+<div class="campo">
+<label for="talla">
+<?= t('Talla') ?>
+</label>
+<select id="talla" name="talla" required>
+<option value="">
+<?= t('Selecciona una talla') ?>
+</option>
+<?php foreach ($tallas_producto as $talla): ?>
+<option value="<?= escapar($talla) ?>">
+<?= escapar($talla) ?>
+</option>
+<?php endforeach; ?>
+</select>
+</div>
+<?php endif; ?>
+<div class="campo">
+<label for="cantidad">
+<?= t('Cantidad') ?>
+</label>
+<input type="number" id="cantidad" name="cantidad" value="1" min="1" max="99">
+</div>
+<button type="submit" class="boton boton-bloque">
 <?= t('Comprar') ?>
-</a>
+</button>
+</form>
 </aside>
 </div>
 <?php if (!empty($sugerencias)): ?>

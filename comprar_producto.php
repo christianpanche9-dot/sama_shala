@@ -2,33 +2,8 @@
 require_once __DIR__ . '/seguridad.php';
 require_once __DIR__ . '/conexion.php';
 require_once __DIR__ . '/funciones.php';
-$id_producto = filter_input(
-INPUT_GET,
-'id',
-FILTER_VALIDATE_INT
-);
-if (!$id_producto) {
-header('Location: tienda.php');
-exit;
-}
-$sql = "
-SELECT id_producto, nombre, precio, tallas, imagen
-FROM productos
-WHERE id_producto = ?
-AND activo = 1
-";
-$stmt = $conexion->prepare($sql);
-$stmt->bind_param('i', $id_producto);
-$stmt->execute();
-$producto = $stmt->get_result()->fetch_assoc();
-if (!$producto) {
-http_response_code(404);
-die(t('El producto solicitado no existe.'));
-}
-$tallas_producto = [];
-if (!empty($producto['tallas'])) {
-$tallas_producto = array_filter(array_map('trim', explode(',', $producto['tallas'])));
-}
+$carrito = $_SESSION['carrito'] ?? [];
+$detalle_carrito = obtenerCarritoDetallado($conexion, $carrito);
 $error = $_GET['error'] ?? '';
 ?>
 <!DOCTYPE html>
@@ -49,33 +24,50 @@ content="width=device-width, initial-scale=1.0"
 <body>
 <?php require_once __DIR__ . '/menu.php'; ?>
 <main class="contenedor seccion">
-<a class="enlace-volver" href="detalle_producto.php?id=<?= (int) $producto['id_producto'] ?>">
-← <?= t('Volver al producto') ?>
+<a class="enlace-volver" href="tienda.php">
+← <?= t('Volver a la tienda') ?>
 </a>
+<h1><?= t('Comprar') ?></h1>
+<?php if (empty($detalle_carrito['items'])): ?>
+<div class="mensaje mensaje-aviso">
+<?= t('Tu carrito está vacío.') ?>
+</div>
+<p>
+<a class="boton" href="tienda.php">
+<?= t('Ir a la tienda') ?>
+</a>
+</p>
+<?php else: ?>
 <div class="ficha-sesion">
 <section class="informacion-sesion">
-<div class="cabecera-producto-compra">
-<div>
-<h1>
-<?= escapar($producto['nombre']) ?>
-</h1>
-<div class="rejilla-datos">
-<div class="dato">
-<span><?= t('Precio') ?></span>
-<strong>
-<?= formatear_precio((float) $producto['precio']) ?>
-</strong>
-</div>
-</div>
-</div>
-<?php if (!empty($producto['imagen'])): ?>
+<h2><?= t('Resumen del pedido') ?></h2>
+<div class="lista-carrito">
+<?php foreach ($detalle_carrito['items'] as $item): ?>
+<div class="fila-carrito">
+<?php if (!empty($item['imagen'])): ?>
 <img
-class="miniatura-producto-comprar"
-src="imagenes/productos/<?= escapar($producto['imagen']) ?>"
-alt="<?= escapar($producto['nombre']) ?>"
+class="miniatura-fila-carrito"
+src="imagenes/productos/<?= escapar($item['imagen']) ?>"
+alt="<?= escapar($item['nombre']) ?>"
 >
 <?php endif; ?>
+<div class="datos-fila-carrito">
+<strong><?= escapar($item['nombre']) ?></strong>
+<?php if (!empty($item['talla'])): ?>
+<span><?= t('Talla:') ?> <?= escapar($item['talla']) ?></span>
+<?php endif; ?>
+<span><?= t('Cantidad:') ?> <?= (int) $item['cantidad'] ?></span>
 </div>
+<div class="precio-fila-carrito">
+<?= formatear_precio($item['subtotal']) ?>
+</div>
+</div>
+<?php endforeach; ?>
+</div>
+<p class="total-carrito">
+<?= t('Total') ?>
+<strong><?= formatear_precio($detalle_carrito['total']) ?></strong>
+</p>
 <?php if ($error === 'pago'): ?>
 <div class="mensaje mensaje-error">
 <?= t('No se ha podido procesar el pago simulado. Inténtalo de nuevo.') ?>
@@ -92,28 +84,6 @@ action="procesar_compra_producto.php"
 method="post"
 class="formulario"
 >
-<input
-type="hidden"
-name="id_producto"
-value="<?= (int) $producto['id_producto'] ?>"
->
-<?php if (!empty($tallas_producto)): ?>
-<div class="campo">
-<label for="talla">
-<?= t('Talla') ?>
-</label>
-<select id="talla" name="talla" required>
-<option value="">
-<?= t('Selecciona una talla') ?>
-</option>
-<?php foreach ($tallas_producto as $talla): ?>
-<option value="<?= escapar($talla) ?>">
-<?= escapar($talla) ?>
-</option>
-<?php endforeach; ?>
-</select>
-</div>
-<?php endif; ?>
 <div class="campo">
 <label for="titular">
 <?= t('Nombre del titular') ?>
@@ -140,13 +110,12 @@ required
 >
 </div>
 <button type="submit" class="boton boton-bloque">
-<?= t('Confirmar compra de') ?> <?= formatear_precio(
-(float) $producto['precio']
-) ?>
+<?= t('Confirmar compra de') ?> <?= formatear_precio($detalle_carrito['total']) ?>
 </button>
 </form>
 </aside>
 </div>
+<?php endif; ?>
 </main>
 <?php require_once __DIR__ . '/pie.php'; ?>
 </body>

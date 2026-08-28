@@ -54,7 +54,7 @@ UNION ALL
 SELECT
 cp.fecha_compra AS fecha_pago,
 CONCAT(u.nombre, ' ', u.apellidos) AS cliente,
-p.nombre AS concepto,
+CONCAT(p.nombre, ' × ', cp.cantidad) AS concepto,
 'Producto' AS tipo_registro,
 cp.precio_pagado,
 cp.metodo_pago,

@@ -332,7 +332,7 @@ return [
 
 // tienda.php / detalle_producto.php / comprar_producto.php / mis_compras.php
 'Tienda' => 'Shop',
-'Descubre Bija, Ayurveda, Fotografía y Angyoga: productos y servicios pensados en tu bienestar.' => 'Discover Bija, Ayurveda, Photography and Angyoga: products and services designed for your wellbeing.',
+'Nuestra tienda reúne cuatro mundos pensados en tu bienestar: el pan artesanal de Bija, los remedios y productos de la medicina ayurvédica, las sesiones fotográficas y fotografías de la naturaleza ecuatoriana, y la ropa de yoga estilizada de Angyoga. Explora cada categoría o ve directo a la que buscas.' => 'Our shop brings together four worlds designed for your wellbeing: Bija\'s artisan bread, Ayurvedic remedies and products, photo sessions and photographs of Ecuadorian nature, and Angyoga\'s stylized yoga clothing. Explore each category or jump straight to the one you\'re looking for.',
 'Panadería artesanal' => 'Artisan bakery',
 'Medicina ayurvédica' => 'Ayurvedic medicine',
 'Sesiones fotográficas y fotografías de la naturaleza ecuatoriana' => 'Photo sessions and photographs of Ecuadorian nature',
@@ -354,4 +354,14 @@ return [
 'Talla:' => 'Size:',
 'Consulta los productos que has comprado en la tienda.' => 'Check the products you have purchased in the shop.',
 'Ver mis compras' => 'View my purchases',
+'Ver detalle del producto' => 'View product details',
+'Cantidad' => 'Quantity',
+'Cantidad:' => 'Quantity:',
+'Agregar al carrito' => 'Add to cart',
+'Carrito' => 'Cart',
+'Tu carrito está vacío.' => 'Your cart is empty.',
+'Quitar' => 'Remove',
+'Total' => 'Total',
+'Resumen del pedido' => 'Order summary',
+'Selecciona una talla válida antes de comprar.' => 'Select a valid size before buying.',
 ];
