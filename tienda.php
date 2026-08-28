@@ -49,7 +49,7 @@ content="width=device-width, initial-scale=1.0"
 <p class="etiqueta"><?= t('Tienda') ?></p>
 <h1><?= t('Tienda') ?></h1>
 <p>
-<?= t('Nuestra tienda reúne cuatro mundos pensados en tu bienestar: el pan artesanal de Bija, los remedios y productos de la medicina ayurvédica, las sesiones fotográficas y fotografías de la naturaleza ecuatoriana, y la ropa de yoga estilizada de Angyoga. Explora cada categoría o ve directo a la que buscas.') ?>
+<?= t('Somos una tienda con alma, donde el bienestar se vive de cuatro formas: el aroma del pan artesanal de Bija, la sabiduría ancestral de la medicina ayurvédica, la belleza capturada de la naturaleza ecuatoriana en fotografía, y el movimiento consciente con la ropa de yoga de Angyoga.') ?>
 </p>
 <?php if (array_sum(array_map('count', $productos_por_categoria)) > 0): ?>
 <nav class="enlaces-categorias-tienda">
@@ -57,7 +57,10 @@ content="width=device-width, initial-scale=1.0"
 <?php if (empty($productos_categoria_enlace)): ?>
 <?php continue; ?>
 <?php endif; ?>
-<a href="#categoria-<?= escapar($categoria_enlace) ?>">
+<a
+class="enlace-categoria-<?= escapar($categoria_enlace) ?>"
+href="#categoria-<?= escapar($categoria_enlace) ?>"
+>
 <?= escapar(texto_categoria_producto($categoria_enlace)) ?>
 </a>
 <?php endforeach; ?>

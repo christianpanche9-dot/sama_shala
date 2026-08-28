@@ -409,23 +409,49 @@ color: var(--color-texto-tenue);
 }
 .enlaces-categorias-tienda {
 display: flex;
-margin-top: 14px;
-gap: 10px;
+margin-top: 18px;
+margin-bottom: 30px;
+gap: 12px;
 flex-wrap: wrap;
 }
 .enlaces-categorias-tienda a {
-padding: 6px 14px;
-color: var(--color-verde-oscuro);
-background-color: var(--color-verde-claro);
+padding: 11px 24px;
 border-radius: 999px;
 font-weight: 700;
 font-size: 0.9rem;
 text-decoration: none;
 transition: background-color 0.2s ease, color 0.2s ease;
 }
-.enlaces-categorias-tienda a:hover {
+.enlace-categoria-bija {
+color: var(--color-verde-oscuro);
+background-color: var(--color-verde-claro);
+}
+.enlace-categoria-bija:hover {
 color: white;
 background-color: var(--color-verde-oscuro);
+}
+.enlace-categoria-ayurveda {
+color: var(--color-marron-oscuro);
+background-color: var(--color-marron-claro);
+}
+.enlace-categoria-ayurveda:hover {
+color: white;
+background-color: var(--color-marron-oscuro);
+}
+.enlace-categoria-fotografia {
+color: var(--color-texto);
+background-color: var(--color-azul-claro);
+}
+.enlace-categoria-fotografia:hover {
+background-color: var(--color-azul);
+}
+.enlace-categoria-angyoga {
+color: var(--color-texto);
+background-color: var(--color-blanco-hueso);
+}
+.enlace-categoria-angyoga:hover {
+color: white;
+background-color: var(--color-texto);
 }
 .diseno-tienda {
 display: grid;

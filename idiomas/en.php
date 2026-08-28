@@ -332,7 +332,7 @@ return [
 
 // tienda.php / detalle_producto.php / comprar_producto.php / mis_compras.php
 'Tienda' => 'Shop',
-'Nuestra tienda reúne cuatro mundos pensados en tu bienestar: el pan artesanal de Bija, los remedios y productos de la medicina ayurvédica, las sesiones fotográficas y fotografías de la naturaleza ecuatoriana, y la ropa de yoga estilizada de Angyoga. Explora cada categoría o ve directo a la que buscas.' => 'Our shop brings together four worlds designed for your wellbeing: Bija\'s artisan bread, Ayurvedic remedies and products, photo sessions and photographs of Ecuadorian nature, and Angyoga\'s stylized yoga clothing. Explore each category or jump straight to the one you\'re looking for.',
+'Somos una tienda con alma, donde el bienestar se vive de cuatro formas: el aroma del pan artesanal de Bija, la sabiduría ancestral de la medicina ayurvédica, la belleza capturada de la naturaleza ecuatoriana en fotografía, y el movimiento consciente con la ropa de yoga de Angyoga.' => 'We are a shop with soul, where wellbeing is lived in four ways: the aroma of Bija\'s artisan bread, the ancestral wisdom of Ayurvedic medicine, the captured beauty of Ecuadorian nature in photography, and conscious movement with Angyoga\'s yoga clothing.',
 'Panadería artesanal' => 'Artisan bakery',
 'Medicina ayurvédica' => 'Ayurvedic medicine',
 'Sesiones fotográficas y fotografías de la naturaleza ecuatoriana' => 'Photo sessions and photographs of Ecuadorian nature',
