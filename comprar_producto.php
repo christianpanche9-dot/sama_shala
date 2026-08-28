@@ -54,13 +54,8 @@ content="width=device-width, initial-scale=1.0"
 </a>
 <div class="ficha-sesion">
 <section class="informacion-sesion">
-<?php if (!empty($producto['imagen'])): ?>
-<img
-class="miniatura-producto-comprar"
-src="imagenes/productos/<?= escapar($producto['imagen']) ?>"
-alt="<?= escapar($producto['nombre']) ?>"
->
-<?php endif; ?>
+<div class="cabecera-producto-compra">
+<div>
 <h1>
 <?= escapar($producto['nombre']) ?>
 </h1>
@@ -71,6 +66,15 @@ alt="<?= escapar($producto['nombre']) ?>"
 <?= formatear_precio((float) $producto['precio']) ?>
 </strong>
 </div>
+</div>
+</div>
+<?php if (!empty($producto['imagen'])): ?>
+<img
+class="miniatura-producto-comprar"
+src="imagenes/productos/<?= escapar($producto['imagen']) ?>"
+alt="<?= escapar($producto['nombre']) ?>"
+>
+<?php endif; ?>
 </div>
 <?php if ($error === 'pago'): ?>
 <div class="mensaje mensaje-error">

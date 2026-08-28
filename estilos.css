@@ -418,12 +418,17 @@ font-size: 1.1rem;
 .precio-sesion-producto strong {
 font-size: 2.1rem;
 }
+.cabecera-producto-compra {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 24px;
+}
 .miniatura-producto-comprar {
 display: block;
-width: 100%;
-max-width: 220px;
-height: 160px;
-margin-bottom: 18px;
+flex-shrink: 0;
+width: 160px;
+height: 120px;
 object-fit: cover;
 border: 1px solid var(--color-borde);
 border-radius: 12px;
@@ -1257,6 +1262,9 @@ display: block;
 .ficha-sesion,
 .diseno-paquetes {
 grid-template-columns: 1fr;
+}
+.cabecera-producto-compra {
+flex-wrap: wrap;
 }
 .navegacion-mes {
 gap: 16px;
