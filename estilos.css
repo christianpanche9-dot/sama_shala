@@ -2089,6 +2089,28 @@ background-color: #f8d7da;
 .menu-fila-desplegable .insignia {
 margin: 6px 12px;
 }
+.seccion-pagos-admin {
+margin-bottom: 40px;
+}
+.encabezado-seccion-pagos-admin {
+display: flex;
+align-items: baseline;
+justify-content: space-between;
+gap: 12px;
+margin-bottom: 18px;
+padding-bottom: 12px;
+border-bottom: 2px solid var(--color-borde);
+}
+.encabezado-seccion-pagos-admin h2 {
+font-size: 1.4rem;
+}
+.subtotal-pagos-admin {
+color: var(--color-texto-tenue);
+}
+.subtotal-pagos-admin strong {
+color: var(--color-verde-oscuro);
+font-size: 1.2rem;
+}
 .grupo-mes-admin {
 margin: 0 0 1.2rem;
 background: #ffffff;

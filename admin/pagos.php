@@ -2,7 +2,21 @@
 require_once "seguridad_admin.php";
 require_once __DIR__ . '/../conexion.php';
 require_once __DIR__ . '/../funciones.php';
-$sql = "
+
+function agrupar_pagos_por_mes(array $pagos): array
+{
+$pagos_por_mes = [];
+foreach ($pagos as $pago) {
+$clave_mes = substr($pago['fecha_pago'], 0, 7);
+if (!isset($pagos_por_mes[$clave_mes])) {
+$pagos_por_mes[$clave_mes] = [];
+}
+$pagos_por_mes[$clave_mes][] = $pago;
+}
+return $pagos_por_mes;
+}
+
+$sql_servicios = "
 SELECT
 fecha_pago,
 cliente,
@@ -48,9 +62,14 @@ INNER JOIN sesiones s ON r.id_sesion = s.id_sesion
 INNER JOIN actividades a ON s.id_actividad = a.id_actividad
 INNER JOIN usuarios u ON r.id_usuario = u.id_usuario
 WHERE r.tipo_pago = 'evento'
+) AS pagos_servicios
+ORDER BY fecha_pago DESC
+";
+$pagos_servicios = $conexion->query($sql_servicios)->fetch_all(MYSQLI_ASSOC);
+$pagos_servicios_por_mes = agrupar_pagos_por_mes($pagos_servicios);
+$subtotal_servicios = array_sum(array_column($pagos_servicios, 'precio_pagado'));
 
-UNION ALL
-
+$sql_productos = "
 SELECT
 cp.fecha_compra AS fecha_pago,
 CONCAT(u.nombre, ' ', u.apellidos) AS cliente,
@@ -63,31 +82,14 @@ cp.estado
 FROM compras_productos cp
 INNER JOIN productos p ON cp.id_producto = p.id_producto
 INNER JOIN usuarios u ON cp.id_usuario = u.id_usuario
-) AS pagos_combinados
 ORDER BY fecha_pago DESC
 ";
-$resultado = $conexion->query($sql);
-$pagos = $resultado->fetch_all(MYSQLI_ASSOC);
-$pagos_por_mes = [];
-foreach ($pagos as $pago) {
-$clave_mes = substr($pago['fecha_pago'], 0, 7);
-if (!isset($pagos_por_mes[$clave_mes])) {
-$pagos_por_mes[$clave_mes] = [];
-}
-$pagos_por_mes[$clave_mes][] = $pago;
-}
+$pagos_productos = $conexion->query($sql_productos)->fetch_all(MYSQLI_ASSOC);
+$pagos_productos_por_mes = agrupar_pagos_por_mes($pagos_productos);
+$subtotal_productos = array_sum(array_column($pagos_productos, 'precio_pagado'));
+
+$total_ventas = $subtotal_servicios + $subtotal_productos;
 $mes_actual = date('Y-m');
-$primer_mes = array_key_first($pagos_por_mes);
-$sql_total = "
-SELECT
-(SELECT COALESCE(SUM(precio_pagado), 0) FROM paquetes_clientes) +
-(SELECT COALESCE(SUM(precio_pagado), 0) FROM reservas WHERE tipo_pago = 'evento') +
-(SELECT COALESCE(SUM(precio_pagado), 0) FROM compras_productos)
-AS total
-";
-$total_ventas = (float) $conexion
-->query($sql_total)
-->fetch_assoc()['total'];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -121,14 +123,45 @@ Total ingresado (simulado):
 </p>
 </div>
 </div>
-<?php if (count($pagos) === 0): ?>
+<?php if (count($pagos_servicios) === 0 && count($pagos_productos) === 0): ?>
 <div class="mensaje mensaje-aviso">
 Todavía no se ha registrado ningún pago.
 </div>
 <?php else: ?>
-<?php foreach ($pagos_por_mes as $clave_mes => $pagos_del_mes): ?>
+<?php
+$grupos_pagos = [
+[
+'titulo' => 'Paquetes y clases',
+'pagos' => $pagos_servicios,
+'pagos_por_mes' => $pagos_servicios_por_mes,
+'subtotal' => $subtotal_servicios
+],
+[
+'titulo' => 'Productos',
+'pagos' => $pagos_productos,
+'pagos_por_mes' => $pagos_productos_por_mes,
+'subtotal' => $subtotal_productos
+]
+];
+?>
+<?php foreach ($grupos_pagos as $grupo): ?>
+<section class="seccion-pagos-admin">
+<div class="encabezado-seccion-pagos-admin">
+<h2><?= escapar($grupo['titulo']) ?></h2>
+<p class="subtotal-pagos-admin">
+Subtotal:
+<strong><?= formatear_precio($grupo['subtotal']) ?></strong>
+</p>
+</div>
+<?php if (empty($grupo['pagos'])): ?>
+<div class="mensaje mensaje-aviso">
+Todavía no se ha registrado ningún pago en esta clasificación.
+</div>
+<?php else: ?>
+<?php $primer_mes_grupo = array_key_first($grupo['pagos_por_mes']); ?>
+<?php foreach ($grupo['pagos_por_mes'] as $clave_mes => $pagos_del_mes): ?>
 <?php $fecha_mes = DateTime::createFromFormat('Y-m-d', $clave_mes . '-01'); ?>
-<details class="grupo-mes-admin" <?= ($clave_mes === $mes_actual || $clave_mes === $primer_mes) ? 'open' : '' ?>>
+<details class="grupo-mes-admin" <?= ($clave_mes === $mes_actual || $clave_mes === $primer_mes_grupo) ? 'open' : '' ?>>
 <summary class="resumen-mes-admin">
 <span>
 <?= escapar(texto_mes((int) $fecha_mes->format('n'))) ?> <?= $fecha_mes->format('Y') ?>
@@ -189,6 +222,9 @@ strtotime($pago['fecha_pago'])
 </table>
 </div>
 </details>
+<?php endforeach; ?>
+<?php endif; ?>
+</section>
 <?php endforeach; ?>
 <?php endif; ?>
 </main>
