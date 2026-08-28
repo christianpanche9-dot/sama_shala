@@ -120,9 +120,9 @@ alt="<?= escapar($producto['nombre']) ?>"
 </p>
 <?php endif; ?>
 </section>
-<aside class="panel-reserva">
-<p class="precio-sesion">
-<?= t('Precio') ?>
+<aside class="panel-reserva panel-producto">
+<h2><?= t('Precio') ?></h2>
+<p class="precio-sesion precio-sesion-producto">
 <strong><?= formatear_precio((float) $producto['precio']) ?></strong>
 </p>
 <a

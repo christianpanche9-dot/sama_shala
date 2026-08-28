@@ -227,9 +227,12 @@ accept="image/jpeg,image/png,image/webp"
 multiple
 >
 <small>
-Puedes seleccionar varias fotos. Se suman a las fotos
-del detalle que ya tiene el producto.
+Puedes seleccionar varias fotos a la vez: en el
+selector de archivos mantén pulsado Ctrl (Cmd en
+Mac) mientras haces clic en cada foto. Se suman a
+las fotos del detalle que ya tiene el producto.
 </small>
+<div class="lista-archivos-seleccionados" id="lista-archivos-imagenes-detalle"></div>
 </div>
 <div class="campo-checkbox campo-completo">
 <label>
@@ -249,5 +252,23 @@ Guardar cambios
 </div>
 </form>
 </main>
+<script>
+(function () {
+var entrada = document.querySelector('#imagenes_detalle');
+var lista = document.querySelector('#lista-archivos-imagenes-detalle');
+if (!entrada || !lista) {
+return;
+}
+entrada.addEventListener('change', function () {
+lista.innerHTML = '';
+Array.from(entrada.files).forEach(function (archivo) {
+var etiqueta = document.createElement('span');
+etiqueta.className = 'etiqueta-archivo-seleccionado';
+etiqueta.textContent = archivo.name;
+lista.appendChild(etiqueta);
+});
+});
+})();
+</script>
 </body>
 </html>

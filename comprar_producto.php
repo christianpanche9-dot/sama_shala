@@ -54,6 +54,13 @@ content="width=device-width, initial-scale=1.0"
 </a>
 <div class="ficha-sesion">
 <section class="informacion-sesion">
+<?php if (!empty($producto['imagen'])): ?>
+<img
+class="miniatura-producto-comprar"
+src="imagenes/productos/<?= escapar($producto['imagen']) ?>"
+alt="<?= escapar($producto['nombre']) ?>"
+>
+<?php endif; ?>
 <h1>
 <?= escapar($producto['nombre']) ?>
 </h1>
