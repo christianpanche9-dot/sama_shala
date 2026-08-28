@@ -162,7 +162,7 @@ name="volver"
 value="comprar_producto.php"
 class="boton boton-bloque"
 >
-<?= t('Ir al carrito') ?>
+<?= t('Comprar') ?>
 </button>
 <button
 type="submit"
@@ -170,7 +170,7 @@ name="volver"
 value="tienda.php"
 class="boton boton-secundario boton-bloque"
 >
-<?= t('Seguir comprando') ?>
+<?= t('Agregar al carrito') ?>
 </button>
 </div>
 </form>
