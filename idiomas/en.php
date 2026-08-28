@@ -364,4 +364,5 @@ return [
 'Total' => 'Total',
 'Resumen del pedido' => 'Order summary',
 'Selecciona una talla válida antes de comprar.' => 'Select a valid size before buying.',
+'Pagar' => 'Pay',
 ];

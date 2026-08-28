@@ -27,7 +27,7 @@ content="width=device-width, initial-scale=1.0"
 <a class="enlace-volver" href="tienda.php">
 ← <?= t('Volver a la tienda') ?>
 </a>
-<h1><?= t('Comprar') ?></h1>
+<h1><?= t('Pagar') ?></h1>
 <?php if (empty($detalle_carrito['items'])): ?>
 <div class="mensaje mensaje-aviso">
 <?= t('Tu carrito está vacío.') ?>

@@ -169,7 +169,7 @@ class="formulario-agregar-carrito"
 <strong><?= formatear_precio($detalle_carrito['total']) ?></strong>
 </p>
 <a class="boton boton-bloque" href="comprar_producto.php">
-<?= t('Comprar') ?>
+<?= t('Pagar') ?>
 </a>
 <?php endif; ?>
 </aside>

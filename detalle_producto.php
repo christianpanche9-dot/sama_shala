@@ -162,7 +162,7 @@ name="volver"
 value="comprar_producto.php"
 class="boton boton-bloque"
 >
-<?= t('Comprar') ?>
+<?= t('Pagar') ?>
 </button>
 <button
 type="submit"
@@ -202,7 +202,7 @@ alt="<?= escapar($sugerencia['nombre']) ?>"
 class="boton boton-bloque"
 href="detalle_producto.php?id=<?= (int) $sugerencia['id_producto'] ?>"
 >
-<?= t('Comprar') ?>
+<?= t('Ver detalle del producto') ?>
 </a>
 </div>
 </article>
