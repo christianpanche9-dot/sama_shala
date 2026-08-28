@@ -132,7 +132,6 @@ alt="<?= escapar($producto['nombre']) ?>"
 <?php endif; ?>
 <form action="carrito_agregar.php" method="post">
 <input type="hidden" name="id_producto" value="<?= (int) $producto['id_producto'] ?>">
-<input type="hidden" name="volver" value="comprar_producto.php">
 <?php if (!empty($tallas_producto)): ?>
 <div class="campo">
 <label for="talla">
@@ -156,9 +155,24 @@ alt="<?= escapar($producto['nombre']) ?>"
 </label>
 <input type="number" id="cantidad" name="cantidad" value="1" min="1" max="99">
 </div>
-<button type="submit" class="boton boton-bloque">
-<?= t('Comprar') ?>
+<div class="acciones-agregar-carrito">
+<button
+type="submit"
+name="volver"
+value="comprar_producto.php"
+class="boton boton-bloque"
+>
+<?= t('Ir al carrito') ?>
 </button>
+<button
+type="submit"
+name="volver"
+value="tienda.php"
+class="boton boton-secundario boton-bloque"
+>
+<?= t('Seguir comprando') ?>
+</button>
+</div>
 </form>
 </aside>
 </div>

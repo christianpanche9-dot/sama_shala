@@ -476,6 +476,11 @@ display: grid;
 margin-top: 10px;
 gap: 8px;
 }
+.acciones-agregar-carrito {
+display: grid;
+margin-top: 6px;
+gap: 10px;
+}
 .formulario-agregar-carrito label {
 display: flex;
 justify-content: space-between;

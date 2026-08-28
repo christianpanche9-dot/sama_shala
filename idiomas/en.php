@@ -364,4 +364,6 @@ return [
 'Total' => 'Total',
 'Resumen del pedido' => 'Order summary',
 'Selecciona una talla válida antes de comprar.' => 'Select a valid size before buying.',
+'Ir al carrito' => 'Go to cart',
+'Seguir comprando' => 'Keep shopping',
 ];
