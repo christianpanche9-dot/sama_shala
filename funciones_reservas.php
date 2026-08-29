@@ -187,10 +187,34 @@ $stmt_restaurar_paquete->close();
 }
 /*
 |--------------------------------------------------------------------------
-| 4. Buscar la primera espera
+| 4-5. Promover en cadena mientras queden plazas libres y gente esperando
 |--------------------------------------------------------------------------
+| Una reserva puede cubrir varias plazas (columna cantidad), así que
+| cancelarla puede liberar más de un hueco: se promociona a tantas
+| personas de la lista de espera como plazas libres queden.
 */
 
+while (true) {
+$sql_ocupadas = "
+SELECT COALESCE(SUM(cantidad), 0) AS total
+FROM reservas
+WHERE id_sesion = ?
+AND estado = 'confirmada'
+";
+$stmt_ocupadas =
+$conexion->prepare($sql_ocupadas);
+$stmt_ocupadas->bind_param(
+"i",
+$id_sesion
+);
+$stmt_ocupadas->execute();
+$ocupadas = (int) $stmt_ocupadas
+->get_result()
+->fetch_assoc()["total"];
+$stmt_ocupadas->close();
+if ($ocupadas >= (int) $sesion["aforo"]) {
+break;
+}
 $sql_espera = "
 SELECT id_espera, id_usuario
 FROM lista_espera
@@ -213,12 +237,9 @@ $primera_espera = $stmt_espera
 ->get_result()
 ->fetch_assoc();
 $stmt_espera->close();
-/*
-|--------------------------------------------------------------------------
-| 5. Promocionar
-|--------------------------------------------------------------------------
-*/
-if ($primera_espera) {
+if (!$primera_espera) {
+break;
+}
 $id_promocionado = (int)
 $primera_espera["id_usuario"];
 $sql_anterior = "
@@ -248,7 +269,8 @@ SET
 estado = 'confirmada',
 asistencia = 'pendiente',
 fecha_reserva = NOW(),
-codigo_reserva = ?
+codigo_reserva = ?,
+cantidad = 1
 WHERE id_reserva = ?
 ";
 $stmt_promocionar =
@@ -314,7 +336,7 @@ $stmt_promocionada->close();
 */
 
 $sql_total = "
-SELECT COUNT(*) AS total
+SELECT COALESCE(SUM(cantidad), 0) AS total
 FROM reservas
 WHERE id_sesion = ?
 AND estado = 'confirmada'

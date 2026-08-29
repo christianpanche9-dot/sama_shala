@@ -24,6 +24,7 @@ $metodo_pago_simulado = null;
 $referencia_pago = null;
 $titular_pago = trim($_POST["titular"] ?? "");
 $tarjeta_pago = trim($_POST["tarjeta"] ?? "");
+$cantidad = 1;
 if (str_starts_with($metodo_pago_enviado, "paquete:")) {
 $tipo_pago = "paquete";
 $id_paquete_cliente = filter_var(
@@ -41,6 +42,18 @@ exit;
 }
 } elseif ($metodo_pago_enviado === "evento") {
 $tipo_pago = "evento";
+$cantidad_enviada = filter_input(
+INPUT_POST,
+"cantidad",
+FILTER_VALIDATE_INT
+);
+if ($cantidad_enviada !== false && $cantidad_enviada !== null) {
+$cantidad = $cantidad_enviada;
+}
+$cantidad = max(
+1,
+min($cantidad, LIMITE_PLAZAS_POR_RESERVA)
+);
 }
 try {
 $conexion->begin_transaction();
@@ -100,12 +113,11 @@ $descuento_usuario = mejorDescuentoEventoTerapia(
 $conexion,
 $id_usuario
 );
-$precio_pagado = $descuento_usuario !== null
-? precio_con_descuento(
+$precio_pagado = precio_total_evento_terapia(
 (float) $actividad["precio"],
-$descuento_usuario["descuento"]
-)
-: (float) $actividad["precio"];
+$cantidad,
+$descuento_usuario !== null ? $descuento_usuario["descuento"] : 0
+);
 $metodo_pago_simulado = "simulado";
 $referencia_pago = "SIM-" . strtoupper(bin2hex(random_bytes(8)));
 }
@@ -199,7 +211,7 @@ t("Ya estás en la lista de espera.")
 */
 
 $sql_contar = "
-SELECT COUNT(*) AS total
+SELECT COALESCE(SUM(cantidad), 0) AS total
 FROM reservas
 WHERE id_sesion = ?
 AND estado = 'confirmada'
@@ -217,7 +229,7 @@ $stmt_contar->close();
 |--------------------------------------------------------------------------
 */
 
-if ($plazas_ocupadas < (int) $sesion["aforo"]) {
+if ($plazas_ocupadas + $cantidad <= (int) $sesion["aforo"]) {
 /*
 |--------------------------------------------------------------------------
 | 5b. Si se paga con paquete, bloquear y consumir un uso
@@ -305,6 +317,7 @@ fecha_reserva = NOW(),
 codigo_reserva = ?,
 id_paquete_cliente = ?,
 tipo_pago = ?,
+cantidad = ?,
 precio_pagado = ?,
 metodo_pago = ?,
 referencia_pago = ?
@@ -313,10 +326,11 @@ WHERE id_reserva = ?
 $stmt_guardar =
 $conexion->prepare($sql_guardar);
 $stmt_guardar->bind_param(
-"sisdssi",
+"sisidssi",
 $codigo_reserva,
 $id_paquete_cliente,
 $tipo_pago,
+$cantidad,
 $precio_pagado,
 $metodo_pago_simulado,
 $referencia_pago,
@@ -329,6 +343,7 @@ id_sesion,
 id_usuario,
 id_paquete_cliente,
 tipo_pago,
+cantidad,
 precio_pagado,
 metodo_pago,
 referencia_pago,
@@ -344,6 +359,7 @@ VALUES (
 ?,
 ?,
 ?,
+?,
 'confirmada',
 'pendiente',
 ?
@@ -352,11 +368,12 @@ VALUES (
 $stmt_guardar =
 $conexion->prepare($sql_guardar);
 $stmt_guardar->bind_param(
-"iiisdsss",
+"iiisidsss",
 $id_sesion,
 $id_usuario,
 $id_paquete_cliente,
 $tipo_pago,
+$cantidad,
 $precio_pagado,
 $metodo_pago_simulado,
 $referencia_pago,
@@ -388,7 +405,7 @@ $lista_anterior["id_espera"]
 $stmt_actualizar_lista->execute();
 $stmt_actualizar_lista->close();
 }
-$nuevo_total = $plazas_ocupadas + 1;
+$nuevo_total = $plazas_ocupadas + $cantidad;
 $nuevo_estado =
 $nuevo_total >= (int) $sesion["aforo"]
 ? "completa"

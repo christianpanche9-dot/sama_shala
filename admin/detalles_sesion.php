@@ -51,6 +51,7 @@ r.codigo_reserva,
 r.estado,
 r.asistencia,
 r.fecha_reserva,
+r.cantidad,
 u.nombre,
 u.apellidos,
 u.email,
@@ -105,7 +106,7 @@ $stmt_espera->execute();
 $lista_espera =
 $stmt_espera->get_result();
 $sql_ocupacion = "
-SELECT COUNT(*) AS total
+SELECT COALESCE(SUM(cantidad), 0) AS total
 FROM reservas
 WHERE id_sesion = ?
 AND estado = 'confirmada'
@@ -259,6 +260,9 @@ $participante["apellidos"] .
 ", " .
 $participante["nombre"]
 ) ?>
+<?php if ((int) $participante["cantidad"] > 1): ?>
+<small>(<?= (int) $participante["cantidad"] ?> plazas)</small>
+<?php endif; ?>
 <br>
 <small>
 <?= escapar(

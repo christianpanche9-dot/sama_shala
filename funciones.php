@@ -331,6 +331,21 @@ function precio_con_descuento(float $precio, int $descuento_porcentaje): float
 return round($precio * (1 - $descuento_porcentaje / 100), 2);
 }
 
+const LIMITE_PLAZAS_POR_RESERVA = 10;
+
+function precio_total_evento_terapia(
+    float $precio_unitario,
+    int $cantidad,
+    int $descuento_porcentaje = 0
+): float {
+    $cantidad = max(1, $cantidad);
+    $precio_primera_plaza = $descuento_porcentaje > 0
+        ? precio_con_descuento($precio_unitario, $descuento_porcentaje)
+        : $precio_unitario;
+    $precio_resto_plazas = $precio_unitario * ($cantidad - 1);
+    return round($precio_primera_plaza + $precio_resto_plazas, 2);
+}
+
 function calcular_porcentaje_ocupacion(
 int $reservas,
 int $aforo

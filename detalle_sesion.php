@@ -37,10 +37,10 @@ e.nombre AS espacio,
 e.ubicacion,
 e.descripcion AS descripcion_espacio,
 e.aforo_maximo,
-COUNT(r.id_reserva)
+COALESCE(SUM(r.cantidad), 0)
 AS reservas_confirmadas,
 GREATEST(
-s.aforo - COUNT(r.id_reserva),
+s.aforo - COALESCE(SUM(r.cantidad), 0),
 0
 ) AS plazas_disponibles
 FROM sesiones AS s

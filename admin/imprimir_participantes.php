@@ -45,6 +45,7 @@ u.nombre,
 u.apellidos,
 u.telefono,
 r.codigo_reserva,
+r.cantidad,
 r.asistencia
 FROM reservas r
 INNER JOIN usuarios u
@@ -138,6 +139,7 @@ $sesion["hora_fin"],
 <th>Participante</th>
 <th>Teléfono</th>
 <th>Código</th>
+<th>Plazas</th>
 <th>Firma</th>
 </tr>
 </thead>
@@ -168,6 +170,10 @@ $participante["telefono"]
     <?= escapar(
 $participante["codigo_reserva"]
 ) ?>
+</td>
+
+<td>
+    <?= (int) $participante["cantidad"] ?>
 </td>
 
 <td></td>

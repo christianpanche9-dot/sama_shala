@@ -56,10 +56,19 @@ DISTINCT CONCAT(m.nombre, ' ', m.apellidos)
 ORDER BY m.apellidos, m.nombre
 SEPARATOR ', '
 ) AS profesor,
-COUNT(DISTINCT r.id_reserva)
-AS reservas_confirmadas,
+(
+SELECT COALESCE(SUM(r.cantidad), 0)
+FROM reservas AS r
+WHERE r.id_sesion = s.id_sesion
+AND r.estado = 'confirmada'
+) AS reservas_confirmadas,
 GREATEST(
-s.aforo - COUNT(DISTINCT r.id_reserva),
+s.aforo - (
+SELECT COALESCE(SUM(r.cantidad), 0)
+FROM reservas AS r
+WHERE r.id_sesion = s.id_sesion
+AND r.estado = 'confirmada'
+),
 0
 ) AS plazas_disponibles
 FROM sesiones AS s
@@ -69,9 +78,6 @@ INNER JOIN sesiones_profesores AS sp
 ON sp.id_sesion = s.id_sesion
 INNER JOIN profesores AS m
 ON sp.id_profesor = m.id_profesor
-LEFT JOIN reservas AS r
-ON r.id_sesion = s.id_sesion
-AND r.estado = 'confirmada'
 WHERE s.id_actividad = ?
 AND s.estado IN (
 'programada',

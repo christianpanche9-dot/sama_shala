@@ -11,7 +11,7 @@ s.aforo,
 s.estado,
 a.nombre AS actividad,
 (
-SELECT COUNT(*)
+SELECT COALESCE(SUM(r.cantidad), 0)
 FROM reservas r
 WHERE r.id_sesion = s.id_sesion
 AND r.estado = 'confirmada'

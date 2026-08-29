@@ -24,7 +24,7 @@ a.tipo AS tipo_actividad,
 a.precio AS precio_actividad,
 e.nombre AS espacio,
 (
-SELECT COUNT(*)
+SELECT COALESCE(SUM(r.cantidad), 0)
 FROM reservas r
 WHERE r.id_sesion = s.id_sesion
 AND r.estado = 'confirmada'
@@ -64,6 +64,10 @@ $plazas_disponibles = max(
 0,
 (int) $sesion["aforo"] -
 (int) $sesion["plazas_ocupadas"]
+);
+$max_plazas_compra = min(
+$plazas_disponibles,
+LIMITE_PLAZAS_POR_RESERVA
 );
 $pago_con_precio_fijo =
 $sesion["tipo_actividad"] !== "clase" &&
@@ -215,6 +219,46 @@ escapar($descuento_usuario["nombre_paquete"])
 <p>
 <?= t("Esta sesión se paga con este precio fijo. No admite pago con paquetes ni clase suelta.") ?>
 </p>
+<?php if ($max_plazas_compra > 1): ?>
+<div class="campo">
+<label for="cantidad">
+<?= t("Número de plazas") ?>
+</label>
+<input
+type="number"
+id="cantidad"
+name="cantidad"
+value="1"
+min="1"
+max="<?= $max_plazas_compra ?>"
+data-precio-primera="<?= $precio_final ?>"
+data-precio-unidad="<?= (float) $sesion["precio_actividad"] ?>"
+oninput="actualizarTotalReserva(this)"
+>
+<?php if ($descuento_usuario !== null): ?>
+<small>
+<?= t("El descuento solo se aplica a la primera plaza; el resto se paga al precio completo.") ?>
+</small>
+<?php endif; ?>
+</div>
+<p>
+<?= t("Total a pagar:") ?>
+<strong id="total-reserva">
+<?= formatear_precio($precio_final) ?>
+</strong>
+</p>
+<script>
+function actualizarTotalReserva(campo) {
+var cantidad = parseInt(campo.value, 10) || 1;
+var precioPrimera = parseFloat(campo.dataset.precioPrimera);
+var precioUnidad = parseFloat(campo.dataset.precioUnidad);
+var total = precioPrimera + precioUnidad * (cantidad - 1);
+var totalFormateado = "$" + total.toFixed(2);
+document.getElementById("total-reserva").textContent = totalFormateado;
+document.getElementById("total-boton").textContent = totalFormateado;
+}
+</script>
+<?php endif; ?>
 </fieldset>
 <fieldset class="campo-completo">
 <legend><?= t("Pago simulado") ?></legend>
@@ -247,10 +291,9 @@ required
 </div>
 </fieldset>
 <button type="submit" class="boton">
-<?= sprintf(
-t("Pagar %s y confirmar"),
-formatear_precio($precio_final)
-) ?>
+<?= t("Pagar") ?>
+<span id="total-boton"><?= formatear_precio($precio_final) ?></span>
+<?= t("y confirmar") ?>
 </button>
 <?php else: ?>
 <fieldset class="campo-completo">

@@ -47,7 +47,10 @@ UNION ALL
 SELECT
 r.fecha_reserva AS fecha_pago,
 CONCAT(u.nombre, ' ', u.apellidos) AS cliente,
-a.nombre AS concepto,
+CASE
+WHEN r.cantidad > 1 THEN CONCAT(a.nombre, ' × ', r.cantidad)
+ELSE a.nombre
+END AS concepto,
 CASE a.tipo
 WHEN 'terapia' THEN 'Terapia'
 WHEN 'taller' THEN 'Taller'

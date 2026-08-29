@@ -14,6 +14,7 @@ r.estado,
 r.asistencia,
 r.codigo_reserva,
 r.tipo_pago,
+r.cantidad,
 r.precio_pagado,
 s.id_sesion,
 s.fecha,
@@ -150,6 +151,15 @@ t(ucfirst($reserva["estado"]))
 <?= t("Clase suelta") ?>
 <?php endif; ?>
 </p>
+<?php if (
+$reserva["tipo_pago"] === "evento" &&
+(int) $reserva["cantidad"] > 1
+): ?>
+<p>
+<strong><?= t('Plazas:') ?></strong>
+<?= (int) $reserva["cantidad"] ?>
+</p>
+<?php endif; ?>
 <?php if (
     $reserva["estado"] === "confirmada"
 ): ?>
