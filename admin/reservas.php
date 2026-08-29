@@ -133,6 +133,16 @@ content="width=device-width, initial-scale=1.0"
 <?php require "menu_admin.php"; ?>
 <main class="contenedor">
 <h1>Gestión de reservas</h1>
+<p>
+<a
+class="boton boton-secundario"
+href="<?= escapar(URL_RESPUESTAS_FORMULARIO_INSCRIPCION_PAQUETE) ?>"
+target="_blank"
+rel="noopener"
+>
+Ver respuestas del formulario de inscripción
+</a>
+</p>
 <?php if ($mensaje === "asistencia"): ?>
 <div class="mensaje mensaje-exito">
 La asistencia se ha actualizado.

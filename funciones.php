@@ -3,6 +3,9 @@ if (session_status() === PHP_SESSION_NONE) {
 session_start();
 }
 
+const URL_FORMULARIO_INSCRIPCION_PAQUETE = 'https://docs.google.com/forms/d/19CNLC515V9V9XlZSq8zTTbWSv7dP-m5TGsw8MKqEdaM/viewform';
+const URL_RESPUESTAS_FORMULARIO_INSCRIPCION_PAQUETE = 'https://docs.google.com/forms/d/19CNLC515V9V9XlZSq8zTTbWSv7dP-m5TGsw8MKqEdaM/edit#responses';
+
 function escapar(?string $texto): string
 {
 return htmlspecialchars(

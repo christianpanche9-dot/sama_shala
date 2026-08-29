@@ -305,6 +305,8 @@ return [
 'Mis paquetes' => 'My packages',
 'Paquete comprado correctamente. Ya puedes usarlo al reservar una sesión.' => 'Package purchased successfully. You can now use it to book a session.',
 'Comprar un nuevo paquete' => 'Buy a new package',
+'Para completar tu inscripción, rellena este formulario (solo la primera vez).' => 'To complete your registration, fill out this form (only the first time).',
+'Ir al formulario de inscripción' => 'Go to the registration form',
 'Todavía no tienes ningún paquete.' => 'You don\'t have any packages yet.',
 'Usos disponibles:' => 'Uses available:',
 'Comprado:' => 'Purchased:',

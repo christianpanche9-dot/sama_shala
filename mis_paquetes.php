@@ -49,6 +49,19 @@ content="width=device-width, initial-scale=1.0"
 <div class="mensaje mensaje-exito">
 <?= t('Paquete comprado correctamente. Ya puedes usarlo al reservar una sesión.') ?>
 </div>
+<div class="mensaje mensaje-exito">
+<p>
+<?= t('Para completar tu inscripción, rellena este formulario (solo la primera vez).') ?>
+</p>
+<a
+class="boton"
+href="<?= escapar(URL_FORMULARIO_INSCRIPCION_PAQUETE) ?>"
+target="_blank"
+rel="noopener"
+>
+<?= t('Ir al formulario de inscripción') ?>
+</a>
+</div>
 <?php endif; ?>
 <p>
 <a class="boton boton-secundario" href="paquetes.php">
