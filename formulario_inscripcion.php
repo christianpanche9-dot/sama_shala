@@ -199,31 +199,17 @@ name="hobbies"
 rows="3"
 ><?= escapar($hobbies) ?></textarea>
 </div>
-<div class="campo">
-<label>
-<?= t("De conformidad con la Ley Orgánica de Protección de Datos Personales, autorizo el uso de mis datos para registro, acompañamiento en la práctica y comunicación interna. También autorizo el uso de mi imagen (fotos o vídeos) para compartir en los medios de Sama Shala.") ?>
-</label>
-<div class="opciones-radio">
+<div class="campo campo-checkbox">
 <label>
 <input
-type="radio"
+type="checkbox"
 name="autorizacion_datos_imagen"
 value="si"
 <?= $autorizacion_datos_imagen === "si" ? "checked" : "" ?>
 required
 >
-<?= t("Sí") ?>
+<?= t("De conformidad con la Ley Orgánica de Protección de Datos Personales, autorizo el uso de mis datos para registro, acompañamiento en la práctica y comunicación interna. También autorizo el uso de mi imagen (fotos o vídeos) para compartir en los medios de Sama Shala.") ?>
 </label>
-<label>
-<input
-type="radio"
-name="autorizacion_datos_imagen"
-value="no"
-<?= $autorizacion_datos_imagen === "no" ? "checked" : "" ?>
->
-<?= t("No") ?>
-</label>
-</div>
 </div>
 <button type="submit" class="boton">
 <?= t("Guardar mis datos") ?>

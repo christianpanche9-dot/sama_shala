@@ -30,7 +30,7 @@ if (
     !in_array($experiencia_previa, $opciones_si_no, true) ||
     !in_array($tiene_lesion, $opciones_si_no, true) ||
     !in_array($tiene_cirugia, $opciones_si_no, true) ||
-    !in_array($autorizacion_datos_imagen, $opciones_si_no, true)
+    $autorizacion_datos_imagen !== "si"
 ) {
     header("Location: formulario_inscripcion.php?error=datos");
     exit;
