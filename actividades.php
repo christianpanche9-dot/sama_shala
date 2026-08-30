@@ -636,7 +636,13 @@ $actividad['tipo'] !== 'clase' &&
 $actividad['precio'] !== null &&
 $descuento_usuario_actividades !== null
 ): ?>
-<span class="insignia">
+<span
+class="insignia insignia-descuento"
+title="<?= escapar(sprintf(
+t('Tienes este descuento porque tienes activo el paquete %s.'),
+$descuento_usuario_actividades['nombre_paquete']
+)) ?>"
+>
 <?= sprintf(
 t('%d%% de descuento'),
 $descuento_usuario_actividades['descuento']

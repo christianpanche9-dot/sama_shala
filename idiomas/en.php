@@ -393,4 +393,5 @@ return [
 'Editar mi formulario' => 'Edit my form',
 'Completar formulario' => 'Complete form',
 '%d%% de descuento' => '%d%% discount',
+'Tienes este descuento porque tienes activo el paquete %s.' => 'You have this discount because you have the %s package active.',
 ];
