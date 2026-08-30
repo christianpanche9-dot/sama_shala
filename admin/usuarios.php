@@ -207,6 +207,9 @@ Acciones
 <a href="editar_usuario.php?id_usuario=<?= (int) $usuario['id_usuario'] ?>">
 Editar
 </a>
+<a href="ver_inscripcion.php?id_usuario=<?= (int) $usuario['id_usuario'] ?>">
+Ver inscripción
+</a>
 <?php if ((int) $usuario['id_usuario'] === idUsuarioActual()): ?>
 <span class="insignia insignia-clara">Tu usuario</span>
 <?php else: ?>

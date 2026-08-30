@@ -136,9 +136,7 @@ content="width=device-width, initial-scale=1.0"
 <p>
 <a
 class="boton boton-secundario"
-href="<?= escapar(URL_RESPUESTAS_FORMULARIO_INSCRIPCION_PAQUETE) ?>"
-target="_blank"
-rel="noopener"
+href="inscripciones.php"
 >
 Ver respuestas del formulario de inscripción
 </a>

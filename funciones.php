@@ -3,9 +3,6 @@ if (session_status() === PHP_SESSION_NONE) {
 session_start();
 }
 
-const URL_FORMULARIO_INSCRIPCION_PAQUETE = 'https://docs.google.com/forms/d/19CNLC515V9V9XlZSq8zTTbWSv7dP-m5TGsw8MKqEdaM/viewform';
-const URL_RESPUESTAS_FORMULARIO_INSCRIPCION_PAQUETE = 'https://docs.google.com/forms/d/19CNLC515V9V9XlZSq8zTTbWSv7dP-m5TGsw8MKqEdaM/edit#responses';
-
 function escapar(?string $texto): string
 {
 return htmlspecialchars(
@@ -527,6 +524,21 @@ function procesar_imagenes_multiples_subidas(
         }
     }
     return ['ok' => true, 'archivos' => $archivos];
+}
+
+function obtenerInscripcion(mysqli $conexion, int $id_usuario): ?array
+{
+    $sql = "
+        SELECT *
+        FROM formulario_inscripcion
+        WHERE id_usuario = ?
+    ";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param('i', $id_usuario);
+    $stmt->execute();
+    $inscripcion = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    return $inscripcion ?: null;
 }
 
 // Placeholder hasta conectar un proveedor de correo (el hosting no

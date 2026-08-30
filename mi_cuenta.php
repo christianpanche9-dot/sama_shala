@@ -1,5 +1,7 @@
 <?php
 require_once "seguridad.php";
+require_once "conexion.php";
+$tiene_inscripcion = obtenerInscripcion($conexion, idUsuarioActual()) !== null;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -102,6 +104,22 @@ $_SESSION["usuario"]["email"]
 </p>
 <a class="boton boton-bloque" href="mis_compras.php">
 <?= t("Ver mis compras") ?>
+</a>
+</article>
+<article class="tarjeta">
+<span class="icono-tarjeta-cuenta">
+<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8">
+<path d="M7 3h10a1 1 0 0 1 1 1v16l-6-3-6 3V4a1 1 0 0 1 1-1Z"/>
+</svg>
+</span>
+<h2><?= t("Formulario de inscripción") ?></h2>
+<p>
+<?= t("Tus datos de salud y la autorización para practicar en Sama Shala.") ?>
+</p>
+<a class="boton boton-bloque" href="formulario_inscripcion.php">
+<?= $tiene_inscripcion
+    ? t("Editar mi formulario")
+    : t("Completar formulario") ?>
 </a>
 </article>
 </section>

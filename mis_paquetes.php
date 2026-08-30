@@ -25,6 +25,7 @@ $stmt->bind_param('i', $id_usuario);
 $stmt->execute();
 $paquetes = $stmt->get_result();
 $mensaje = $_GET['mensaje'] ?? '';
+$tiene_inscripcion = obtenerInscripcion($conexion, $id_usuario) !== null;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -49,19 +50,16 @@ content="width=device-width, initial-scale=1.0"
 <div class="mensaje mensaje-exito">
 <?= t('Paquete comprado correctamente. Ya puedes usarlo al reservar una sesión.') ?>
 </div>
+<?php if (!$tiene_inscripcion): ?>
 <div class="mensaje mensaje-exito">
 <p>
 <?= t('Para completar tu inscripción, rellena este formulario (solo la primera vez).') ?>
 </p>
-<a
-class="boton"
-href="<?= escapar(URL_FORMULARIO_INSCRIPCION_PAQUETE) ?>"
-target="_blank"
-rel="noopener"
->
+<a class="boton" href="formulario_inscripcion.php">
 <?= t('Ir al formulario de inscripción') ?>
 </a>
 </div>
+<?php endif; ?>
 <?php endif; ?>
 <p>
 <a class="boton boton-secundario" href="paquetes.php">
