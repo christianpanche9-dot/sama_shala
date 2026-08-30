@@ -1561,6 +1561,9 @@ justify-content: center;
 .rejilla-profesores {
 grid-template-columns: 1fr;
 }
+.columna-productos-tienda .rejilla-actividades {
+grid-template-columns: 1fr;
+}
 .seccion-tipo-actividad,
 .seccion-top-actividades {
 padding: 26px 18px;
