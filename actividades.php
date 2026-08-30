@@ -67,6 +67,7 @@ a.tipo,
 a.nivel,
 a.duracion_minutos,
 a.imagen,
+a.precio,
 COUNT(s.id_sesion) AS proximas_sesiones,
 MIN(
 TIMESTAMP(
@@ -94,7 +95,8 @@ a.categoria,
 a.tipo,
 a.nivel,
 a.duracion_minutos,
-a.imagen
+a.imagen,
+a.precio
 ORDER BY a.nombre
 ";
 $stmt = $conexion->prepare($sql);
@@ -193,6 +195,10 @@ a.posicion_top
 ORDER BY a.posicion_top ASC
 LIMIT 3
 ";
+$descuento_usuario_actividades = usuarioAutenticado()
+? mejorDescuentoEventoTerapia($conexion, idUsuarioActual())
+: null;
+
 $resultado_top = $conexion->query($sql_top);
 $actividades_top = [];
 $actividad_banner_top = null;
@@ -625,6 +631,18 @@ $actividad['nombre']
 $actividad['nombre']
 ) ?>
 </h2>
+<?php if (
+$actividad['tipo'] !== 'clase' &&
+$actividad['precio'] !== null &&
+$descuento_usuario_actividades !== null
+): ?>
+<span class="insignia">
+<?= sprintf(
+t('%d%% de descuento'),
+$descuento_usuario_actividades['descuento']
+) ?>
+</span>
+<?php endif; ?>
 <p>
 <?= escapar(
 $actividad['descripcion']

@@ -392,4 +392,5 @@ return [
 'Tus datos de salud y la autorización para practicar en Sama Shala.' => 'Your health details and the authorization to practice at Sama Shala.',
 'Editar mi formulario' => 'Edit my form',
 'Completar formulario' => 'Complete form',
+'%d%% de descuento' => '%d%% discount',
 ];
