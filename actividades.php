@@ -199,6 +199,8 @@ $descuento_usuario_actividades = usuarioAutenticado()
 ? mejorDescuentoEventoTerapia($conexion, idUsuarioActual())
 : null;
 
+$mensaje = trim($_GET['mensaje'] ?? '');
+
 $resultado_top = $conexion->query($sql_top);
 $actividades_top = [];
 $actividad_banner_top = null;
@@ -310,6 +312,11 @@ window.addEventListener("resize", ajustarTamano);
 })();
 </script>
 <div class="contenedor seccion">
+<?php if ($mensaje === 'inscripcion_guardada'): ?>
+<div class="mensaje mensaje-exito">
+<?= t('Tus datos se han guardado correctamente.') ?>
+</div>
+<?php endif; ?>
 <?php if ($actividad_banner_top !== null): ?>
 <a
 class="banner-top"

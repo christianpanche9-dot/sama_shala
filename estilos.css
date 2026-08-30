@@ -1797,6 +1797,12 @@ accent-color: var(--color-verde-oscuro);
 cursor: pointer;
 flex-shrink: 0;
 }
+.campo-checkbox-texto-largo label {
+align-items: flex-start;
+}
+.campo-checkbox-texto-largo input[type="checkbox"] {
+margin-top: 3px;
+}
 .lista-profesores-checkbox {
 display: flex;
 flex-direction: column;

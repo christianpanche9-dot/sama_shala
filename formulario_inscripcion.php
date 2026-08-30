@@ -5,7 +5,6 @@ require_once "conexion.php";
 $id_usuario = idUsuarioActual();
 $inscripcion = obtenerInscripcion($conexion, $id_usuario);
 $error = $_GET["error"] ?? "";
-$guardado = ($_GET["mensaje"] ?? "") === "guardado";
 
 $nombre = $inscripcion["nombre"] ?? nombreUsuarioActual();
 $email = $inscripcion["email"] ?? ($_SESSION["usuario"]["email"] ?? "");
@@ -41,11 +40,6 @@ content="width=device-width, initial-scale=1.0"
 <p>
 <?= t("Completa tus datos de salud y la autorización para poder practicar en Sama Shala.") ?>
 </p>
-<?php if ($guardado): ?>
-<div class="mensaje mensaje-exito">
-<?= t("Tus datos se han guardado correctamente.") ?>
-</div>
-<?php endif; ?>
 <?php if ($error === "datos"): ?>
 <div class="mensaje mensaje-error">
 <?= t("Revisa los datos introducidos.") ?>
@@ -199,7 +193,7 @@ name="hobbies"
 rows="3"
 ><?= escapar($hobbies) ?></textarea>
 </div>
-<div class="campo campo-checkbox">
+<div class="campo campo-checkbox campo-checkbox-texto-largo">
 <label>
 <input
 type="checkbox"

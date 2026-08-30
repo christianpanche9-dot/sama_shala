@@ -101,5 +101,5 @@ $stmt->bind_param(
 $stmt->execute();
 $stmt->close();
 $conexion->close();
-header("Location: formulario_inscripcion.php?mensaje=guardado");
+header("Location: actividades.php?mensaje=inscripcion_guardada");
 exit;
