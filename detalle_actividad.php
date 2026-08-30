@@ -40,6 +40,17 @@ if (!$actividad) {
 http_response_code(404);
 die(t('La actividad no existe o no está disponible.'));
 }
+$descuento_usuario_actividad = null;
+if (
+$actividad['tipo'] !== 'clase' &&
+$actividad['precio'] !== null &&
+usuarioAutenticado()
+) {
+$descuento_usuario_actividad = mejorDescuentoEventoTerapia(
+$conexion,
+idUsuarioActual()
+);
+}
 $sql_sesiones = "
 SELECT
 s.id_sesion,
@@ -176,6 +187,15 @@ $actividad['descripcion']
 <div class="mensaje mensaje-aviso">
 <?= t('Esta actividad se paga con el precio indicado al reservar. No admite pago con paquetes ni clase suelta.') ?>
 </div>
+<?php if ($descuento_usuario_actividad !== null): ?>
+<div class="mensaje mensaje-exito">
+<?= sprintf(
+t('Tienes un %d%% de descuento en este evento o terapia gracias a tu paquete %s.'),
+$descuento_usuario_actividad['descuento'],
+escapar($descuento_usuario_actividad['nombre_paquete'])
+) ?>
+</div>
+<?php endif; ?>
 <?php endif; ?>
 <a
 class="enlace-volver"
