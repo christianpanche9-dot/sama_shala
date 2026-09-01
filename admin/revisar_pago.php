@@ -58,7 +58,7 @@ throw new Exception('No se ha podido actualizar la compra.');
 $stmt->close();
 } else {
 $sql_estado_pago = "
-SELECT estado_pago
+SELECT estado, estado_pago
 FROM reservas
 WHERE id_reserva = ?
 ";
@@ -67,7 +67,11 @@ $stmt_estado_pago->bind_param('i', $id_registro);
 $stmt_estado_pago->execute();
 $reserva = $stmt_estado_pago->get_result()->fetch_assoc();
 $stmt_estado_pago->close();
-if (!$reserva || $reserva['estado_pago'] !== 'pendiente') {
+if (
+!$reserva ||
+$reserva['estado_pago'] !== 'pendiente' ||
+$reserva['estado'] !== 'confirmada'
+) {
 throw new Exception('La reserva no está pendiente de revisión.');
 }
 if ($accion === 'aprobar') {
@@ -76,6 +80,7 @@ UPDATE reservas
 SET estado_pago = 'pagado'
 WHERE id_reserva = ?
 AND estado_pago = 'pendiente'
+AND estado = 'confirmada'
 ";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param('i', $id_registro);

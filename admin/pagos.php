@@ -39,7 +39,11 @@ bc.precio_pagado,
 bc.metodo_pago,
 bc.referencia_pago,
 bc.comprobante_pago,
-IF(bc.estado = 'pendiente', 'pendiente', 'pagado') AS estado_pago,
+CASE
+WHEN bc.estado = 'pendiente' THEN 'pendiente'
+WHEN bc.estado = 'cancelado' AND bc.metodo_pago = 'transferencia' THEN 'rechazado'
+ELSE 'pagado'
+END AS estado_pago,
 'paquete' AS tipo_origen,
 bc.id_paquete_cliente AS id_registro
 FROM paquetes_clientes bc
@@ -66,7 +70,10 @@ r.precio_pagado,
 r.metodo_pago,
 r.referencia_pago,
 r.comprobante_pago,
-r.estado_pago,
+CASE
+WHEN r.estado = 'cancelada' AND r.metodo_pago = 'transferencia' THEN 'rechazado'
+ELSE r.estado_pago
+END AS estado_pago,
 'evento' AS tipo_origen,
 r.id_reserva AS id_registro
 FROM reservas r
@@ -79,7 +86,10 @@ ORDER BY fecha_pago DESC
 ";
 $pagos_servicios = $conexion->query($sql_servicios)->fetch_all(MYSQLI_ASSOC);
 $pagos_servicios_por_mes = agrupar_pagos_por_mes($pagos_servicios);
-$subtotal_servicios = array_sum(array_column($pagos_servicios, 'precio_pagado'));
+$subtotal_servicios = array_sum(array_column(
+    array_filter($pagos_servicios, fn ($pago) => $pago['estado_pago'] === 'pagado'),
+    'precio_pagado'
+));
 
 $sql_productos = "
 SELECT
@@ -101,7 +111,10 @@ ORDER BY fecha_pago DESC
 ";
 $pagos_productos = $conexion->query($sql_productos)->fetch_all(MYSQLI_ASSOC);
 $pagos_productos_por_mes = agrupar_pagos_por_mes($pagos_productos);
-$subtotal_productos = array_sum(array_column($pagos_productos, 'precio_pagado'));
+$subtotal_productos = array_sum(array_column(
+    array_filter($pagos_productos, fn ($pago) => $pago['estado_pago'] === 'pagado'),
+    'precio_pagado'
+));
 
 $total_ventas = $subtotal_servicios + $subtotal_productos;
 $mes_actual = date('Y-m');
@@ -132,7 +145,7 @@ Administración
 </p>
 <h1>Pagos</h1>
 <p>
-Total ingresado (simulado):
+Total ingresado (confirmado):
 <strong>
 <?= formatear_precio($total_ventas) ?>
 </strong>
@@ -258,9 +271,13 @@ Ver foto
 <?php endif; ?>
 </td>
 <td>
-<?= $pago['estado_pago'] === 'pendiente'
-    ? 'Pendiente de revisión'
-    : 'Pagado' ?>
+<?php if ($pago['estado_pago'] === 'pendiente'): ?>
+Pendiente de revisión
+<?php elseif ($pago['estado_pago'] === 'rechazado'): ?>
+Rechazado
+<?php else: ?>
+Pagado
+<?php endif; ?>
 </td>
 <td class="acciones-tabla">
 <?php if ($pago['estado_pago'] === 'pendiente'): ?>
