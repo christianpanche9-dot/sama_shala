@@ -2303,43 +2303,30 @@ width: 100%;
 }
 .datos-transferencia {
 margin-bottom: 1.2rem;
-padding: 0.4rem 1.2rem;
+padding: 0.9rem 1.2rem;
 background-color: var(--color-marron-claro);
 border: 1px solid var(--color-marron);
 border-radius: 10px;
+overflow-wrap: break-word;
 }
 .cuenta-transferencia {
-padding: 0.6rem 0;
+padding-bottom: 0.6rem;
+margin-bottom: 0.6rem;
 border-bottom: 1px solid var(--color-marron);
 }
-.cuenta-transferencia:last-child {
-border-bottom: none;
-}
-.cuenta-transferencia summary {
+.cuenta-transferencia h3 {
+margin: 0 0 0.3rem;
 color: var(--color-marron-oscuro);
-font-weight: 700;
-cursor: pointer;
+font-size: 1rem;
 }
-.cuenta-transferencia[open] summary {
-margin-bottom: 0.5rem;
+.datos-transferencia p {
+margin: 0.15rem 0;
+font-size: 0.92rem;
+line-height: 1.4;
 }
-.datos-transferencia dl {
-display: grid;
-grid-template-columns: 1fr;
-gap: 0.15rem;
-margin: 0;
-}
-.datos-transferencia dt {
-margin-top: 0.4rem;
+.contacto-transferencia {
 color: var(--color-texto-tenue);
-font-weight: 700;
-}
-.datos-transferencia dt:first-child {
-margin-top: 0;
-}
-.datos-transferencia dd {
-margin: 0;
-overflow-wrap: break-word;
+font-size: 0.85rem;
 }
 .usuario-menu {
 color: var(--color-azul);

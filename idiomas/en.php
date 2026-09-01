@@ -414,4 +414,5 @@ return [
 'Pago pendiente de revisión.' => 'Payment pending review.',
 'Pagado' => 'Paid',
 'Rechazado' => 'Rejected',
+'¿Dudas? Escríbenos al' => 'Questions? Message us at',
 ];
