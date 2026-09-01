@@ -94,9 +94,13 @@ strtotime($compra['fecha_compra'])
 </p>
 <p>
 <strong><?= t('Estado:') ?></strong>
-<?= $compra['estado'] === 'pendiente'
-    ? t('Pendiente de revisión')
-    : t('Pagado') ?>
+<?php if ($compra['estado'] === 'pendiente'): ?>
+<?= t('Pendiente de revisión') ?>
+<?php elseif ($compra['estado'] === 'rechazado'): ?>
+<?= t('Rechazado') ?>
+<?php else: ?>
+<?= t('Pagado') ?>
+<?php endif; ?>
 </p>
 <p class="codigo-reserva">
 <?= t('Ref. pago:') ?> <?= escapar($compra['referencia_pago']) ?> ·

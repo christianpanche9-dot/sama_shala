@@ -161,7 +161,10 @@ $reserva["tipo_pago"] === "evento" &&
 <?= (int) $reserva["cantidad"] ?>
 </p>
 <?php endif; ?>
-<?php if ($reserva["estado_pago"] === "pendiente"): ?>
+<?php if (
+$reserva["estado_pago"] === "pendiente" &&
+$reserva["estado"] === "confirmada"
+): ?>
 <div class="mensaje mensaje-aviso">
 <?= t('Pago pendiente de revisión.') ?>
 </div>

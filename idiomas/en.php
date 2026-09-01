@@ -413,4 +413,5 @@ return [
 'Pendiente de revisión' => 'Pending review',
 'Pago pendiente de revisión.' => 'Payment pending review.',
 'Pagado' => 'Paid',
+'Rechazado' => 'Rejected',
 ];
