@@ -2257,6 +2257,60 @@ width: auto;
 accent-color: var(--color-verde-oscuro);
 cursor: pointer;
 }
+@media (max-width: 850px) {
+.formulario {
+margin: 1.5rem auto;
+padding: 1.5rem;
+}
+}
+@media (max-width: 580px) {
+.formulario {
+margin: 0.5rem auto;
+padding: 1.25rem;
+border-radius: 12px;
+}
+.campo {
+margin-bottom: 1.1rem;
+}
+.opciones-radio {
+flex-direction: column;
+gap: 0.7rem;
+}
+.opciones-radio label {
+width: 100%;
+}
+.formulario button[type="submit"] {
+width: 100%;
+}
+}
+.datos-transferencia {
+margin-bottom: 1.2rem;
+padding: 1rem 1.2rem;
+background-color: var(--color-marron-claro);
+border: 1px solid var(--color-marron);
+border-radius: 10px;
+}
+.datos-transferencia h3 {
+margin: 0.9rem 0 0.4rem;
+color: var(--color-marron-oscuro);
+font-size: 1rem;
+}
+.datos-transferencia h3:first-child {
+margin-top: 0;
+}
+.datos-transferencia dl {
+display: grid;
+grid-template-columns: auto 1fr;
+gap: 0.2rem 0.6rem;
+margin: 0;
+}
+.datos-transferencia dt {
+color: var(--color-texto-tenue);
+font-weight: 700;
+}
+.datos-transferencia dd {
+margin: 0;
+}
 .usuario-menu {
 color: var(--color-azul);
 font-weight: 700;

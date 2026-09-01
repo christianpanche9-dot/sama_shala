@@ -181,6 +181,8 @@ content="width=device-width, initial-scale=1.0"
 <form
 action="procesar_reserva.php"
 method="post"
+enctype="multipart/form-data"
+id="formulario-reserva"
 >
 <input
 type="hidden"
@@ -261,7 +263,28 @@ document.getElementById("total-boton").textContent = totalFormateado;
 <?php endif; ?>
 </fieldset>
 <fieldset class="campo-completo">
-<legend><?= t("Pago simulado") ?></legend>
+<legend><?= t("¿Cómo quieres pagar?") ?></legend>
+<label class="opcion-pago">
+<input
+type="radio"
+name="metodo_pago_compra"
+value="simulado"
+checked
+data-metodo-pago
+>
+<?= t("Pago simulado") ?>
+</label>
+<label class="opcion-pago">
+<input
+type="radio"
+name="metodo_pago_compra"
+value="transferencia"
+data-metodo-pago
+>
+<?= t("Transferencia bancaria") ?>
+</label>
+</fieldset>
+<div id="bloque-pago-simulado">
 <p>
 <?= t("Este proyecto no cobra dinero real: al confirmar se registra el pago directamente como pagado.") ?>
 </p>
@@ -274,7 +297,7 @@ type="text"
 id="titular"
 name="titular"
 maxlength="150"
-required
+data-requerido-simulado
 >
 </div>
 <div class="campo">
@@ -286,10 +309,51 @@ type="text"
 id="tarjeta"
 name="tarjeta"
 maxlength="30"
-required
+data-requerido-simulado
 >
 </div>
-</fieldset>
+</div>
+<div id="bloque-pago-transferencia" hidden>
+<?php require __DIR__ . '/datos_transferencia.php'; ?>
+<div class="campo">
+<label for="comprobante_pago">
+<?= t("Foto del comprobante de la transferencia") ?>
+</label>
+<input
+type="file"
+id="comprobante_pago"
+name="comprobante_pago"
+accept="image/*"
+data-requerido-transferencia
+>
+</div>
+<p class="ayuda">
+<?= t("Tu reserva quedará pendiente de revisión hasta que confirmemos el pago.") ?>
+</p>
+</div>
+<script>
+(function () {
+var formulario = document.getElementById('formulario-reserva');
+var bloqueSimulado = document.getElementById('bloque-pago-simulado');
+var bloqueTransferencia = document.getElementById('bloque-pago-transferencia');
+var radios = formulario.querySelectorAll('[data-metodo-pago]');
+function actualizarModoPago() {
+var esTransferencia = formulario.querySelector('[data-metodo-pago]:checked').value === 'transferencia';
+bloqueSimulado.hidden = esTransferencia;
+bloqueTransferencia.hidden = !esTransferencia;
+formulario.querySelectorAll('[data-requerido-simulado]').forEach(function (campo) {
+campo.required = !esTransferencia;
+});
+formulario.querySelectorAll('[data-requerido-transferencia]').forEach(function (campo) {
+campo.required = esTransferencia;
+});
+}
+radios.forEach(function (radio) {
+radio.addEventListener('change', actualizarModoPago);
+});
+actualizarModoPago();
+})();
+</script>
 <button type="submit" class="boton">
 <?= t("Pagar") ?>
 <span id="total-boton"><?= formatear_precio($precio_final) ?></span>

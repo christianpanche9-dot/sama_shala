@@ -25,7 +25,10 @@ tipo_registro,
 precio_pagado,
 metodo_pago,
 referencia_pago,
-estado
+comprobante_pago,
+estado_pago,
+tipo_origen,
+id_registro
 FROM (
 SELECT
 bc.fecha_compra AS fecha_pago,
@@ -35,7 +38,10 @@ tb.nombre AS concepto,
 bc.precio_pagado,
 bc.metodo_pago,
 bc.referencia_pago,
-bc.estado
+bc.comprobante_pago,
+IF(bc.estado = 'pendiente', 'pendiente', 'pagado') AS estado_pago,
+'paquete' AS tipo_origen,
+bc.id_paquete_cliente AS id_registro
 FROM paquetes_clientes bc
 INNER JOIN tipos_paquete tb
 ON bc.id_tipo_paquete = tb.id_tipo_paquete
@@ -59,7 +65,10 @@ END AS tipo_registro,
 r.precio_pagado,
 r.metodo_pago,
 r.referencia_pago,
-r.estado
+r.comprobante_pago,
+r.estado_pago,
+'evento' AS tipo_origen,
+r.id_reserva AS id_registro
 FROM reservas r
 INNER JOIN sesiones s ON r.id_sesion = s.id_sesion
 INNER JOIN actividades a ON s.id_actividad = a.id_actividad
@@ -81,7 +90,10 @@ CONCAT(p.nombre, ' × ', cp.cantidad) AS concepto,
 cp.precio_pagado,
 cp.metodo_pago,
 cp.referencia_pago,
-cp.estado
+cp.comprobante_pago,
+cp.estado AS estado_pago,
+'producto' AS tipo_origen,
+cp.id_compra AS id_registro
 FROM compras_productos cp
 INNER JOIN productos p ON cp.id_producto = p.id_producto
 INNER JOIN usuarios u ON cp.id_usuario = u.id_usuario
@@ -93,6 +105,7 @@ $subtotal_productos = array_sum(array_column($pagos_productos, 'precio_pagado'))
 
 $total_ventas = $subtotal_servicios + $subtotal_productos;
 $mes_actual = date('Y-m');
+$mensaje = $_GET['mensaje'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -126,6 +139,19 @@ Total ingresado (simulado):
 </p>
 </div>
 </div>
+<?php if ($mensaje === 'aprobado'): ?>
+<div class="mensaje mensaje-exito">
+El pago se ha aprobado correctamente.
+</div>
+<?php elseif ($mensaje === 'rechazado'): ?>
+<div class="mensaje mensaje-exito">
+El pago se ha rechazado correctamente.
+</div>
+<?php elseif ($mensaje === 'error'): ?>
+<div class="mensaje mensaje-error">
+No se ha podido procesar la revisión del pago.
+</div>
+<?php endif; ?>
 <?php if (count($pagos_servicios) === 0 && count($pagos_productos) === 0): ?>
 <div class="mensaje mensaje-aviso">
 Todavía no se ha registrado ningún pago.
@@ -184,7 +210,9 @@ Todavía no se ha registrado ningún pago en esta clasificación.
 <th>Importe</th>
 <th>Método</th>
 <th>Referencia</th>
+<th>Comprobante</th>
 <th>Estado</th>
+<th>Acciones</th>
 </tr>
 </thead>
 <tbody>
@@ -217,7 +245,48 @@ strtotime($pago['fecha_pago'])
 <?= escapar($pago['referencia_pago']) ?>
 </td>
 <td>
-<?= escapar(ucfirst($pago['estado'])) ?>
+<?php if (!empty($pago['comprobante_pago'])): ?>
+<a
+href="../imagenes/comprobantes/<?= escapar($pago['comprobante_pago']) ?>"
+target="_blank"
+rel="noopener"
+>
+Ver foto
+</a>
+<?php else: ?>
+—
+<?php endif; ?>
+</td>
+<td>
+<?= $pago['estado_pago'] === 'pendiente'
+    ? 'Pendiente de revisión'
+    : 'Pagado' ?>
+</td>
+<td class="acciones-tabla">
+<?php if ($pago['estado_pago'] === 'pendiente'): ?>
+<form action="revisar_pago.php" method="post">
+<input type="hidden" name="tipo_origen" value="<?= escapar($pago['tipo_origen']) ?>">
+<input type="hidden" name="id_registro" value="<?= (int) $pago['id_registro'] ?>">
+<input type="hidden" name="accion" value="aprobar">
+<button type="submit" class="boton boton-secundario boton-pequeno">
+Aprobar
+</button>
+</form>
+<form
+action="revisar_pago.php"
+method="post"
+onsubmit="return confirm('¿Seguro que quieres rechazar este pago?');"
+>
+<input type="hidden" name="tipo_origen" value="<?= escapar($pago['tipo_origen']) ?>">
+<input type="hidden" name="id_registro" value="<?= (int) $pago['id_registro'] ?>">
+<input type="hidden" name="accion" value="rechazar">
+<button type="submit" class="boton boton-pequeno peligro">
+Rechazar
+</button>
+</form>
+<?php else: ?>
+—
+<?php endif; ?>
 </td>
 </tr>
 <?php endforeach; ?>

@@ -11,6 +11,7 @@ SELECT
 r.id_reserva,
 r.fecha_reserva,
 r.estado,
+r.estado_pago,
 r.asistencia,
 r.codigo_reserva,
 r.tipo_pago,
@@ -160,6 +161,11 @@ $reserva["tipo_pago"] === "evento" &&
 <?= (int) $reserva["cantidad"] ?>
 </p>
 <?php endif; ?>
+<?php if ($reserva["estado_pago"] === "pendiente"): ?>
+<div class="mensaje mensaje-aviso">
+<?= t('Pago pendiente de revisión.') ?>
+</div>
+<?php endif; ?>
 <?php if (
     $reserva["estado"] === "confirmada"
 ): ?>
@@ -240,6 +246,7 @@ $stmt_espera->bind_param("i", $id_usuario);
 $stmt_espera->execute();
 $lista_espera = $stmt_espera->get_result();
 $mensaje = $_GET["mensaje"] ?? "";
+$pago_pendiente = ($_GET["pago"] ?? "") === "pendiente";
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -260,7 +267,11 @@ content="width=device-width, initial-scale=1.0"
 <?php require "menu.php"; ?>
 <main class="contenedor">
 <h1><?= t('Mis reservas') ?></h1>
-<?php if ($mensaje === "confirmada"): ?>
+<?php if ($mensaje === "confirmada" && $pago_pendiente): ?>
+<div class="mensaje mensaje-aviso">
+<?= t('Hemos registrado tu reserva por transferencia bancaria. Quedará pendiente de revisión hasta que confirmemos el pago.') ?>
+</div>
+<?php elseif ($mensaje === "confirmada"): ?>
 <div class="mensaje mensaje-exito">
 <?= t('La reserva se ha confirmado correctamente.') ?>
 </div>

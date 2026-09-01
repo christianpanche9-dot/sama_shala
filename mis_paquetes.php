@@ -23,9 +23,10 @@ ORDER BY bc.fecha_compra DESC
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param('i', $id_usuario);
 $stmt->execute();
-$paquetes = $stmt->get_result();
+$paquetes = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $mensaje = $_GET['mensaje'] ?? '';
 $tiene_inscripcion = obtenerInscripcion($conexion, $id_usuario) !== null;
+$paquete_recien_comprado = $paquetes[0] ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -47,9 +48,15 @@ content="width=device-width, initial-scale=1.0"
 <main class="contenedor">
 <h1><?= t('Mis paquetes') ?></h1>
 <?php if ($mensaje === 'comprado'): ?>
+<?php if ($paquete_recien_comprado !== null && $paquete_recien_comprado['estado'] === 'pendiente'): ?>
+<div class="mensaje mensaje-aviso">
+<?= t('Hemos registrado tu compra por transferencia bancaria. Quedará pendiente de revisión hasta que confirmemos el pago.') ?>
+</div>
+<?php else: ?>
 <div class="mensaje mensaje-exito">
 <?= t('Paquete comprado correctamente. Ya puedes usarlo al reservar una sesión.') ?>
 </div>
+<?php endif; ?>
 <?php if (!$tiene_inscripcion): ?>
 <div class="mensaje mensaje-exito">
 <p>
@@ -66,11 +73,11 @@ content="width=device-width, initial-scale=1.0"
 <?= t('Comprar un nuevo paquete') ?>
 </a>
 </p>
-<?php if ($paquetes->num_rows === 0): ?>
+<?php if (count($paquetes) === 0): ?>
 <p><?= t('Todavía no tienes ningún paquete.') ?></p>
 <?php else: ?>
 <div class="rejilla-reservas">
-<?php while ($paquete = $paquetes->fetch_assoc()): ?>
+<?php foreach ($paquetes as $paquete): ?>
 <?php
 $caducado =
 $paquete['fecha_caducidad'] !== null &&
@@ -103,7 +110,9 @@ strtotime($paquete['fecha_caducidad'])
 </p>
 <p>
 <strong><?= t('Estado:') ?></strong>
-<?php if ($paquete['estado'] === 'cancelado'): ?>
+<?php if ($paquete['estado'] === 'pendiente'): ?>
+<?= t('Pendiente de revisión') ?>
+<?php elseif ($paquete['estado'] === 'cancelado'): ?>
 <?= t('Cancelado') ?>
 <?php elseif ($caducado): ?>
 <?= t('Caducado') ?>
@@ -120,7 +129,7 @@ strtotime($paquete['fecha_caducidad'])
 ) ?>
 </p>
 </article>
-<?php endwhile; ?>
+<?php endforeach; ?>
 </div>
 <?php endif; ?>
 </main>

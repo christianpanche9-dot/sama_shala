@@ -75,15 +75,39 @@ alt="<?= escapar($item['nombre']) ?>"
 <?php endif; ?>
 </section>
 <aside class="panel-reserva">
-<h2><?= t('Pago simulado') ?></h2>
-<p>
-<?= t('Este proyecto no cobra dinero real: al confirmar se registra la compra directamente como pagada.') ?>
-</p>
+<h2><?= t('¿Cómo quieres pagar?') ?></h2>
 <form
 action="procesar_compra_producto.php"
 method="post"
+enctype="multipart/form-data"
 class="formulario"
+id="formulario-pago-producto"
 >
+<fieldset class="campo-completo">
+<label class="opcion-pago">
+<input
+type="radio"
+name="metodo_pago_compra"
+value="simulado"
+checked
+data-metodo-pago
+>
+<?= t('Pago simulado') ?>
+</label>
+<label class="opcion-pago">
+<input
+type="radio"
+name="metodo_pago_compra"
+value="transferencia"
+data-metodo-pago
+>
+<?= t('Transferencia bancaria') ?>
+</label>
+</fieldset>
+<div id="bloque-pago-simulado">
+<p>
+<?= t('Este proyecto no cobra dinero real: al confirmar se registra la compra directamente como pagada.') ?>
+</p>
 <div class="campo">
 <label for="titular">
 <?= t('Nombre del titular') ?>
@@ -93,7 +117,7 @@ type="text"
 id="titular"
 name="titular"
 maxlength="150"
-required
+data-requerido-simulado
 >
 </div>
 <div class="campo">
@@ -106,8 +130,27 @@ id="tarjeta"
 name="tarjeta"
 maxlength="19"
 placeholder="4111 1111 1111 1111"
-required
+data-requerido-simulado
 >
+</div>
+</div>
+<div id="bloque-pago-transferencia" hidden>
+<?php require __DIR__ . '/datos_transferencia.php'; ?>
+<div class="campo">
+<label for="comprobante_pago">
+<?= t('Foto del comprobante de la transferencia') ?>
+</label>
+<input
+type="file"
+id="comprobante_pago"
+name="comprobante_pago"
+accept="image/*"
+data-requerido-transferencia
+>
+</div>
+<p class="ayuda">
+<?= t('Tu compra quedará pendiente de revisión hasta que confirmemos el pago.') ?>
+</p>
 </div>
 <button type="submit" class="boton boton-bloque">
 <?= t('Confirmar compra de') ?> <?= formatear_precio($detalle_carrito['total']) ?>
@@ -115,6 +158,29 @@ required
 </form>
 </aside>
 </div>
+<script>
+(function () {
+var formulario = document.getElementById('formulario-pago-producto');
+var bloqueSimulado = document.getElementById('bloque-pago-simulado');
+var bloqueTransferencia = document.getElementById('bloque-pago-transferencia');
+var radios = formulario.querySelectorAll('[data-metodo-pago]');
+function actualizarModoPago() {
+var esTransferencia = formulario.querySelector('[data-metodo-pago]:checked').value === 'transferencia';
+bloqueSimulado.hidden = esTransferencia;
+bloqueTransferencia.hidden = !esTransferencia;
+formulario.querySelectorAll('[data-requerido-simulado]').forEach(function (campo) {
+campo.required = !esTransferencia;
+});
+formulario.querySelectorAll('[data-requerido-transferencia]').forEach(function (campo) {
+campo.required = esTransferencia;
+});
+}
+radios.forEach(function (radio) {
+radio.addEventListener('change', actualizarModoPago);
+});
+actualizarModoPago();
+})();
+</script>
 <?php endif; ?>
 </main>
 <?php require_once __DIR__ . '/pie.php'; ?>

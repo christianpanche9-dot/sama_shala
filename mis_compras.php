@@ -23,8 +23,9 @@ ORDER BY cp.fecha_compra DESC
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param('i', $id_usuario);
 $stmt->execute();
-$compras = $stmt->get_result();
+$compras = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $mensaje = $_GET['mensaje'] ?? '';
+$compra_recien_hecha = $compras[0] ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -46,20 +47,26 @@ content="width=device-width, initial-scale=1.0"
 <main class="contenedor">
 <h1><?= t('Mis compras') ?></h1>
 <?php if ($mensaje === 'comprado'): ?>
+<?php if ($compra_recien_hecha !== null && $compra_recien_hecha['estado'] === 'pendiente'): ?>
+<div class="mensaje mensaje-aviso">
+<?= t('Hemos registrado tu compra por transferencia bancaria. Quedará pendiente de revisión hasta que confirmemos el pago.') ?>
+</div>
+<?php else: ?>
 <div class="mensaje mensaje-exito">
 <?= t('Producto comprado correctamente. Nos pondremos en contacto para coordinar la entrega.') ?>
 </div>
+<?php endif; ?>
 <?php endif; ?>
 <p>
 <a class="boton boton-secundario" href="tienda.php">
 <?= t('Ir a la tienda') ?>
 </a>
 </p>
-<?php if ($compras->num_rows === 0): ?>
+<?php if (count($compras) === 0): ?>
 <p><?= t('Todavía no tienes ninguna compra.') ?></p>
 <?php else: ?>
 <div class="rejilla-reservas">
-<?php while ($compra = $compras->fetch_assoc()): ?>
+<?php foreach ($compras as $compra): ?>
 <article class="tarjeta-reserva">
 <h3>
 <?= escapar($compra['nombre_producto']) ?>
@@ -87,7 +94,9 @@ strtotime($compra['fecha_compra'])
 </p>
 <p>
 <strong><?= t('Estado:') ?></strong>
-<?= escapar(ucfirst($compra['estado'])) ?>
+<?= $compra['estado'] === 'pendiente'
+    ? t('Pendiente de revisión')
+    : t('Pagado') ?>
 </p>
 <p class="codigo-reserva">
 <?= t('Ref. pago:') ?> <?= escapar($compra['referencia_pago']) ?> ·
@@ -96,7 +105,7 @@ strtotime($compra['fecha_compra'])
 ) ?>
 </p>
 </article>
-<?php endwhile; ?>
+<?php endforeach; ?>
 </div>
 <?php endif; ?>
 </main>

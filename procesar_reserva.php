@@ -6,9 +6,8 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 header("Location: sesiones.php");
 exit;
 }
-$id_sesion = filter_input(
-INPUT_POST,
-"id_sesion",
+$id_sesion = filter_var(
+$_POST["id_sesion"] ?? null,
 FILTER_VALIDATE_INT
 );
 $id_usuario = idUsuarioActual();
@@ -22,6 +21,8 @@ $id_paquete_cliente = null;
 $precio_pagado = null;
 $metodo_pago_simulado = null;
 $referencia_pago = null;
+$estado_pago = "pagado";
+$comprobante_pago = null;
 $titular_pago = trim($_POST["titular"] ?? "");
 $tarjeta_pago = trim($_POST["tarjeta"] ?? "");
 $cantidad = 1;
@@ -42,9 +43,8 @@ exit;
 }
 } elseif ($metodo_pago_enviado === "evento") {
 $tipo_pago = "evento";
-$cantidad_enviada = filter_input(
-INPUT_POST,
-"cantidad",
+$cantidad_enviada = filter_var(
+$_POST["cantidad"] ?? null,
 FILTER_VALIDATE_INT
 );
 if ($cantidad_enviada !== false && $cantidad_enviada !== null) {
@@ -54,6 +54,25 @@ $cantidad = max(
 1,
 min($cantidad, LIMITE_PLAZAS_POR_RESERVA)
 );
+$metodo_pago_compra = trim($_POST["metodo_pago_compra"] ?? "simulado");
+if ($metodo_pago_compra === "transferencia") {
+$resultado_comprobante = procesar_imagen_subida(
+"comprobante_pago",
+__DIR__ . "/imagenes/comprobantes",
+"comprobante"
+);
+if (!$resultado_comprobante["ok"] || $resultado_comprobante["archivo"] === null) {
+header(
+"Location: detalle_sesion.php?id=" .
+$id_sesion .
+"&error=" .
+urlencode("Adjunta la foto del comprobante de la transferencia.")
+);
+exit;
+}
+$comprobante_pago = $resultado_comprobante["archivo"];
+$estado_pago = "pendiente";
+}
 }
 try {
 $conexion->begin_transaction();
@@ -104,7 +123,10 @@ throw new Exception(
 t("Esta sesión no admite el pago con precio fijo.")
 );
 }
-if ($titular_pago === "" || $tarjeta_pago === "") {
+if (
+$estado_pago !== "pendiente" &&
+($titular_pago === "" || $tarjeta_pago === "")
+) {
 throw new Exception(
 t("Introduce los datos de pago.")
 );
@@ -118,8 +140,8 @@ $precio_pagado = precio_total_evento_terapia(
 $cantidad,
 $descuento_usuario !== null ? $descuento_usuario["descuento"] : 0
 );
-$metodo_pago_simulado = "simulado";
-$referencia_pago = "SIM-" . strtoupper(bin2hex(random_bytes(8)));
+$metodo_pago_simulado = $estado_pago === "pendiente" ? "transferencia" : "simulado";
+$referencia_pago = ($estado_pago === "pendiente" ? "TRANSF-" : "SIM-") . strtoupper(bin2hex(random_bytes(8)));
 }
 if (
 !in_array(
@@ -320,13 +342,15 @@ tipo_pago = ?,
 cantidad = ?,
 precio_pagado = ?,
 metodo_pago = ?,
-referencia_pago = ?
+referencia_pago = ?,
+estado_pago = ?,
+comprobante_pago = ?
 WHERE id_reserva = ?
 ";
 $stmt_guardar =
 $conexion->prepare($sql_guardar);
 $stmt_guardar->bind_param(
-"sisidssi",
+"sisidssssi",
 $codigo_reserva,
 $id_paquete_cliente,
 $tipo_pago,
@@ -334,6 +358,8 @@ $cantidad,
 $precio_pagado,
 $metodo_pago_simulado,
 $referencia_pago,
+$estado_pago,
+$comprobante_pago,
 $reserva_anterior["id_reserva"]
 );
 } else {
@@ -347,11 +373,15 @@ cantidad,
 precio_pagado,
 metodo_pago,
 referencia_pago,
+estado_pago,
+comprobante_pago,
 estado,
 asistencia,
 codigo_reserva
 )
 VALUES (
+?,
+?,
 ?,
 ?,
 ?,
@@ -368,7 +398,7 @@ VALUES (
 $stmt_guardar =
 $conexion->prepare($sql_guardar);
 $stmt_guardar->bind_param(
-"iiisidsss",
+"iiisidsssss",
 $id_sesion,
 $id_usuario,
 $id_paquete_cliente,
@@ -377,6 +407,8 @@ $cantidad,
 $precio_pagado,
 $metodo_pago_simulado,
 $referencia_pago,
+$estado_pago,
+$comprobante_pago,
 $codigo_reserva
 );
 }
@@ -427,7 +459,8 @@ $stmt_estado->close();
 $conexion->commit();
 header(
 "Location: mis_reservas.php" .
-"?mensaje=confirmada"
+"?mensaje=confirmada" .
+($estado_pago === "pendiente" ? "&pago=pendiente" : "")
 );
 exit;
 }
