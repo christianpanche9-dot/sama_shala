@@ -38,7 +38,7 @@ content="width=device-width, initial-scale=1.0"
 </a>
 </p>
 <?php else: ?>
-<div class="ficha-sesion">
+<div class="ficha-sesion ficha-pago">
 <section class="informacion-sesion">
 <h2><?= t('Resumen del pedido') ?></h2>
 <div class="lista-carrito">

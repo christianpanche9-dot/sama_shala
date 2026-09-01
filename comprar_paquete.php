@@ -54,7 +54,7 @@ content="width=device-width, initial-scale=1.0"
 <a class="enlace-volver" href="paquetes.php">
 ← <?= t('Volver a paquetes') ?>
 </a>
-<div class="ficha-sesion">
+<div class="ficha-sesion ficha-pago">
 <section class="informacion-sesion">
 <h1>
 <?= escapar($paquete['nombre']) ?>

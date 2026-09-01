@@ -1278,6 +1278,12 @@ padding: 28px;
 position: sticky;
 top: 20px;
 }
+.ficha-pago {
+grid-template-columns: 1fr;
+}
+.ficha-pago .panel-reserva {
+position: static;
+}
 .diseno-paquetes {
 display: grid;
 grid-template-columns: 1fr 340px;
