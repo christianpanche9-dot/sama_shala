@@ -2366,6 +2366,26 @@ margin: 0;
 color: var(--color-verde-oscuro);
 font-weight: 700;
 }
+@media (max-width: 850px) {
+.panel-cuenta {
+padding: 1.5rem;
+}
+}
+@media (max-width: 580px) {
+.panel-cuenta {
+padding: 1.25rem;
+}
+.panel-cuenta-cabecera {
+flex-wrap: wrap;
+}
+.panel-cuenta dl {
+grid-template-columns: 1fr;
+gap: 3px 0;
+}
+.panel-cuenta dd {
+margin-bottom: 10px;
+}
+}
 .titulo-opciones-cuenta {
 margin: 0 0 20px;
 font-size: 1.5rem;
