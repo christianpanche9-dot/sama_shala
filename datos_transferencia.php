@@ -1,5 +1,6 @@
 <div class="datos-transferencia">
-<h3><?= t('Cooperativa JEP') ?></h3>
+<details class="cuenta-transferencia" open>
+<summary><?= t('Cooperativa JEP') ?></summary>
 <dl>
 <dt><?= t('Tipo de cuenta:') ?></dt>
 <dd>Ahorros</dd>
@@ -14,7 +15,9 @@
 <dt><?= t('Correo:') ?></dt>
 <dd>samashalaec@gmail.com</dd>
 </dl>
-<h3><?= t('Banco Pichincha') ?></h3>
+</details>
+<details class="cuenta-transferencia">
+<summary><?= t('Banco Pichincha') ?></summary>
 <dl>
 <dt><?= t('Tipo de cuenta:') ?></dt>
 <dd>Ahorros</dd>
@@ -29,4 +32,5 @@
 <dt><?= t('Correo:') ?></dt>
 <dd>samashalaec@gmail.com</dd>
 </dl>
+</details>
 </div>
