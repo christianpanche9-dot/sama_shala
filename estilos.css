@@ -2235,6 +2235,24 @@ font: inherit;
 border-color: var(--color-verde-oscuro);
 outline: 3px solid rgba(87, 120, 93, 0.15);
 }
+.campo input[type="file"] {
+padding: 0.5rem;
+background-color: white;
+}
+.campo input[type="file"]::file-selector-button {
+padding: 0.5rem 1rem;
+margin-right: 0.75rem;
+color: white;
+background-color: var(--color-verde-oscuro);
+border: none;
+border-radius: 6px;
+font: inherit;
+font-weight: 700;
+cursor: pointer;
+}
+.campo input[type="file"]::file-selector-button:hover {
+background-color: var(--color-verde-oscuro-hover);
+}
 .ayuda {
 margin-top: 0.4rem;
 color: var(--color-texto-tenue);
@@ -2300,8 +2318,8 @@ margin-top: 0;
 }
 .datos-transferencia dl {
 display: grid;
-grid-template-columns: 1fr;
-gap: 0.2rem;
+grid-template-columns: auto minmax(0, 1fr);
+gap: 0.2rem 0.6rem;
 margin: 0 0 0.7rem;
 }
 .datos-transferencia dl:last-child {
@@ -2312,9 +2330,9 @@ color: var(--color-texto-tenue);
 font-weight: 700;
 }
 .datos-transferencia dd {
-margin: 0 0 0.3rem;
-overflow-wrap: break-word;
-word-break: break-word;
+margin: 0;
+min-width: 0;
+overflow-wrap: anywhere;
 }
 .usuario-menu {
 color: var(--color-azul);
