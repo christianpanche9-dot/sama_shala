@@ -2300,16 +2300,21 @@ margin-top: 0;
 }
 .datos-transferencia dl {
 display: grid;
-grid-template-columns: auto 1fr;
-gap: 0.2rem 0.6rem;
-margin: 0;
+grid-template-columns: 1fr;
+gap: 0.2rem;
+margin: 0 0 0.7rem;
+}
+.datos-transferencia dl:last-child {
+margin-bottom: 0;
 }
 .datos-transferencia dt {
 color: var(--color-texto-tenue);
 font-weight: 700;
 }
 .datos-transferencia dd {
-margin: 0;
+margin: 0 0 0.3rem;
+overflow-wrap: break-word;
+word-break: break-word;
 }
 .usuario-menu {
 color: var(--color-azul);
