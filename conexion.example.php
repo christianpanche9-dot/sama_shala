@@ -14,3 +14,4 @@ die(
 'No se ha podido conectar con la base de datos.'
 );
 }
+$conexion->set_charset('utf8mb4');
