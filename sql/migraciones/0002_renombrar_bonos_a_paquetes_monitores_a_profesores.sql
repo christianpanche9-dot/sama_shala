@@ -24,7 +24,7 @@ ALTER TABLE paquetes_clientes
   CHANGE COLUMN id_bono_cliente id_paquete_cliente INT(11) NOT NULL AUTO_INCREMENT,
   CHANGE COLUMN id_tipo_bono id_tipo_paquete INT(11) NOT NULL;
 
-ALTER TABLE paquetes_clientes RENAME INDEX id_tipo_bono TO id_tipo_paquete;
+ALTER TABLE paquetes_clientes DROP INDEX id_tipo_bono, ADD INDEX id_tipo_paquete (id_tipo_paquete);
 
 ALTER TABLE profesores
   CHANGE COLUMN id_monitor id_profesor INT(11) NOT NULL AUTO_INCREMENT;
@@ -32,8 +32,8 @@ ALTER TABLE profesores
 ALTER TABLE sesiones
   CHANGE COLUMN id_monitor id_profesor INT(11) NOT NULL;
 
-ALTER TABLE sesiones RENAME INDEX idx_sesion_monitor_fecha TO idx_sesion_profesor_fecha;
-ALTER TABLE sesiones RENAME INDEX idx_sesiones_monitor_horario TO idx_sesiones_profesor_horario;
+ALTER TABLE sesiones DROP INDEX idx_sesion_monitor_fecha, ADD INDEX idx_sesion_profesor_fecha (id_profesor, fecha);
+ALTER TABLE sesiones DROP INDEX idx_sesiones_monitor_horario, ADD INDEX idx_sesiones_profesor_horario (id_profesor, fecha, hora_inicio, hora_fin);
 
 ALTER TABLE reservas
   CHANGE COLUMN id_bono_cliente id_paquete_cliente INT DEFAULT NULL;
