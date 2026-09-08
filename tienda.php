@@ -88,6 +88,7 @@ id="categoria-<?= escapar($categoria_actual) ?>"
 <?php if (!empty($producto['imagen'])): ?>
 <img
 class="imagen-actividad"
+loading="lazy"
 src="imagenes/productos/<?= escapar($producto['imagen']) ?>"
 alt="<?= escapar($producto['nombre']) ?>"
 >

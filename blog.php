@@ -41,6 +41,7 @@ content="width=device-width, initial-scale=1.0"
 <?php if (!empty($entrada['portada'])): ?>
 <img
 class="imagen-actividad"
+loading="lazy"
 src="imagenes/blog/<?= escapar($entrada['portada']) ?>"
 alt="<?= escapar($entrada['titulo']) ?>"
 >

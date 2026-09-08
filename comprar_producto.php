@@ -47,6 +47,7 @@ content="width=device-width, initial-scale=1.0"
 <?php if (!empty($item['imagen'])): ?>
 <img
 class="miniatura-fila-carrito"
+loading="lazy"
 src="imagenes/productos/<?= escapar($item['imagen']) ?>"
 alt="<?= escapar($item['nombre']) ?>"
 >

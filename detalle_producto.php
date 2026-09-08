@@ -99,6 +99,7 @@ alt="<?= escapar($producto['nombre']) ?>"
 <?php foreach ($galeria as $indice_imagen => $imagen_galeria): ?>
 <img
 class="miniatura-galeria <?= $indice_imagen === 0 ? 'activa' : '' ?>"
+loading="lazy"
 src="imagenes/productos/<?= escapar($imagen_galeria) ?>"
 alt="<?= escapar($producto['nombre']) ?>"
 >
@@ -185,6 +186,7 @@ class="boton boton-secundario boton-bloque"
 <?php if (!empty($sugerencia['imagen'])): ?>
 <img
 class="imagen-actividad"
+loading="lazy"
 src="imagenes/productos/<?= escapar($sugerencia['imagen']) ?>"
 alt="<?= escapar($sugerencia['nombre']) ?>"
 >

@@ -35,6 +35,8 @@ content="width=device-width, initial-scale=1.0"
 >
 <title><?= t('Paquetes | Sama Shala') ?></title>
 <link rel="stylesheet" href="<?= urlEstilos() ?>">
+<link rel="preconnect" href="https://www.youtube.com">
+<link rel="preconnect" href="https://i.ytimg.com">
 <link rel="icon" type="image/png" sizes="32x32" href="imagenes/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="imagenes/favicon-16x16.png">
 <link rel="apple-touch-icon" href="imagenes/apple-touch-icon.png">
@@ -58,7 +60,7 @@ content="width=device-width, initial-scale=1.0"
 </div>
 </div>
 </section>
-<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://www.youtube.com/iframe_api" async></script>
 <script>
 (function () {
 const contenedor = document.querySelector(".hero-video-fondo");

@@ -34,6 +34,10 @@ content="width=device-width, initial-scale=1.0"
 <?= $entrada ? escapar($entrada['titulo']) . ' ' . t('| Sama Shala') : t('Entrada no encontrada | Sama Shala') ?>
 </title>
 <link rel="stylesheet" href="<?= urlEstilos() ?>">
+<?php if ($id_youtube): ?>
+<link rel="preconnect" href="https://www.youtube.com">
+<link rel="preconnect" href="https://i.ytimg.com">
+<?php endif; ?>
 <link rel="icon" type="image/png" sizes="32x32" href="imagenes/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="imagenes/favicon-16x16.png">
 <link rel="apple-touch-icon" href="imagenes/apple-touch-icon.png">
@@ -66,6 +70,8 @@ src="https://www.youtube.com/embed/<?= escapar($id_youtube) ?>"
 title="<?= escapar($entrada['titulo']) ?>"
 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 allowfullscreen
+fetchpriority="high"
+loading="eager"
 ></iframe>
 </div>
 <?php endif; ?>
