@@ -66,6 +66,10 @@ content="width=device-width, initial-scale=1.0"
 <div class="mensaje mensaje-error">
 <?= t("La contraseña debe tener al menos ocho caracteres.") ?>
 </div>
+<?php elseif ($error === "misma"): ?>
+<div class="mensaje mensaje-error">
+<?= t("La nueva contraseña no puede ser igual a la anterior.") ?>
+</div>
 <?php endif; ?>
 <form
 action="guardar_nueva_contrasena.php"

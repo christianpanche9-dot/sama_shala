@@ -31,7 +31,7 @@ exit;
 }
 
 $sql = "
-SELECT id_usuario
+SELECT id_usuario, password
 FROM usuarios
 WHERE token_recuperacion = ?
 AND token_recuperacion_expira > NOW()
@@ -45,6 +45,14 @@ $stmt->close();
 
 if (!$usuario) {
 header("Location: recuperar_contrasena.php?error=token");
+exit;
+}
+
+if (password_verify($password, $usuario["password"])) {
+header(
+"Location: restablecer_contrasena.php?token=" .
+urlencode($token) . "&error=misma"
+);
 exit;
 }
 
