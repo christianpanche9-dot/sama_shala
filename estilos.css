@@ -1080,6 +1080,10 @@ background-color: white;
 border: 1px solid var(--color-borde);
 border-radius: 14px;
 }
+.calendario-mes-publico:has(.dia-calendario-publico:hover),
+.calendario-mes-publico:has(.dia-calendario-publico:focus-within) {
+overflow: visible;
+}
 .calendario-publico-cabecera {
 display: grid;
 grid-template-columns: repeat(7, 1fr);
@@ -1105,6 +1109,22 @@ flex-direction: column;
 gap: 6px;
 border-right: 1px solid var(--color-borde);
 border-bottom: 1px solid var(--color-borde);
+transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.dia-calendario-publico:not(.dia-calendario-publico-vacio):hover,
+.dia-calendario-publico:not(.dia-calendario-publico-vacio):focus-within {
+position: relative;
+z-index: 20;
+background-color: white;
+box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+border-radius: 10px;
+transform: scale(1.6);
+}
+.dia-calendario-publico:hover .sesion-calendario-nombre,
+.dia-calendario-publico:focus-within .sesion-calendario-nombre {
+overflow: visible;
+white-space: normal;
+text-overflow: clip;
 }
 .dia-calendario-publico-vacio {
 background-color: var(--color-fondo);
