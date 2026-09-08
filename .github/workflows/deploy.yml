@@ -27,3 +27,4 @@ jobs:
             **/.git*/**
             **/.github/**
             **/conexion.php
+            **/correo_config.php

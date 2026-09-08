@@ -541,13 +541,17 @@ function obtenerInscripcion(mysqli $conexion, int $id_usuario): ?array
     return $inscripcion ?: null;
 }
 
-// Placeholder hasta conectar un proveedor de correo (el hosting no
-// soporta SMTP ni mail() de forma fiable). De momento solo registra el
-// enlace en el log del servidor.
 function enviar_correo_recuperacion(string $email, string $enlace): bool
 {
-error_log("[recuperacion_password] $email => $enlace");
-return false;
+    require_once __DIR__ . '/correo.php';
+    $asunto = 'Recupera tu contraseña | Sama Shala';
+    $cuerpo = '
+        <p>Recibimos una solicitud para restablecer tu contraseña.</p>
+        <p><a href="' . htmlspecialchars($enlace, ENT_QUOTES, 'UTF-8') . '">Haz clic aquí para crear una nueva contraseña</a></p>
+        <p>Este enlace vence en 1 hora. Si no solicitaste este cambio, puedes ignorar este correo.</p>
+    ';
+    $resultado = enviar_correo($email, $asunto, $cuerpo);
+    return $resultado['ok'];
 }
 
 function extraer_id_youtube(?string $url): ?string
