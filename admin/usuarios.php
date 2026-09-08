@@ -276,11 +276,19 @@ if (yaAbierto) {
 return;
 }
 var rect = boton.getBoundingClientRect();
-desplegable.style.top = rect.bottom + 6 + "px";
-desplegable.style.right = window.innerWidth - rect.right + "px";
 desplegable.classList.add("abierto");
 boton.classList.add("abierto");
 boton.setAttribute("aria-expanded", "true");
+var altura = desplegable.offsetHeight;
+var top = rect.bottom + 6;
+if (top + altura > window.innerHeight) {
+top = rect.top - altura - 6;
+}
+if (top < 6) {
+top = 6;
+}
+desplegable.style.top = top + "px";
+desplegable.style.right = window.innerWidth - rect.right + "px";
 });
 });
 document.addEventListener("click", function (evento) {
