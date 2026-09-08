@@ -9,7 +9,6 @@ $nombre = trim($_POST["nombre"] ?? "");
 $apellidos = trim($_POST["apellidos"] ?? "");
 $email = trim($_POST["email"] ?? "");
 $telefono = trim($_POST["telefono"] ?? "");
-$direccion = trim($_POST["direccion"] ?? "");
 $password = $_POST["password"] ?? "";
 $repetir_password = $_POST["repetir_password"] ?? "";
 $errores = [];
@@ -58,17 +57,16 @@ PASSWORD_DEFAULT
 );
 $sql = "INSERT INTO usuarios
 (nombre, apellidos, email, password,
-telefono, direccion)
-VALUES (?, ?, ?, ?, ?, ?)";
+telefono)
+VALUES (?, ?, ?, ?, ?)";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param(
-"ssssss",
+"sssss",
 $nombre,
 $apellidos,
 $email,
 $password_hash,
-$telefono,
-$direccion
+$telefono
 );
 $stmt->execute();
 if ($stmt->affected_rows === 1) {
