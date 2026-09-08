@@ -1,4 +1,4 @@
-name: Deploy a InfinityFree
+name: Deploy a samashala.com
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
           protocol: ftps
-          server-dir: /htdocs/
+          server-dir: /public_html/samashala.com/
           exclude: |
             **/.git*
             **/.git*/**
