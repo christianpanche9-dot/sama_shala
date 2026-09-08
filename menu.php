@@ -56,6 +56,9 @@ aria-label="Abrir menú"
 <a href="blog.php">
 <?= t('Blog') ?>
 </a>
+<a href="contactanos.php">
+<?= t('Contáctanos') ?>
+</a>
 <?php if (usuarioAutenticado()): ?>
 <?php if (usuarioEsAdmin()): ?>
 <a href="admin/index.php">

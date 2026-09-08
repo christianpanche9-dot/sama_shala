@@ -132,7 +132,7 @@ Pega el link del video de YouTube que quieras mostrar en la entrada.
 Contenido
 </label>
 <div id="editor-contenido"></div>
-<textarea id="contenido" name="contenido" hidden required><?= $entrada['contenido'] ?></textarea>
+<textarea id="contenido" name="contenido" hidden><?= $entrada['contenido'] ?></textarea>
 </div>
 <div class="campo-checkbox campo-completo">
 <label>

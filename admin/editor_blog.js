@@ -63,7 +63,15 @@ alert('No se ha podido subir la imagen.');
 });
 }
 
-formulario.addEventListener('submit', function () {
+quill.on('text-change', function () {
 campoContenido.value = quill.root.innerHTML;
+});
+
+formulario.addEventListener('submit', function (evento) {
+campoContenido.value = quill.root.innerHTML;
+if (quill.getText().trim() === '') {
+evento.preventDefault();
+alert('El contenido es obligatorio.');
+}
 });
 })();

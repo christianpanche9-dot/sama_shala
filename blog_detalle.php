@@ -9,7 +9,7 @@ FILTER_VALIDATE_INT
 $entrada = null;
 if ($id_entrada) {
 $sql = "
-SELECT id_entrada, titulo, portada, contenido, video_url, fecha_creacion
+SELECT id_entrada, titulo, portada, contenido, video_url
 FROM blog_entradas
 WHERE id_entrada = ?
 AND activo = 1
@@ -59,9 +59,6 @@ alt="<?= escapar($entrada['titulo']) ?>"
 >
 <?php endif; ?>
 <h1><?= escapar($entrada['titulo']) ?></h1>
-<p class="dato-destacado">
-<?= escapar(formatear_fecha(substr($entrada['fecha_creacion'], 0, 10))) ?>
-</p>
 <?php if ($id_youtube): ?>
 <div class="video-blog">
 <iframe

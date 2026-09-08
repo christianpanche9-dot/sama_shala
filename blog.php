@@ -2,7 +2,7 @@
 require_once __DIR__ . '/conexion.php';
 require_once __DIR__ . '/funciones.php';
 $sql = "
-SELECT id_entrada, titulo, portada, contenido, fecha_creacion
+SELECT id_entrada, titulo, portada, contenido
 FROM blog_entradas
 WHERE activo = 1
 ORDER BY fecha_creacion DESC
@@ -51,9 +51,6 @@ alt="<?= escapar($entrada['titulo']) ?>"
 <?php endif; ?>
 <div class="contenido-tarjeta">
 <h2><?= escapar($entrada['titulo']) ?></h2>
-<p class="dato-destacado">
-<?= escapar(formatear_fecha(substr($entrada['fecha_creacion'], 0, 10))) ?>
-</p>
 <p>
 <?= escapar(mb_substr(trim(strip_tags($entrada['contenido'])), 0, 150)) ?>…
 </p>
