@@ -2877,6 +2877,34 @@ color: var(--color-verde-oscuro);
 .contacto-dato p {
 margin: 0;
 }
+.lista-telefonos-contacto {
+display: flex;
+flex-direction: column;
+gap: 8px;
+margin: 0;
+padding: 0;
+list-style: none;
+}
+.lista-telefonos-contacto li {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.boton-whatsapp-contacto {
+display: flex;
+flex-shrink: 0;
+align-items: center;
+justify-content: center;
+width: 28px;
+height: 28px;
+color: white;
+background-color: #25d366;
+border-radius: 999px;
+transition: background-color 0.2s ease;
+}
+.boton-whatsapp-contacto:hover {
+background-color: #1eb855;
+}
 .contacto-icono {
 display: flex;
 align-items: center;
