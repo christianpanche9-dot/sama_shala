@@ -44,6 +44,9 @@ Paquetes
 <a href="productos.php">
 Tienda
 </a>
+<a href="blog.php">
+Blog
+</a>
 <a href="pagos.php">
 Pagos
 </a>

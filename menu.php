@@ -53,6 +53,9 @@ aria-label="Abrir menú"
 <a href="tienda.php">
 <?= t('Tienda') ?>
 </a>
+<a href="blog.php">
+<?= t('Blog') ?>
+</a>
 <?php if (usuarioAutenticado()): ?>
 <?php if (usuarioEsAdmin()): ?>
 <a href="admin/index.php">

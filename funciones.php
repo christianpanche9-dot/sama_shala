@@ -549,3 +549,27 @@ function enviar_correo_recuperacion(string $email, string $enlace): bool
 error_log("[recuperacion_password] $email => $enlace");
 return false;
 }
+
+function extraer_id_youtube(?string $url): ?string
+{
+    $url = trim($url ?? '');
+    if ($url === '') {
+        return null;
+    }
+    $patron = '#(?:youtube\.com/(?:watch\?v=|embed/|shorts/)|youtu\.be/)([A-Za-z0-9_-]{11})#';
+    if (preg_match($patron, $url, $coincidencias)) {
+        return $coincidencias[1];
+    }
+    return null;
+}
+
+function sanitizar_html_blog(string $html): string
+{
+    $etiquetas_permitidas = '<p><br><strong><b><em><i><u><s><a><ul><ol><li><h2><h3><blockquote><img>';
+    $html = strip_tags($html, $etiquetas_permitidas);
+    $html = preg_replace('/\son\w+\s*=\s*"[^"]*"/i', '', $html);
+    $html = preg_replace("/\son\w+\s*=\s*'[^']*'/i", '', $html);
+    $html = preg_replace('/(href|src)\s*=\s*"\s*javascript:[^"]*"/i', '$1="#"', $html);
+    $html = preg_replace("/(href|src)\s*=\s*'\s*javascript:[^']*'/i", "$1='#'", $html);
+    return $html;
+}
