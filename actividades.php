@@ -265,12 +265,13 @@ return;
 const ancho = contenedor.offsetWidth;
 const alto = contenedor.offsetHeight;
 const proporcion = 16 / 9;
+const zoom = 1.25;
 if (ancho / alto > proporcion) {
-iframe.style.width = "100%";
-iframe.style.height = (ancho / proporcion) + "px";
+iframe.style.width = (ancho * zoom) + "px";
+iframe.style.height = (ancho / proporcion * zoom) + "px";
 } else {
-iframe.style.height = "100%";
-iframe.style.width = (alto * proporcion) + "px";
+iframe.style.height = (alto * zoom) + "px";
+iframe.style.width = (alto * proporcion * zoom) + "px";
 }
 }
 
@@ -339,6 +340,8 @@ alt="<?= escapar($actividad_banner_top['nombre']) ?>"
 <h2 class="titulo-calendario-semana">
 <?= t('Calendario semanal') ?>
 </h2>
+<div class="calendario-semana-contenedor">
+<span class="flecha-semana flecha-semana-izquierda" aria-hidden="true">‹</span>
 <div class="calendario-semana">
 <?php foreach ($dias_semana as $indice => $dia): ?>
 <button
@@ -358,6 +361,8 @@ texto_dia_semana_abreviado(
 </span>
 </button>
 <?php endforeach; ?>
+</div>
+<span class="flecha-semana flecha-semana-derecha" aria-hidden="true">›</span>
 </div>
 <div class="dias-actividades">
 <?php foreach ($dias_semana as $indice => $dia): ?>

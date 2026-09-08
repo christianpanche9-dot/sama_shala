@@ -187,12 +187,13 @@ return;
 const ancho = contenedor.offsetWidth;
 const alto = contenedor.offsetHeight;
 const proporcion = 16 / 9;
+const zoom = 1.25;
 if (ancho / alto > proporcion) {
-iframe.style.width = "100%";
-iframe.style.height = (ancho / proporcion) + "px";
+iframe.style.width = (ancho * zoom) + "px";
+iframe.style.height = (ancho / proporcion * zoom) + "px";
 } else {
-iframe.style.height = "100%";
-iframe.style.width = (alto * proporcion) + "px";
+iframe.style.height = (alto * zoom) + "px";
+iframe.style.width = (alto * proporcion * zoom) + "px";
 }
 }
 
@@ -315,6 +316,8 @@ href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
 <p class="navegacion-semana-titulo" id="etiqueta-semana-activa">
 <?= etiqueta_semana_de($fecha_activa) ?>
 </p>
+<div class="calendario-semana-contenedor">
+<span class="flecha-semana flecha-semana-izquierda" aria-hidden="true">‹</span>
 <div class="calendario-semana">
 <?php foreach ($dias_mes as $dia): ?>
 <?php $clave_dia = $dia->format('Y-m-d'); ?>
@@ -335,6 +338,8 @@ texto_dia_semana_abreviado(
 </span>
 </button>
 <?php endforeach; ?>
+</div>
+<span class="flecha-semana flecha-semana-derecha" aria-hidden="true">›</span>
 </div>
 <div class="dias-actividades">
 <?php foreach ($dias_mes as $dia): ?>

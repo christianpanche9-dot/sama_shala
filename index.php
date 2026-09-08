@@ -73,12 +73,13 @@ return;
 const ancho = contenedor.offsetWidth;
 const alto = contenedor.offsetHeight;
 const proporcion = 16 / 9;
+const zoom = 1.25;
 if (ancho / alto > proporcion) {
-iframe.style.width = "100%";
-iframe.style.height = (ancho / proporcion) + "px";
+iframe.style.width = (ancho * zoom) + "px";
+iframe.style.height = (ancho / proporcion * zoom) + "px";
 } else {
-iframe.style.height = "100%";
-iframe.style.width = (alto * proporcion) + "px";
+iframe.style.height = (alto * zoom) + "px";
+iframe.style.width = (alto * proporcion * zoom) + "px";
 }
 }
 

@@ -914,6 +914,12 @@ padding: 0 16px 14px;
 color: var(--color-texto-tenue);
 font-size: 0.85rem;
 }
+.calendario-semana-contenedor {
+position: relative;
+}
+.flecha-semana {
+display: none;
+}
 .calendario-semana {
 display: flex;
 margin: 20px 0 10px;
@@ -1613,6 +1619,30 @@ font-size: 0.75rem;
 }
 .calendario-semana {
 gap: 6px;
+}
+.flecha-semana {
+display: flex;
+position: absolute;
+top: 50%;
+z-index: 1;
+align-items: center;
+justify-content: center;
+width: 22px;
+height: 22px;
+transform: translateY(-50%);
+color: white;
+background-color: var(--color-verde-oscuro);
+border-radius: 999px;
+box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+font-size: 1rem;
+line-height: 1;
+pointer-events: none;
+}
+.flecha-semana-izquierda {
+left: -6px;
+}
+.flecha-semana-derecha {
+right: -6px;
 }
 .dia-semana-boton {
 min-width: 58px;
