@@ -64,7 +64,7 @@ required
 </button>
 </form>
 <p class="enlace-formulario-cuenta">
-<a href="login.php"><?= t("Volver a iniciar sesión") ?></a>
+<a class="boton boton-secundario" href="login.php"><?= t("Volver a iniciar sesión") ?></a>
 </p>
 </main>
 <?php require_once __DIR__ . '/pie.php'; ?>
