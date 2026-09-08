@@ -2328,6 +2328,42 @@ width: 100%;
 width: 100%;
 }
 }
+.pagina-cuenta-formulario {
+max-width: 650px;
+}
+.pagina-cuenta-formulario .encabezado-pagina {
+text-align: center;
+}
+.texto-formulario-cuenta {
+max-width: 480px;
+margin: 0 auto 8px;
+color: var(--color-texto-tenue);
+text-align: center;
+line-height: 1.5;
+}
+.enlace-formulario-cuenta {
+margin-top: 12px;
+text-align: center;
+}
+@media (max-width: 850px) {
+.pagina-cuenta-formulario {
+width: 92%;
+}
+.pagina-cuenta-formulario .encabezado-pagina h1 {
+font-size: 1.9rem;
+}
+}
+@media (max-width: 580px) {
+.pagina-cuenta-formulario {
+width: 100%;
+}
+.pagina-cuenta-formulario .encabezado-pagina h1 {
+font-size: 1.6rem;
+}
+.texto-formulario-cuenta {
+font-size: 0.95rem;
+}
+}
 .datos-transferencia {
 margin-bottom: 1.2rem;
 padding: 0.9rem 1.2rem;

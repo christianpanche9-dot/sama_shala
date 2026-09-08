@@ -24,21 +24,24 @@ content="width=device-width, initial-scale=1.0"
 </head>
 <body>
 <?php require "menu.php"; ?>
-<main class="contenedor">
+<main class="contenedor seccion pagina-cuenta-formulario">
+<div class="encabezado-pagina">
+<p class="etiqueta"><?= t("Cuenta") ?></p>
 <h1><?= t("Recuperar contraseña") ?></h1>
-<p>
+</div>
+<p class="texto-formulario-cuenta">
 <?= t("Escribe tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña.") ?>
 </p>
 <?php if ($mensaje === "enviado"): ?>
-<div class="mensaje exito">
+<div class="mensaje mensaje-exito">
 <?= t("Si existe una cuenta con ese correo, te hemos enviado instrucciones para restablecer la contraseña.") ?>
 </div>
 <?php elseif ($error === "datos"): ?>
-<div class="mensaje error">
+<div class="mensaje mensaje-error">
 <?= t("Escribe un correo electrónico válido.") ?>
 </div>
 <?php elseif ($error === "token"): ?>
-<div class="mensaje error">
+<div class="mensaje mensaje-error">
 <?= t("El enlace no es válido o ha caducado. Solicita uno nuevo.") ?>
 </div>
 <?php endif; ?>
@@ -60,7 +63,7 @@ required
 <?= t("Enviar instrucciones") ?>
 </button>
 </form>
-<p>
+<p class="enlace-formulario-cuenta">
 <a href="login.php"><?= t("Volver a iniciar sesión") ?></a>
 </p>
 </main>

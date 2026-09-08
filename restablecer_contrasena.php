@@ -43,24 +43,27 @@ content="width=device-width, initial-scale=1.0"
 </head>
 <body>
 <?php require "menu.php"; ?>
-<main class="contenedor">
+<main class="contenedor seccion pagina-cuenta-formulario">
+<div class="encabezado-pagina">
+<p class="etiqueta"><?= t("Cuenta") ?></p>
 <h1><?= t("Restablecer contraseña") ?></h1>
+</div>
 <?php if (!$token_valido): ?>
-<div class="mensaje error">
+<div class="mensaje mensaje-error">
 <?= t("El enlace no es válido o ha caducado. Solicita uno nuevo.") ?>
 </div>
-<p>
+<p class="enlace-formulario-cuenta">
 <a href="recuperar_contrasena.php">
 <?= t("Solicitar un nuevo enlace") ?>
 </a>
 </p>
 <?php else: ?>
 <?php if ($error === "password"): ?>
-<div class="mensaje error">
+<div class="mensaje mensaje-error">
 <?= t("Las contraseñas no coinciden.") ?>
 </div>
 <?php elseif ($error === "datos"): ?>
-<div class="mensaje error">
+<div class="mensaje mensaje-error">
 <?= t("La contraseña debe tener al menos ocho caracteres.") ?>
 </div>
 <?php endif; ?>
