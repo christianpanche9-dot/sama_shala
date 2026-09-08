@@ -3,6 +3,11 @@ require_once __DIR__ . "/funciones.php";
 ?>
 <div class="barra-utilidad">
 <div class="contenedor barra-utilidad-interior">
+<?php if (usuarioAutenticado()): ?>
+<span class="barra-utilidad-usuario">
+<?= t('Usuario:') ?> <?= escapar(nombreUsuarioActual()) ?>
+</span>
+<?php endif; ?>
 <a
 class="<?= idiomaActual() === 'es' ? 'activo' : '' ?>"
 href="cambiar_idioma.php?idioma=es"
@@ -72,11 +77,6 @@ aria-label="Abrir menú"
 <?= t('Mis reservas') ?>
 </a>
 <?php endif; ?>
-<span class="usuario-menu">
-<?= escapar(
-    nombreUsuarioActual()
-) ?>
-</span>
 <a href="logout.php">
 <?= t('Salir') ?>
 </a>

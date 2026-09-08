@@ -137,6 +137,11 @@ background-color: rgba(255, 255, 255, 0.12);
 color: white;
 font-weight: 700;
 }
+.barra-utilidad-usuario {
+margin-right: auto;
+padding: 4px 10px;
+font-weight: 700;
+}
 .cabecera {
 color: white;
 background-color: var(--color-verde-oscuro);
@@ -1555,9 +1560,6 @@ overflow: visible;
 padding: 10px 14px;
 border-radius: 8px;
 }
-.usuario-menu {
-padding: 10px 14px;
-}
 .menu-mas {
 display: none;
 }
@@ -1580,6 +1582,11 @@ font-size: 0.85rem;
 .barra-utilidad-interior {
 flex-wrap: wrap;
 justify-content: center;
+}
+.barra-utilidad-usuario {
+margin-right: 0;
+width: 100%;
+text-align: center;
 }
 .rejilla-ventajas,
 .rejilla-actividades,
@@ -2390,10 +2397,6 @@ line-height: 1.4;
 .contacto-transferencia {
 color: var(--color-texto-tenue);
 font-size: 0.85rem;
-}
-.usuario-menu {
-color: var(--color-azul);
-font-weight: 700;
 }
 .panel-cuenta {
 margin: 0.5rem 0 3rem;
