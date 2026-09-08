@@ -21,7 +21,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
           protocol: ftps
-          server-dir: /public_html/samashala.com/
+          server-dir: /
           exclude: |
             **/.git*
             **/.git*/**
