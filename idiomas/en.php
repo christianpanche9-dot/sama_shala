@@ -30,6 +30,8 @@ return [
 'Mi cuenta' => 'My account',
 'Mis reservas' => 'My bookings',
 'Salir' => 'Log out',
+'Blog' => 'Blog',
+'Contáctanos' => 'Contact us',
 
 // pie.php
 'Síguenos' => 'Follow us',
@@ -84,6 +86,10 @@ return [
 'Filtrar' => 'Filter',
 'Limpiar' => 'Clear',
 'No se han encontrado actividades con los filtros seleccionados.' => 'No activities found with the selected filters.',
+'Conoce todas nuestras actividades' => 'Discover all our activities',
+'Eventos' => 'Events',
+'Terapias' => 'Therapies',
+'Talleres' => 'Workshops',
 'Duración' => 'Duration',
 'minutos' => 'minutes',
 'minuto' => 'minute',
@@ -244,6 +250,9 @@ return [
 'El correo ya está registrado' => 'This email is already registered',
 'Cuenta creada correctamente' => 'Account created successfully',
 'Ya puedes iniciar sesión.' => 'You can now log in.',
+'Cuenta' => 'Account',
+'Usuario:' => 'User:',
+'La nueva contraseña no puede ser igual a la anterior.' => 'The new password cannot be the same as the previous one.',
 
 // mi_cuenta.php
 'Hola,' => 'Hi,',
@@ -415,4 +424,21 @@ return [
 'Pagado' => 'Paid',
 'Rechazado' => 'Rejected',
 '¿Dudas? Escríbenos al' => 'Questions? Message us at',
+
+// contactanos.php
+'Contáctanos | Sama Shala' => 'Contact us | Sama Shala',
+'Hablemos' => 'Let\'s talk',
+'¿Tienes alguna pregunta o quieres visitarnos?' => 'Do you have a question or want to visit us?',
+'Dirección' => 'Address',
+'Correo' => 'Email',
+'Ubicación de Sama Shala' => 'Sama Shala location',
+
+// blog.php / blog_detalle.php
+'Blog | Sama Shala' => 'Blog | Sama Shala',
+'Nuestro blog' => 'Our blog',
+'Todavía no hay entradas publicadas.' => 'No entries published yet.',
+'Leer entrada' => 'Read entry',
+'Entrada no encontrada | Sama Shala' => 'Entry not found | Sama Shala',
+'Volver al blog' => 'Back to blog',
+'La entrada no existe o no está disponible.' => 'This entry doesn\'t exist or isn\'t available.',
 ];
