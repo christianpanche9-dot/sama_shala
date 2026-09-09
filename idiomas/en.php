@@ -462,6 +462,10 @@ return [
 'Volver al blog' => 'Back to blog',
 'La entrada no existe o no está disponible.' => 'This entry doesn\'t exist or isn\'t available.',
 
+// login.php (Google)
+'Continuar con Google' => 'Continue with Google',
+'No se pudo iniciar sesión con Google. Inténtalo de nuevo.' => 'We couldn\'t sign you in with Google. Please try again.',
+
 // terminos.php / politica_privacidad.php
 'Legal' => 'Legal',
 'Términos y condiciones' => 'Terms and conditions',
