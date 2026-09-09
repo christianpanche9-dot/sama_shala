@@ -41,6 +41,17 @@ if ($stmt->affected_rows === 0) {
 throw new Exception('No se ha podido actualizar el paquete.');
 }
 $stmt->close();
+if ($nuevo_estado === 'activo') {
+$sql_usuario = "SELECT id_usuario FROM paquetes_clientes WHERE id_paquete_cliente = ?";
+$stmt_usuario = $conexion->prepare($sql_usuario);
+$stmt_usuario->bind_param('i', $id_registro);
+$stmt_usuario->execute();
+$fila_usuario = $stmt_usuario->get_result()->fetch_assoc();
+$stmt_usuario->close();
+if ($fila_usuario) {
+activarPreReservasPendientes($conexion, (int) $fila_usuario['id_usuario'], $id_registro);
+}
+}
 } elseif ($tipo_origen === 'producto') {
 $nuevo_estado = $accion === 'aprobar' ? 'pagado' : 'rechazado';
 $sql = "

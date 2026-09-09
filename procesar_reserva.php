@@ -2,6 +2,7 @@
 require_once "seguridad.php";
 require_once "conexion.php";
 require_once "funciones.php";
+require_once "funciones_reservas.php";
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 header("Location: sesiones.php");
 exit;
@@ -25,6 +26,7 @@ $estado_pago = "pagado";
 $comprobante_pago = null;
 $titular_pago = trim($_POST["titular"] ?? "");
 $tarjeta_pago = trim($_POST["tarjeta"] ?? "");
+$repetir_semanal = isset($_POST["repetir_semanal"]);
 $cantidad = 1;
 if (str_starts_with($metodo_pago_enviado, "paquete:")) {
 $tipo_pago = "paquete";
@@ -457,10 +459,26 @@ $id_sesion
 $stmt_estado->execute();
 $stmt_estado->close();
 $conexion->commit();
+$resumen_recurrente = "";
+if ($tipo_pago === "paquete" && $repetir_semanal) {
+$dia_semana_sesion = (int) (new DateTime($sesion["fecha"]))->format("N");
+$resultado_recurrente = crearReservaRecurrente(
+$conexion,
+$id_usuario,
+(int) $sesion["id_actividad"],
+$dia_semana_sesion,
+$sesion["hora_inicio"],
+$id_paquete_cliente
+);
+$resumen_recurrente = "&recurrente=" .
+$resultado_recurrente["confirmadas"] .
+"-" . $resultado_recurrente["pre_reservas"];
+}
 header(
 "Location: mis_reservas.php" .
 "?mensaje=confirmada" .
-($estado_pago === "pendiente" ? "&pago=pendiente" : "")
+($estado_pago === "pendiente" ? "&pago=pendiente" : "") .
+$resumen_recurrente
 );
 exit;
 }

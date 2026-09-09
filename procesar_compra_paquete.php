@@ -2,6 +2,7 @@
 require_once __DIR__ . '/seguridad.php';
 require_once __DIR__ . '/conexion.php';
 require_once __DIR__ . '/funciones.php';
+require_once __DIR__ . '/funciones_reservas.php';
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 header('Location: paquetes.php');
 exit;
@@ -124,8 +125,12 @@ $comprobante_pago,
 $estado
 );
 $stmt_compra->execute();
+$id_paquete_cliente_nuevo = $conexion->insert_id;
 $stmt_compra->close();
 $conexion->commit();
+if ($estado === 'activo') {
+activarPreReservasPendientes($conexion, $id_usuario, $id_paquete_cliente_nuevo);
+}
 header(
 'Location: mis_paquetes.php?mensaje=comprado'
 );

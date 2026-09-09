@@ -1,7 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 require_once "seguridad.php";
 require_once "conexion.php";
 require_once "funciones.php";
@@ -17,6 +14,7 @@ r.codigo_reserva,
 r.tipo_pago,
 r.cantidad,
 r.precio_pagado,
+r.id_recurrente,
 s.id_sesion,
 s.fecha,
 s.hora_inicio,
@@ -82,9 +80,10 @@ $inicio = new DateTime(
 $reserva["fecha"] . " " . $reserva["hora_inicio"]
 );
 $puede_cancelar =
-$reserva["estado"] === "confirmada" &&
+in_array($reserva["estado"], ["confirmada", "pre_reserva"], true) &&
 $reserva["estado_sesion"] !== "cancelada" &&
-$inicio > (new DateTime())->modify("+15 minutes");
+($reserva["estado"] === "pre_reserva" ||
+$inicio > (new DateTime())->modify("+15 minutes"));
 $etiqueta = $colapsable ? 'details' : 'article';
 ?>
 <<?= $etiqueta ?> class="tarjeta-reserva">
@@ -136,10 +135,15 @@ $reserva["espacio"]
 </p>
 <p>
 <strong><?= t('Estado:') ?></strong>
-<?= escapar(
-t(ucfirst($reserva["estado"]))
-) ?>
+<?= $reserva["estado"] === "pre_reserva"
+? t("Pendiente de paquete")
+: escapar(t(ucfirst($reserva["estado"]))) ?>
 </p>
+<?php if ($reserva["estado"] === "pre_reserva"): ?>
+<div class="mensaje mensaje-aviso">
+<?= t('Se confirmará automáticamente cuando actives un paquete con usos disponibles.') ?>
+</div>
+<?php endif; ?>
 <p>
 <strong><?= t('Pago:') ?></strong>
 <?php if ($reserva["tipo_pago"] === "paquete"): ?>
@@ -250,6 +254,26 @@ $stmt_espera->execute();
 $lista_espera = $stmt_espera->get_result();
 $mensaje = $_GET["mensaje"] ?? "";
 $pago_pendiente = ($_GET["pago"] ?? "") === "pendiente";
+$resumen_recurrente = trim($_GET["recurrente"] ?? "");
+
+$sql_recurrentes = "
+SELECT
+rr.id_recurrente,
+rr.dia_semana,
+rr.hora_inicio,
+a.nombre AS actividad
+FROM reservas_recurrentes rr
+INNER JOIN actividades a
+ON rr.id_actividad = a.id_actividad
+WHERE rr.id_usuario = ?
+AND rr.estado = 'activa'
+ORDER BY rr.dia_semana ASC, rr.hora_inicio ASC
+";
+$stmt_recurrentes = $conexion->prepare($sql_recurrentes);
+$stmt_recurrentes->bind_param("i", $id_usuario);
+$stmt_recurrentes->execute();
+$reservas_recurrentes = $stmt_recurrentes->get_result()->fetch_all(MYSQLI_ASSOC);
+$stmt_recurrentes->close();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -286,6 +310,22 @@ content="width=device-width, initial-scale=1.0"
 <div class="mensaje mensaje-exito">
 <?= t('La reserva se ha cancelado.') ?>
 </div>
+<?php elseif ($mensaje === "recurrente_cancelada"): ?>
+<div class="mensaje mensaje-exito">
+<?= t('La clase recurrente y sus reservas futuras se han cancelado.') ?>
+</div>
+<?php endif; ?>
+<?php if ($resumen_recurrente !== ""): ?>
+<?php [$cantidad_confirmadas, $cantidad_pre_reservas] = array_map('intval', explode('-', $resumen_recurrente)); ?>
+<?php if ($cantidad_confirmadas > 0 || $cantidad_pre_reservas > 0): ?>
+<div class="mensaje mensaje-exito">
+<?= sprintf(
+t('Además reservamos %d clases futuras del mismo horario. %d quedaron pendientes de que actives un paquete con usos disponibles.'),
+$cantidad_confirmadas + $cantidad_pre_reservas,
+$cantidad_pre_reservas
+) ?>
+</div>
+<?php endif; ?>
 <?php endif; ?>
 <section>
 <h2><?= t('Reservas') ?></h2>
@@ -295,6 +335,42 @@ content="width=device-width, initial-scale=1.0"
 <div class="rejilla-reservas">
 <?php foreach ($reservas_activas as $reserva): ?>
 <?php tarjeta_reserva($reserva); ?>
+<?php endforeach; ?>
+</div>
+<?php endif; ?>
+</section>
+
+<section>
+<h2><?= t('Clases recurrentes') ?></h2>
+<?php if (empty($reservas_recurrentes)): ?>
+<p>
+<?= t('No tienes ninguna clase reservada de forma recurrente.') ?>
+</p>
+<?php else: ?>
+<div class="rejilla-reservas">
+<?php foreach ($reservas_recurrentes as $recurrente): ?>
+<article class="tarjeta-reserva">
+<h3>
+<?= escapar($recurrente['actividad']) ?>
+</h3>
+<p>
+<?= sprintf(
+t('Todos los %s a las %s'),
+texto_dia_semana((int) $recurrente['dia_semana']),
+substr($recurrente['hora_inicio'], 0, 5)
+) ?>
+</p>
+<form action="cancelar_recurrente.php" method="post">
+<input
+type="hidden"
+name="id_recurrente"
+value="<?= (int) $recurrente['id_recurrente'] ?>"
+>
+<button type="submit" class="boton peligro">
+<?= t('Cancelar clase recurrente') ?>
+</button>
+</form>
+</article>
 <?php endforeach; ?>
 </div>
 <?php endif; ?>

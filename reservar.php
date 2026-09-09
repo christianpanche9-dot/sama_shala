@@ -116,6 +116,38 @@ $paquetes_disponibles = $stmt_paquetes
 ->fetch_all(MYSQLI_ASSOC);
 $stmt_paquetes->close();
 }
+$id_actividad_sesion = null;
+$dia_semana_sesion = (int) (new DateTime($sesion['fecha']))->format('N');
+$recurrente_activa = null;
+if (!$pago_con_precio_fijo) {
+$sql_id_actividad = "SELECT id_actividad FROM sesiones WHERE id_sesion = ?";
+$stmt_id_actividad = $conexion->prepare($sql_id_actividad);
+$stmt_id_actividad->bind_param("i", $id_sesion);
+$stmt_id_actividad->execute();
+$id_actividad_sesion = (int) $stmt_id_actividad->get_result()->fetch_assoc()['id_actividad'];
+$stmt_id_actividad->close();
+
+$sql_recurrente = "
+SELECT id_recurrente
+FROM reservas_recurrentes
+WHERE id_usuario = ?
+AND id_actividad = ?
+AND dia_semana = ?
+AND hora_inicio = ?
+AND estado = 'activa'
+";
+$stmt_recurrente = $conexion->prepare($sql_recurrente);
+$stmt_recurrente->bind_param(
+"iiis",
+$id_usuario_actual,
+$id_actividad_sesion,
+$dia_semana_sesion,
+$sesion['hora_inicio']
+);
+$stmt_recurrente->execute();
+$recurrente_activa = $stmt_recurrente->get_result()->fetch_assoc();
+$stmt_recurrente->close();
+}
 $conexion->close();
 ?>
 <!DOCTYPE html>
@@ -382,6 +414,49 @@ value="paquete:<?= (int) $paquete["id_paquete_cliente"] ?>"
 </label>
 <?php endforeach; ?>
 </fieldset>
+<?php if ($recurrente_activa): ?>
+<div class="mensaje mensaje-aviso campo-completo">
+<?= sprintf(
+t("Ya tienes esta clase reservada todos los %s a las %s."),
+texto_dia_semana($dia_semana_sesion),
+substr($sesion['hora_inicio'], 0, 5)
+) ?>
+<a href="mis_reservas.php"><?= t("Gestionar mis clases recurrentes") ?></a>
+</div>
+<?php elseif (!empty($paquetes_disponibles)): ?>
+<div class="campo-checkbox campo-completo">
+<label>
+<input
+type="checkbox"
+name="repetir_semanal"
+value="1"
+id="repetir_semanal"
+>
+<?= t("Reservar esta clase y repetirla cada semana, el mismo día y hora, mientras tenga cupo y mi paquete esté activo.") ?>
+</label>
+</div>
+<script>
+(function () {
+var formulario = document.getElementById('formulario-reserva');
+var repetir = document.getElementById('repetir_semanal');
+if (!formulario || !repetir) {
+return;
+}
+function actualizarRepetir() {
+var seleccionado = formulario.querySelector('input[name="metodo_pago"]:checked');
+var esPaquete = seleccionado && seleccionado.value.startsWith('paquete:');
+repetir.disabled = !esPaquete;
+if (!esPaquete) {
+repetir.checked = false;
+}
+}
+formulario.querySelectorAll('input[name="metodo_pago"]').forEach(function (radio) {
+radio.addEventListener('change', actualizarRepetir);
+});
+actualizarRepetir();
+})();
+</script>
+<?php endif; ?>
 <button type="submit" class="boton">
 <?= t("Confirmar solicitud") ?>
 </button>

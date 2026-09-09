@@ -180,6 +180,20 @@ $dias = [
 return t($dias[$dia_semana] ?? '');
 }
 
+function texto_dia_semana(int $dia_semana): string
+{
+$dias = [
+1 => 'Lunes',
+2 => 'Martes',
+3 => 'Miércoles',
+4 => 'Jueves',
+5 => 'Viernes',
+6 => 'Sábado',
+7 => 'Domingo'
+];
+return t($dias[$dia_semana] ?? '');
+}
+
 function texto_mes(int $mes): string
 {
 $meses = [

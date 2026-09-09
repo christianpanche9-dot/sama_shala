@@ -5,6 +5,321 @@ return strtoupper(
     bin2hex(random_bytes(8))
 );
 }
+
+function crearReservaRecurrente(
+    mysqli $conexion,
+    int $id_usuario,
+    int $id_actividad,
+    int $dia_semana,
+    string $hora_inicio,
+    int $id_paquete_cliente
+): array {
+    $sql_patron = "
+        INSERT INTO reservas_recurrentes (id_usuario, id_actividad, dia_semana, hora_inicio, estado)
+        VALUES (?, ?, ?, ?, 'activa')
+        ON DUPLICATE KEY UPDATE estado = 'activa'
+    ";
+    $stmt_patron = $conexion->prepare($sql_patron);
+    $stmt_patron->bind_param('iiis', $id_usuario, $id_actividad, $dia_semana, $hora_inicio);
+    $stmt_patron->execute();
+    $stmt_patron->close();
+
+    $sql_id = "
+        SELECT id_recurrente
+        FROM reservas_recurrentes
+        WHERE id_usuario = ?
+        AND id_actividad = ?
+        AND dia_semana = ?
+        AND hora_inicio = ?
+    ";
+    $stmt_id = $conexion->prepare($sql_id);
+    $stmt_id->bind_param('iiis', $id_usuario, $id_actividad, $dia_semana, $hora_inicio);
+    $stmt_id->execute();
+    $id_recurrente = (int) $stmt_id->get_result()->fetch_assoc()['id_recurrente'];
+    $stmt_id->close();
+
+    $dia_semana_mysql = $dia_semana - 1;
+    $sql_sesiones = "
+        SELECT s.id_sesion
+        FROM sesiones s
+        WHERE s.id_actividad = ?
+        AND WEEKDAY(s.fecha) = ?
+        AND s.hora_inicio = ?
+        AND CONCAT(s.fecha, ' ', s.hora_inicio) > NOW()
+        AND s.estado IN ('programada', 'completa')
+        AND NOT EXISTS (
+            SELECT 1 FROM reservas r
+            WHERE r.id_sesion = s.id_sesion
+            AND r.id_usuario = ?
+            AND r.estado IN ('confirmada', 'pre_reserva')
+        )
+        ORDER BY s.fecha ASC
+    ";
+    $stmt_sesiones = $conexion->prepare($sql_sesiones);
+    $stmt_sesiones->bind_param(
+        'iisi',
+        $id_actividad,
+        $dia_semana_mysql,
+        $hora_inicio,
+        $id_usuario
+    );
+    $stmt_sesiones->execute();
+    $sesiones_pendientes = array_column(
+        $stmt_sesiones->get_result()->fetch_all(MYSQLI_ASSOC),
+        'id_sesion'
+    );
+    $stmt_sesiones->close();
+
+    $confirmadas = 0;
+    $pre_reservas = 0;
+    $omitidas_por_aforo = 0;
+
+    foreach ($sesiones_pendientes as $id_sesion) {
+        $conexion->begin_transaction();
+        try {
+            $sql_sesion = "
+                SELECT id_sesion, aforo
+                FROM sesiones
+                WHERE id_sesion = ?
+                FOR UPDATE
+            ";
+            $stmt_sesion = $conexion->prepare($sql_sesion);
+            $stmt_sesion->bind_param('i', $id_sesion);
+            $stmt_sesion->execute();
+            $sesion = $stmt_sesion->get_result()->fetch_assoc();
+            $stmt_sesion->close();
+
+            $sql_ocupadas = "
+                SELECT COALESCE(SUM(cantidad), 0) AS total
+                FROM reservas
+                WHERE id_sesion = ?
+                AND estado = 'confirmada'
+            ";
+            $stmt_ocupadas = $conexion->prepare($sql_ocupadas);
+            $stmt_ocupadas->bind_param('i', $id_sesion);
+            $stmt_ocupadas->execute();
+            $ocupadas = (int) $stmt_ocupadas->get_result()->fetch_assoc()['total'];
+            $stmt_ocupadas->close();
+
+            if ($ocupadas >= (int) $sesion['aforo']) {
+                $conexion->commit();
+                $omitidas_por_aforo++;
+                continue;
+            }
+
+            $sql_paquete = "
+                SELECT usos_disponibles, estado, fecha_caducidad
+                FROM paquetes_clientes
+                WHERE id_paquete_cliente = ?
+                AND id_usuario = ?
+                FOR UPDATE
+            ";
+            $stmt_paquete = $conexion->prepare($sql_paquete);
+            $stmt_paquete->bind_param('ii', $id_paquete_cliente, $id_usuario);
+            $stmt_paquete->execute();
+            $paquete = $stmt_paquete->get_result()->fetch_assoc();
+            $stmt_paquete->close();
+
+            $paquete_vigente = $paquete
+                && $paquete['estado'] === 'activo'
+                && (int) $paquete['usos_disponibles'] > 0
+                && (
+                    $paquete['fecha_caducidad'] === null
+                    || strtotime($paquete['fecha_caducidad']) >= strtotime('today')
+                );
+
+            $codigo = generarCodigoReserva();
+
+            if ($paquete_vigente) {
+                $usos_restantes = (int) $paquete['usos_disponibles'] - 1;
+                $estado_paquete = $usos_restantes <= 0 ? 'agotado' : 'activo';
+                $sql_consumir = "
+                    UPDATE paquetes_clientes
+                    SET usos_disponibles = ?, estado = ?
+                    WHERE id_paquete_cliente = ?
+                ";
+                $stmt_consumir = $conexion->prepare($sql_consumir);
+                $stmt_consumir->bind_param('isi', $usos_restantes, $estado_paquete, $id_paquete_cliente);
+                $stmt_consumir->execute();
+                $stmt_consumir->close();
+
+                $sql_reserva = "
+                    INSERT INTO reservas (
+                        id_sesion, id_usuario, id_paquete_cliente, id_recurrente,
+                        tipo_pago, estado, asistencia, codigo_reserva
+                    )
+                    VALUES (?, ?, ?, ?, 'paquete', 'confirmada', 'pendiente', ?)
+                ";
+                $stmt_reserva = $conexion->prepare($sql_reserva);
+                $stmt_reserva->bind_param(
+                    'iiiis',
+                    $id_sesion,
+                    $id_usuario,
+                    $id_paquete_cliente,
+                    $id_recurrente,
+                    $codigo
+                );
+                $stmt_reserva->execute();
+                $stmt_reserva->close();
+
+                $nuevo_total = $ocupadas + 1;
+                $nuevo_estado = $nuevo_total >= (int) $sesion['aforo'] ? 'completa' : 'programada';
+                $sql_estado = "UPDATE sesiones SET estado = ? WHERE id_sesion = ?";
+                $stmt_estado = $conexion->prepare($sql_estado);
+                $stmt_estado->bind_param('si', $nuevo_estado, $id_sesion);
+                $stmt_estado->execute();
+                $stmt_estado->close();
+
+                $confirmadas++;
+            } else {
+                $sql_reserva = "
+                    INSERT INTO reservas (
+                        id_sesion, id_usuario, id_recurrente,
+                        tipo_pago, estado, asistencia, codigo_reserva
+                    )
+                    VALUES (?, ?, ?, 'paquete', 'pre_reserva', 'pendiente', ?)
+                ";
+                $stmt_reserva = $conexion->prepare($sql_reserva);
+                $stmt_reserva->bind_param(
+                    'iiis',
+                    $id_sesion,
+                    $id_usuario,
+                    $id_recurrente,
+                    $codigo
+                );
+                $stmt_reserva->execute();
+                $stmt_reserva->close();
+
+                $pre_reservas++;
+            }
+            $conexion->commit();
+        } catch (Throwable $error) {
+            $conexion->rollback();
+        }
+    }
+
+    return [
+        'id_recurrente' => $id_recurrente,
+        'confirmadas' => $confirmadas,
+        'pre_reservas' => $pre_reservas,
+        'omitidas_por_aforo' => $omitidas_por_aforo
+    ];
+}
+
+function activarPreReservasPendientes(mysqli $conexion, int $id_usuario, int $id_paquete_cliente): void
+{
+    $sql_paquete = "
+        SELECT usos_disponibles, estado, fecha_caducidad
+        FROM paquetes_clientes
+        WHERE id_paquete_cliente = ?
+        AND id_usuario = ?
+        FOR UPDATE
+    ";
+    $stmt_paquete = $conexion->prepare($sql_paquete);
+    $stmt_paquete->bind_param('ii', $id_paquete_cliente, $id_usuario);
+    $stmt_paquete->execute();
+    $paquete = $stmt_paquete->get_result()->fetch_assoc();
+    $stmt_paquete->close();
+
+    if (
+        !$paquete
+        || $paquete['estado'] !== 'activo'
+        || (int) $paquete['usos_disponibles'] <= 0
+        || (
+            $paquete['fecha_caducidad'] !== null
+            && strtotime($paquete['fecha_caducidad']) < strtotime('today')
+        )
+    ) {
+        return;
+    }
+
+    $sql_pendientes = "
+        SELECT r.id_reserva, r.id_sesion, s.aforo
+        FROM reservas r
+        INNER JOIN sesiones s ON r.id_sesion = s.id_sesion
+        WHERE r.id_usuario = ?
+        AND r.estado = 'pre_reserva'
+        AND CONCAT(s.fecha, ' ', s.hora_inicio) > NOW()
+        ORDER BY s.fecha ASC, s.hora_inicio ASC
+    ";
+    $stmt_pendientes = $conexion->prepare($sql_pendientes);
+    $stmt_pendientes->bind_param('i', $id_usuario);
+    $stmt_pendientes->execute();
+    $pendientes = $stmt_pendientes->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt_pendientes->close();
+
+    $usos_disponibles = (int) $paquete['usos_disponibles'];
+
+    foreach ($pendientes as $pendiente) {
+        if ($usos_disponibles <= 0) {
+            break;
+        }
+        $conexion->begin_transaction();
+        try {
+            $sql_sesion = "SELECT aforo FROM sesiones WHERE id_sesion = ? FOR UPDATE";
+            $stmt_sesion = $conexion->prepare($sql_sesion);
+            $stmt_sesion->bind_param('i', $pendiente['id_sesion']);
+            $stmt_sesion->execute();
+            $sesion = $stmt_sesion->get_result()->fetch_assoc();
+            $stmt_sesion->close();
+
+            $sql_ocupadas = "
+                SELECT COALESCE(SUM(cantidad), 0) AS total
+                FROM reservas
+                WHERE id_sesion = ?
+                AND estado = 'confirmada'
+            ";
+            $stmt_ocupadas = $conexion->prepare($sql_ocupadas);
+            $stmt_ocupadas->bind_param('i', $pendiente['id_sesion']);
+            $stmt_ocupadas->execute();
+            $ocupadas = (int) $stmt_ocupadas->get_result()->fetch_assoc()['total'];
+            $stmt_ocupadas->close();
+
+            if ($ocupadas >= (int) $sesion['aforo']) {
+                $conexion->commit();
+                continue;
+            }
+
+            $usos_disponibles--;
+            $estado_paquete = $usos_disponibles <= 0 ? 'agotado' : 'activo';
+            $sql_consumir = "
+                UPDATE paquetes_clientes
+                SET usos_disponibles = ?, estado = ?
+                WHERE id_paquete_cliente = ?
+            ";
+            $stmt_consumir = $conexion->prepare($sql_consumir);
+            $stmt_consumir->bind_param('isi', $usos_disponibles, $estado_paquete, $id_paquete_cliente);
+            $stmt_consumir->execute();
+            $stmt_consumir->close();
+
+            $codigo = generarCodigoReserva();
+            $sql_activar = "
+                UPDATE reservas
+                SET estado = 'confirmada',
+                    id_paquete_cliente = ?,
+                    codigo_reserva = ?,
+                    fecha_reserva = NOW()
+                WHERE id_reserva = ?
+            ";
+            $stmt_activar = $conexion->prepare($sql_activar);
+            $stmt_activar->bind_param('isi', $id_paquete_cliente, $codigo, $pendiente['id_reserva']);
+            $stmt_activar->execute();
+            $stmt_activar->close();
+
+            $nuevo_total = $ocupadas + 1;
+            $nuevo_estado = $nuevo_total >= (int) $sesion['aforo'] ? 'completa' : 'programada';
+            $sql_estado = "UPDATE sesiones SET estado = ? WHERE id_sesion = ?";
+            $stmt_estado = $conexion->prepare($sql_estado);
+            $stmt_estado->bind_param('si', $nuevo_estado, $pendiente['id_sesion']);
+            $stmt_estado->execute();
+            $stmt_estado->close();
+
+            $conexion->commit();
+        } catch (Throwable $error) {
+            $conexion->rollback();
+        }
+    }
+}
 function cancelarReservaYPromocionar(
 mysqli $conexion,
 int $id_reserva,
@@ -64,12 +379,13 @@ throw new Exception(
 "La reserva no existe."
 );
 }
-if ($reserva["estado"] !== "confirmada") {
+if (!in_array($reserva["estado"], ["confirmada", "pre_reserva"], true)) {
 throw new Exception(
 "La reserva no está confirmada."
 );
 }
-if ($id_usuario !== null) {
+$era_pre_reserva = $reserva["estado"] === "pre_reserva";
+if ($id_usuario !== null && !$era_pre_reserva) {
 $inicio_sesion = strtotime(
 $reserva["fecha"] . " " . $reserva["hora_inicio"]
 );
