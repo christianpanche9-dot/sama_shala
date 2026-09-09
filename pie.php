@@ -69,7 +69,7 @@ English
 <path d="M12 22s7-7.4 7-12.6A7 7 0 0 0 5 9.4C5 14.6 12 22 12 22Z"/>
 <circle cx="12" cy="9.4" r="2.6"/>
 </svg>
-Los Álamos y Ordoñez Lasso, Cuenca – Ecuador
+Los Álamos y Del Arrayán, Cuenca – Ecuador
 </p>
 <p>
 <svg class="pie-icono-dato" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8">

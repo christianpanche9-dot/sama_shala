@@ -77,7 +77,7 @@ aria-label="WhatsApp"
 </span>
 <div>
 <strong><?= t('Dirección') ?></strong>
-<p>Los Álamos y Ordoñez Lasso, Cuenca – Ecuador</p>
+<p>Los Álamos y Del Arrayán, Cuenca – Ecuador</p>
 </div>
 </div>
 <div class="contacto-dato">
@@ -95,7 +95,7 @@ aria-label="WhatsApp"
 </section>
 <div class="contacto-mapa">
 <iframe
-src="https://www.google.com/maps?q=Los+%C3%81lamos+y+Ordo%C3%B1ez+Lasso%2C+Cuenca%2C+Ecuador&output=embed"
+src="https://www.google.com/maps?q=Los+%C3%81lamos+y+Del+Arrayan%2C+Cuenca%2C+Ecuador&output=embed"
 title="<?= t('Ubicación de Sama Shala') ?>"
 loading="lazy"
 allowfullscreen
