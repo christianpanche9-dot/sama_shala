@@ -83,6 +83,8 @@ Los Álamos y Del Arrayán, Cuenca – Ecuador
 <a href="actividades.php"><?= t('Actividades') ?></a>
 <a href="sesiones.php"><?= t('Calendario') ?></a>
 <a href="paquetes.php"><?= t('Paquetes') ?></a>
+<a href="terminos.php"><?= t('Términos y condiciones') ?></a>
+<a href="politica_privacidad.php"><?= t('Política de privacidad') ?></a>
 </nav>
 <p class="pie-copyright">
 &copy; <?= date('Y') ?> Sama Shala

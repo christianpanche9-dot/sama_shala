@@ -461,4 +461,11 @@ return [
 'Entrada no encontrada | Sama Shala' => 'Entry not found | Sama Shala',
 'Volver al blog' => 'Back to blog',
 'La entrada no existe o no está disponible.' => 'This entry doesn\'t exist or isn\'t available.',
+
+// terminos.php / politica_privacidad.php
+'Legal' => 'Legal',
+'Términos y condiciones' => 'Terms and conditions',
+'Política de privacidad' => 'Privacy policy',
+'Términos y condiciones | Sama Shala' => 'Terms and conditions | Sama Shala',
+'Política de privacidad | Sama Shala' => 'Privacy policy | Sama Shala',
 ];

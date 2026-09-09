@@ -2,6 +2,12 @@
 CacheDisable public /
 </IfModule>
 
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^terminos/?$ terminos.php [L]
+RewriteRule ^politica-privacidad/?$ politica_privacidad.php [L]
+</IfModule>
+
 <IfModule mod_expires.c>
 ExpiresActive On
 ExpiresByType image/jpeg "access plus 1 year"
