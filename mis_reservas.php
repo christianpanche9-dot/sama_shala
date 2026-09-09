@@ -62,6 +62,63 @@ $a["fecha"] . $a["hora_inicio"],
 $b["fecha"] . $b["hora_inicio"]
 )
 );
+$reservas_por_dia_calendario = [];
+foreach ($reservas_activas as $reserva) {
+$reservas_por_dia_calendario[$reserva["fecha"]][] = $reserva;
+}
+$hoy_calendario = new DateTime('today');
+$mes_calendario = filter_input(
+INPUT_GET,
+'mes',
+FILTER_VALIDATE_INT,
+['options' => ['min_range' => 1, 'max_range' => 12]]
+);
+$anio_calendario = filter_input(
+INPUT_GET,
+'anio',
+FILTER_VALIDATE_INT,
+['options' => ['min_range' => 2020, 'max_range' => 2100]]
+);
+if (!$mes_calendario || !$anio_calendario) {
+$mes_calendario = (int) $hoy_calendario->format('n');
+$anio_calendario = (int) $hoy_calendario->format('Y');
+}
+$primer_dia_mes_visible_calendario = new DateTime(
+sprintf('%04d-%02d-01', $anio_calendario, $mes_calendario)
+);
+$primer_dia_mes_actual_calendario = new DateTime($hoy_calendario->format('Y-m-01'));
+if ($primer_dia_mes_visible_calendario < $primer_dia_mes_actual_calendario) {
+$mes_calendario = (int) $hoy_calendario->format('n');
+$anio_calendario = (int) $hoy_calendario->format('Y');
+$primer_dia_mes_visible_calendario = clone $primer_dia_mes_actual_calendario;
+}
+$mes_anterior_calendario = $mes_calendario === 1 ? 12 : $mes_calendario - 1;
+$anio_mes_anterior_calendario = $mes_calendario === 1 ? $anio_calendario - 1 : $anio_calendario;
+$mes_siguiente_calendario = $mes_calendario === 12 ? 1 : $mes_calendario + 1;
+$anio_mes_siguiente_calendario = $mes_calendario === 12 ? $anio_calendario + 1 : $anio_calendario;
+$primer_dia_mes_anterior_calendario = new DateTime(
+sprintf('%04d-%02d-01', $anio_mes_anterior_calendario, $mes_anterior_calendario)
+);
+$mostrar_mes_anterior_calendario = $primer_dia_mes_anterior_calendario >= $primer_dia_mes_actual_calendario;
+$dias_en_mes_calendario = (int) $primer_dia_mes_visible_calendario->format('t');
+$dias_mes_calendario = [];
+for ($d = 1; $d <= $dias_en_mes_calendario; $d++) {
+$dias_mes_calendario[] = new DateTime(
+sprintf('%04d-%02d-%02d', $anio_calendario, $mes_calendario, $d)
+);
+}
+$semanas_mes_calendario = generar_calendario_mes($anio_calendario, $mes_calendario);
+$fecha_activa_calendario = $primer_dia_mes_visible_calendario == $primer_dia_mes_actual_calendario
+? clone $hoy_calendario
+: clone $primer_dia_mes_visible_calendario;
+$clave_fecha_activa_calendario = $fecha_activa_calendario->format('Y-m-d');
+$hay_reservas_en_mes_calendario = false;
+foreach ($dias_mes_calendario as $dia_calendario) {
+if (!empty($reservas_por_dia_calendario[$dia_calendario->format('Y-m-d')])) {
+$hay_reservas_en_mes_calendario = true;
+break;
+}
+}
 $historial_por_mes = [];
 foreach ($reservas_historial as $reserva) {
 $clave_mes = substr($reserva["fecha"], 0, 7);
@@ -332,11 +389,231 @@ $cantidad_pre_reservas
 <?php if (count($reservas_activas) === 0): ?>
     <p><?= t('Todavía no tienes reservas.') ?></p>
 <?php else: ?>
-<div class="rejilla-reservas">
-<?php foreach ($reservas_activas as $reserva): ?>
-<?php tarjeta_reserva($reserva); ?>
+<div class="navegacion-mes">
+<?php if ($mostrar_mes_anterior_calendario): ?>
+<a
+class="boton-mes"
+href="mis_reservas.php?mes=<?= $mes_anterior_calendario ?>&anio=<?= $anio_mes_anterior_calendario ?>"
+aria-label="<?= t('Mes anterior') ?>"
+>
+←
+</a>
+<?php else: ?>
+<span class="boton-mes boton-mes-deshabilitado" aria-hidden="true">
+←
+</span>
+<?php endif; ?>
+<span class="navegacion-mes-titulo">
+<?= escapar(texto_mes($mes_calendario)) ?> <?= $anio_calendario ?>
+</span>
+<a
+class="boton-mes"
+href="mis_reservas.php?mes=<?= $mes_siguiente_calendario ?>&anio=<?= $anio_mes_siguiente_calendario ?>"
+aria-label="<?= t('Mes siguiente') ?>"
+>
+→
+</a>
+</div>
+<?php if (!$hay_reservas_en_mes_calendario): ?>
+<div class="mensaje mensaje-aviso">
+<?= t('No tienes reservas programadas este mes.') ?>
+</div>
+<?php endif; ?>
+<div class="vista-calendario-escritorio">
+<div class="calendario-mes-publico">
+<div class="calendario-publico-cabecera">
+<?php for ($d = 1; $d <= 7; $d++): ?>
+<span><?= escapar(texto_dia_semana_abreviado($d)) ?></span>
+<?php endfor; ?>
+</div>
+<div class="calendario-publico-grilla">
+<?php foreach ($semanas_mes_calendario as $semana): ?>
+<?php foreach ($semana as $dia_calendario): ?>
+<?php if ($dia_calendario === null): ?>
+<div class="dia-calendario-publico dia-calendario-publico-vacio">
+</div>
+<?php else: ?>
+<?php
+$clave_dia_calendario = $dia_calendario->format('Y-m-d');
+$es_hoy_calendario = $clave_dia_calendario === $hoy_calendario->format('Y-m-d');
+$es_pasado_calendario = $dia_calendario < $hoy_calendario;
+?>
+<div class="dia-calendario-publico<?= $es_hoy_calendario ? ' dia-calendario-publico-hoy' : '' ?><?= $es_pasado_calendario ? ' dia-calendario-publico-pasado' : '' ?>">
+<span class="dia-calendario-publico-numero">
+<?= (int) $dia_calendario->format('j') ?>
+</span>
+<?php if (!empty($reservas_por_dia_calendario[$clave_dia_calendario])): ?>
+<div class="sesiones-dia-calendario">
+<?php foreach ($reservas_por_dia_calendario[$clave_dia_calendario] as $reserva_dia): ?>
+<button
+type="button"
+class="sesion-calendario-chip sesion-calendario-chip-clase<?= $reserva_dia['estado'] === 'pre_reserva' ? ' sesion-calendario-chip-pendiente' : '' ?>"
+data-id-reserva="<?= (int) $reserva_dia['id_reserva'] ?>"
+>
+<span class="sesion-calendario-hora">
+<?= escapar(formatear_hora($reserva_dia['hora_inicio'])) ?>
+</span>
+<span class="sesion-calendario-nombre">
+<?= escapar($reserva_dia['actividad']) ?>
+</span>
+</button>
 <?php endforeach; ?>
 </div>
+<?php endif; ?>
+</div>
+<?php endif; ?>
+<?php endforeach; ?>
+<?php endforeach; ?>
+</div>
+</div>
+</div>
+<div class="vista-calendario-movil">
+<p class="navegacion-semana-titulo" id="etiqueta-semana-activa-reservas">
+<?= etiqueta_semana_de($fecha_activa_calendario) ?>
+</p>
+<div class="calendario-semana-contenedor">
+<span class="flecha-semana flecha-semana-izquierda" aria-hidden="true">‹</span>
+<div class="calendario-semana">
+<?php foreach ($dias_mes_calendario as $dia_calendario): ?>
+<?php $clave_dia_calendario = $dia_calendario->format('Y-m-d'); ?>
+<button
+type="button"
+class="dia-semana-boton dia-semana-boton-reservas<?= $clave_dia_calendario === $clave_fecha_activa_calendario ? ' activo' : '' ?><?= $dia_calendario < $hoy_calendario ? ' dia-semana-boton-pasado' : '' ?>"
+data-fecha="<?= $clave_dia_calendario ?>"
+>
+<span class="dia-semana-abrev">
+<?= escapar(
+texto_dia_semana_abreviado(
+(int) $dia_calendario->format('N')
+)
+) ?>
+</span>
+<span class="dia-semana-numero">
+<?= $dia_calendario->format('j') ?>
+</span>
+<?php if (!empty($reservas_por_dia_calendario[$clave_dia_calendario])): ?>
+<span class="punto-dia-con-reserva" aria-hidden="true"></span>
+<?php endif; ?>
+</button>
+<?php endforeach; ?>
+</div>
+<span class="flecha-semana flecha-semana-derecha" aria-hidden="true">›</span>
+</div>
+<div class="dias-actividades">
+<?php foreach ($dias_mes_calendario as $dia_calendario): ?>
+<?php $clave_dia_calendario = $dia_calendario->format('Y-m-d'); ?>
+<div
+class="dia-actividades dia-actividades-reservas<?= $clave_dia_calendario === $clave_fecha_activa_calendario ? ' activo' : '' ?>"
+data-fecha="<?= $clave_dia_calendario ?>"
+>
+<?php if (empty($reservas_por_dia_calendario[$clave_dia_calendario])): ?>
+<p class="sin-sesiones">
+<?= t('No hay actividades programadas ese día.') ?>
+</p>
+<?php else: ?>
+<?php foreach ($reservas_por_dia_calendario[$clave_dia_calendario] as $reserva_dia): ?>
+<button
+type="button"
+class="item-actividad-dia<?= $reserva_dia['estado'] === 'pre_reserva' ? ' item-actividad-pendiente' : '' ?>"
+data-id-reserva="<?= (int) $reserva_dia['id_reserva'] ?>"
+>
+<span class="item-actividad-hora">
+<?= escapar(formatear_hora($reserva_dia['hora_inicio'])) ?> – <?= escapar(formatear_hora($reserva_dia['hora_fin'])) ?>
+</span>
+<span class="item-actividad-nombre">
+<?= escapar($reserva_dia['actividad']) ?>
+</span>
+</button>
+<?php endforeach; ?>
+<?php endif; ?>
+</div>
+<?php endforeach; ?>
+</div>
+</div>
+<div class="detalle-reserva-calendario">
+<p class="aviso-selecciona-reserva" id="aviso-selecciona-reserva">
+<?= t('Selecciona una clase del calendario para ver los detalles.') ?>
+</p>
+<?php foreach ($reservas_activas as $reserva): ?>
+<div
+class="detalle-reserva-item"
+id="detalle-reserva-<?= (int) $reserva['id_reserva'] ?>"
+data-detalle-reserva
+hidden
+>
+<?php tarjeta_reserva($reserva); ?>
+</div>
+<?php endforeach; ?>
+</div>
+<script>
+(function () {
+const botonesReserva = document.querySelectorAll('[data-id-reserva]');
+const detalles = document.querySelectorAll('[data-detalle-reserva]');
+const aviso = document.getElementById('aviso-selecciona-reserva');
+const contenedorDetalle = document.querySelector('.detalle-reserva-calendario');
+botonesReserva.forEach(function (boton) {
+boton.addEventListener('click', function () {
+const idReserva = boton.getAttribute('data-id-reserva');
+detalles.forEach(function (detalle) {
+detalle.hidden = detalle.id !== 'detalle-reserva-' + idReserva;
+});
+if (aviso) {
+aviso.hidden = true;
+}
+botonesReserva.forEach(function (b) {
+b.classList.toggle('activo', b === boton);
+});
+if (contenedorDetalle) {
+contenedorDetalle.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+});
+});
+
+const idioma = "<?= idiomaActual() === 'en' ? 'en' : 'es' ?>";
+const conectorDe = idioma === "en" ? "" : " " + <?= json_encode(t('de')) ?>;
+const botonesDiasReservas = document.querySelectorAll(".dia-semana-boton-reservas");
+const panelesDiasReservas = document.querySelectorAll(".dia-actividades-reservas");
+const etiquetaSemanaReservas = document.querySelector("#etiqueta-semana-activa-reservas");
+const botonActivoReservas = document.querySelector(".dia-semana-boton-reservas.activo");
+if (botonActivoReservas) {
+botonActivoReservas.scrollIntoView({ inline: "center", block: "nearest" });
+}
+
+function calcularEtiquetaSemanaReservas(fechaStr) {
+const fecha = new Date(fechaStr + "T00:00:00");
+const diaIso = (fecha.getDay() + 6) % 7;
+const lunes = new Date(fecha);
+lunes.setDate(fecha.getDate() - diaIso);
+const domingo = new Date(lunes);
+domingo.setDate(lunes.getDate() + 6);
+const formatoMes = new Intl.DateTimeFormat(idioma, { month: "long" });
+if (lunes.getMonth() === domingo.getMonth()) {
+return lunes.getDate() + " - " + domingo.getDate() +
+conectorDe + " " + formatoMes.format(lunes);
+}
+return lunes.getDate() + conectorDe + " " + formatoMes.format(lunes) +
+" - " + domingo.getDate() + conectorDe + " " + formatoMes.format(domingo);
+}
+
+botonesDiasReservas.forEach(function (boton) {
+boton.addEventListener("click", function () {
+const fecha = boton.getAttribute("data-fecha");
+botonesDiasReservas.forEach(function (b) {
+b.classList.toggle("activo", b === boton);
+});
+panelesDiasReservas.forEach(function (panel) {
+panel.classList.toggle(
+"activo",
+panel.getAttribute("data-fecha") === fecha
+);
+});
+if (etiquetaSemanaReservas) {
+etiquetaSemanaReservas.textContent = calcularEtiquetaSemanaReservas(fecha);
+}
+});
+});
+})();
+</script>
 <?php endif; ?>
 </section>
 

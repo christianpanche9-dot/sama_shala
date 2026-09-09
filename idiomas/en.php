@@ -355,6 +355,8 @@ return [
 'Todos los %s a las %s' => 'Every %s at %s',
 'Cancelar clase recurrente' => 'Cancel recurring class',
 'La clase recurrente y sus reservas futuras se han cancelado.' => 'The recurring class and its future bookings have been cancelled.',
+'No tienes reservas programadas este mes.' => 'You don\'t have any bookings scheduled this month.',
+'Selecciona una clase del calendario para ver los detalles.' => 'Select a class from the calendar to see the details.',
 'Lista de espera' => 'Waitlist',
 'No estás esperando plaza en ninguna sesión.' => 'You are not waiting for a spot in any session.',
 'Posición:' => 'Position:',

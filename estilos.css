@@ -1216,6 +1216,43 @@ font-size: 0.75rem;
 text-overflow: ellipsis;
 white-space: nowrap;
 }
+button.sesion-calendario-chip,
+button.item-actividad-dia {
+width: 100%;
+border: none;
+font: inherit;
+text-align: left;
+cursor: pointer;
+}
+button.item-actividad-dia {
+background: transparent;
+}
+.sesion-calendario-chip-pendiente {
+border-left-style: dashed;
+opacity: 0.65;
+}
+.item-actividad-pendiente {
+opacity: 0.65;
+}
+.sesion-calendario-chip.activo,
+button.item-actividad-dia.activo {
+outline: 2px solid var(--color-verde-oscuro);
+outline-offset: 2px;
+}
+.punto-dia-con-reserva {
+display: block;
+width: 6px;
+height: 6px;
+margin: 4px auto 0;
+background-color: var(--color-verde-oscuro);
+border-radius: 999px;
+}
+.detalle-reserva-calendario {
+margin-top: 24px;
+}
+.aviso-selecciona-reserva {
+color: var(--color-texto-tenue);
+}
 .campo {
 display: grid;
 min-width: 210px;

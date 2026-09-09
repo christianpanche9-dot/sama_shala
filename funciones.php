@@ -213,6 +213,21 @@ $meses = [
 return t($meses[$mes] ?? '');
 }
 
+function etiqueta_semana_de(DateTime $fecha): string
+{
+$dia_semana_iso = (int) $fecha->format('N');
+$lunes = (clone $fecha)->modify('-' . ($dia_semana_iso - 1) . ' day');
+$domingo = (clone $lunes)->modify('+6 day');
+if ($lunes->format('n') === $domingo->format('n')) {
+return $lunes->format('j') . ' - ' . $domingo->format('j') .
+' ' . t('de') . ' ' . escapar(texto_mes((int) $lunes->format('n')));
+}
+return $lunes->format('j') . ' ' . t('de') . ' ' .
+escapar(texto_mes((int) $lunes->format('n'))) . ' - ' .
+$domingo->format('j') . ' ' . t('de') . ' ' .
+escapar(texto_mes((int) $domingo->format('n')));
+}
+
 function generar_calendario_mes(int $anio, int $mes): array
 {
 $primer_dia = new DateTime(
