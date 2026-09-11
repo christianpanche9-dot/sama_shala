@@ -4,6 +4,9 @@ CacheDisable public /
 
 <IfModule mod_rewrite.c>
 RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP_HOST} !=localhost
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 RewriteRule ^terminos/?$ terminos.php [L]
 RewriteRule ^politica-privacidad/?$ politica_privacidad.php [L]
 </IfModule>
@@ -16,4 +19,12 @@ ExpiresByType image/webp "access plus 1 year"
 ExpiresByType image/x-icon "access plus 1 year"
 ExpiresByType text/css "access plus 1 year"
 ExpiresByType application/javascript "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set Strict-Transport-Security "max-age=31536000"
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.youtube.com https://cdn.quilljs.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.quilljs.com https://cdn.jsdelivr.net; img-src 'self' data: https://i.ytimg.com; font-src 'self'; connect-src 'self'; frame-src https://www.youtube.com https://www.google.com; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
 </IfModule>
