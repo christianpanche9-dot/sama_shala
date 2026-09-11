@@ -1,5 +1,14 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) {
+$es_https = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== "off")
+|| ($_SERVER["SERVER_PORT"] ?? "") === "443";
+session_set_cookie_params([
+"lifetime" => 0,
+"path" => "/",
+"secure" => $es_https,
+"httponly" => true,
+"samesite" => "Lax"
+]);
 session_start();
 }
 
