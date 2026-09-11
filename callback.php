@@ -78,7 +78,8 @@ nombre,
 apellidos,
 email,
 rol,
-activo
+activo,
+totp_habilitado
 FROM usuarios
 WHERE email = ?
 LIMIT 1
@@ -114,6 +115,7 @@ $usuario = [
 "email" => $email,
 "rol" => "cliente",
 "activo" => 1,
+"totp_habilitado" => 0,
 ];
 $stmt_insertar->close();
 }
@@ -125,14 +127,7 @@ header("Location: login.php?error=inactivo");
 exit;
 }
 
-session_regenerate_id(true);
-$_SESSION["usuario"] = [
-"id_usuario" => (int) $usuario["id_usuario"],
-"nombre" => $usuario["nombre"],
-"apellidos" => $usuario["apellidos"],
-"email" => $usuario["email"],
-"rol" => $usuario["rol"],
-];
+completarLoginOExigirTotp($usuario);
 
 if ($usuario["rol"] === "admin") {
 header("Location: admin/index.php");

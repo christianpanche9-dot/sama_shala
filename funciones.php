@@ -103,6 +103,32 @@ function limpiarIntentosLogin(mysqli $conexion, string $email): void
     $stmt->execute();
 }
 
+function completarLoginOExigirTotp(array $usuario): void
+{
+    $requiere_totp = $usuario["rol"] === "admin"
+        && (int) ($usuario["totp_habilitado"] ?? 0) === 1;
+    if ($requiere_totp) {
+        $_SESSION["totp_pendiente"] = [
+            "id_usuario" => (int) $usuario["id_usuario"],
+            "nombre" => $usuario["nombre"],
+            "apellidos" => $usuario["apellidos"],
+            "email" => $usuario["email"],
+            "rol" => $usuario["rol"]
+        ];
+        unset($_SESSION["totp_intentos"]);
+        header("Location: verificar_totp.php");
+        exit;
+    }
+    session_regenerate_id(true);
+    $_SESSION["usuario"] = [
+        "id_usuario" => (int) $usuario["id_usuario"],
+        "nombre" => $usuario["nombre"],
+        "apellidos" => $usuario["apellidos"],
+        "email" => $usuario["email"],
+        "rol" => $usuario["rol"]
+    ];
+}
+
 function usuarioAutenticado(): bool
 {
 return isset($_SESSION["usuario"]["id_usuario"]);

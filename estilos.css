@@ -2730,6 +2730,18 @@ font-family: monospace;
 font-weight: 700;
 letter-spacing: 0.05em;
 }
+.codigo-secreto-totp {
+display: inline-block;
+margin: 0.5rem 0 1.5rem;
+padding: 1rem 1.4rem;
+color: var(--color-verde-oscuro);
+background: var(--color-azul-claro);
+border-radius: 8px;
+font-family: monospace;
+font-size: 1.2rem;
+font-weight: 700;
+letter-spacing: 0.1em;
+}
 .boton.peligro {
 background: #b42318;
 }

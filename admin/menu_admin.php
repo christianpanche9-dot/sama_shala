@@ -53,6 +53,9 @@ Pagos
 <a href="estadisticas.php">
 Estadísticas
 </a>
+<a href="seguridad_2fa.php">
+Seguridad
+</a>
 <a href="../index.php">
 Ver web pública
 </a>

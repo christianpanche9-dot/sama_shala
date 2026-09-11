@@ -30,7 +30,8 @@ apellidos,
 email,
 password,
 rol,
-activo
+activo,
+totp_habilitado
 FROM usuarios
 WHERE email = ?
 LIMIT 1
@@ -57,16 +58,9 @@ header("Location: login.php?error=inactivo");
 exit;
 }
 limpiarIntentosLogin($conexion, $email);
-session_regenerate_id(true);
-$_SESSION["usuario"] = [
-"id_usuario" => (int) $usuario["id_usuario"],
-"nombre" => $usuario["nombre"],
-"apellidos" => $usuario["apellidos"],
-"email" => $usuario["email"],
-"rol" => $usuario["rol"]
-];
 $stmt->close();
 $conexion->close();
+completarLoginOExigirTotp($usuario);
 if ($usuario["rol"] === "admin") {
 header("Location: admin/index.php");
 exit;

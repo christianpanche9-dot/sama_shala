@@ -467,6 +467,24 @@ return [
 'No se pudo iniciar sesión con Google. Inténtalo de nuevo.' => 'We couldn\'t sign you in with Google. Please try again.',
 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.' => 'Too many attempts. Please wait a few minutes and try again.',
 
+// verificar_totp.php / admin/seguridad_2fa.php (2FA)
+'Verificación en dos pasos' => 'Two-factor authentication',
+'Ingresa el código de 6 dígitos de tu aplicación de autenticación.' => 'Enter the 6-digit code from your authenticator app.',
+'El código no es válido o ha caducado.' => 'The code is invalid or has expired.',
+'Código de verificación' => 'Verification code',
+'Verificar' => 'Verify',
+'Cancelar' => 'Cancel',
+'La verificación en dos pasos se activó correctamente.' => 'Two-factor authentication was turned on successfully.',
+'La verificación en dos pasos se desactivó.' => 'Two-factor authentication was turned off.',
+'El código no es válido. Inténtalo de nuevo.' => 'The code is invalid. Please try again.',
+'La contraseña no es correcta.' => 'The password is incorrect.',
+'La verificación en dos pasos está activa en tu cuenta. Cada vez que inicies sesión, se te pedirá un código de tu aplicación de autenticación.' => 'Two-factor authentication is active on your account. You\'ll be asked for a code from your authenticator app every time you sign in.',
+'Confirma tu contraseña para desactivarla' => 'Confirm your password to turn it off',
+'Desactivar verificación en dos pasos' => 'Turn off two-factor authentication',
+'Escanea o copia esta clave en una aplicación de autenticación (Google Authenticator, Authy, etc.) y luego ingresa el código de 6 dígitos para confirmar la activación.' => 'Scan or copy this key into an authenticator app (Google Authenticator, Authy, etc.) and then enter the 6-digit code to confirm activation.',
+'Activar verificación en dos pasos' => 'Turn on two-factor authentication',
+'Seguridad' => 'Security',
+
 // terminos.php / politica_privacidad.php
 'Legal' => 'Legal',
 'Términos y condiciones' => 'Terms and conditions',
