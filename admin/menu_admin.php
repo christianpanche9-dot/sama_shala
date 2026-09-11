@@ -152,30 +152,18 @@ if (window.innerWidth <= puntoCorte) {
 return;
 }
 
-const anchoTotal = enlaces.reduce(function (suma, enlace) {
-return suma + enlace.offsetWidth + 6;
-}, 0);
-if (anchoTotal <= menu.clientWidth) {
+if (menu.scrollWidth <= menu.clientWidth) {
 return;
 }
 
-const anchoDisponible = menu.clientWidth - (botonMas.offsetWidth || 90) - 6;
-let usado = 0;
-const desbordados = [];
-enlaces.forEach(function (enlace) {
-const ancho = enlace.offsetWidth + 6;
-if (!desbordados.length && usado + ancho <= anchoDisponible) {
-usado += ancho;
-} else {
-desbordados.push(enlace);
-}
-});
-
-desbordados.forEach(function (enlace) {
-enlace.classList.add("oculto-por-espacio");
-desplegableMas.appendChild(enlace);
-});
 botonMas.classList.add("tiene-oculto");
+
+const restantes = enlaces.slice();
+while (restantes.length && menu.scrollWidth > menu.clientWidth) {
+const enlace = restantes.pop();
+enlace.classList.add("oculto-por-espacio");
+desplegableMas.insertBefore(enlace, desplegableMas.firstChild);
+}
 }
 
 let temporizador = null;
