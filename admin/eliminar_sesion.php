@@ -6,6 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 header("Location: sesiones.php");
 exit;
 }
+validarCsrf();
 
 $id_sesion = filter_input(
 INPUT_POST,

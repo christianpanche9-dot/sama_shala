@@ -46,6 +46,11 @@ method="post"
 enctype="multipart/form-data"
 id="formulario-blog"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <div class="campo campo-completo">
 <label for="titulo">
 Título

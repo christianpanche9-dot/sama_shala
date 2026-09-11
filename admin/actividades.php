@@ -304,6 +304,11 @@ type="hidden"
 name="id_actividad"
 value="<?= (int) $actividad['id_actividad'] ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <button class="boton peligro boton-pequeno" type="submit">
 Eliminar
 </button>

@@ -87,6 +87,11 @@ type="hidden"
 name="id_profesor"
 value="<?= (int) $profesor['id_profesor'] ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <div class="campo">
 <label for="nombre">Nombre</label>
 <input

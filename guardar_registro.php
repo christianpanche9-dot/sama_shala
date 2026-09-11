@@ -5,6 +5,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 header("Location: registro.php");
 exit;
 }
+validarCsrf();
 if (usuarioAutenticado()) {
 header("Location: mi_cuenta.php");
 exit;

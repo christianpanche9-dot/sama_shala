@@ -129,6 +129,11 @@ type="hidden"
 name="id_profesor"
 value="<?= (int) $profesor['id_profesor'] ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <button class="boton peligro boton-pequeno" type="submit">
 Eliminar
 </button>

@@ -7,6 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 header("Location: mis_reservas.php");
 exit;
 }
+validarCsrf();
 $id_reserva = filter_input(
 INPUT_POST,
 "id_reserva",

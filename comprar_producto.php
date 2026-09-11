@@ -84,6 +84,11 @@ enctype="multipart/form-data"
 class="formulario"
 id="formulario-pago-producto"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <fieldset class="campo-completo">
 <label class="opcion-pago">
 <input

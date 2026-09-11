@@ -77,6 +77,11 @@ type="hidden"
 name="id_entrada"
 value="<?= (int) $entrada['id_entrada'] ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <div class="campo campo-completo">
 <label for="titulo">
 Título

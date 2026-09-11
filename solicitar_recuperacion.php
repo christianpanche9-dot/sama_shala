@@ -7,6 +7,8 @@ header("Location: recuperar_contrasena.php");
 exit;
 }
 
+validarCsrf();
+
 $email = strtolower(trim($_POST["email"] ?? ""));
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 header("Location: recuperar_contrasena.php?error=datos");

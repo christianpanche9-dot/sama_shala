@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 header('Location: nuevo_blog.php');
 exit;
 }
+validarCsrf();
 $titulo = trim($_POST['titulo'] ?? '');
 $contenido = trim($_POST['contenido'] ?? '');
 $video_url = trim($_POST['video_url'] ?? '');

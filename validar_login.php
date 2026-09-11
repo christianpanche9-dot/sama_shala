@@ -6,6 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 header("Location: login.php");
 exit;
 }
+validarCsrf();
 $email = strtolower(trim($_POST["email"] ?? ""));
 $password = $_POST["password"] ?? "";
 $volver = trim($_POST["volver"] ?? "");

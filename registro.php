@@ -56,6 +56,11 @@ action="guardar_registro.php"
 method="post"
 class="formulario"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <div class="campo">
     <label for="nombre"><?= t("Nombre") ?></label>
 <input

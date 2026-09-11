@@ -137,6 +137,11 @@ type="hidden"
 name="id_sesion"
 value="<?= (int) $sesion['id_sesion'] ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <div class="campo">
 <label for="id_actividad">
 Actividad

@@ -1,10 +1,11 @@
 <?php
+require_once "conexion.php";
+require_once "funciones.php";
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 header("Location: registro.php");
 exit;
 }
-require_once "conexion.php";
-require_once "funciones.php";
+validarCsrf();
 $nombre = trim($_POST["nombre"] ?? "");
 $apellidos = trim($_POST["apellidos"] ?? "");
 $email = trim($_POST["email"] ?? "");

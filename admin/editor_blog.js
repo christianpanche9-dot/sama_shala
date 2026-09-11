@@ -40,8 +40,12 @@ if (!archivo) {
 return;
 }
 var rango = quill.getSelection(true);
+var campoCsrf = formulario.querySelector('input[name="csrf_token"]');
 var datos = new FormData();
 datos.append('archivo', archivo);
+if (campoCsrf) {
+datos.append('csrf_token', campoCsrf.value);
+}
 fetch('subir_imagen_blog.php', {
 method: 'POST',
 body: datos

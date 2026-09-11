@@ -5,6 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 header('Location: nuevo_espacio.php');
 exit;
 }
+validarCsrf();
 $nombre = trim($_POST['nombre'] ?? '');
 $ubicacion = trim($_POST['ubicacion'] ?? '');
 $descripcion = trim($_POST['descripcion'] ?? '');

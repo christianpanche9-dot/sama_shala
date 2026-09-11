@@ -318,6 +318,11 @@ value="<?=
 $id_sesion
 ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <select
 name="asistencia"
 >
@@ -393,6 +398,11 @@ name="id_sesion"
 value="<?=
 $id_sesion
 ?>"
+>
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
 >
 <button
 type="submit"

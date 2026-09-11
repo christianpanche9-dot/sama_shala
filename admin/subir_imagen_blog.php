@@ -2,6 +2,8 @@
 require_once "seguridad_admin.php";
 require_once __DIR__ . '/../funciones.php';
 
+validarCsrf();
+
 header('Content-Type: application/json');
 
 $resultado = procesar_imagen_subida(

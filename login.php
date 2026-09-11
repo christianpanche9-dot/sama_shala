@@ -63,6 +63,11 @@ type="hidden"
 name="volver"
 value="<?= escapar($volver) ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <div class="campo">
 <label for="email"><?= t("Correo electrónico") ?></label>
 <input

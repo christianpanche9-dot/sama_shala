@@ -7,6 +7,8 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit;
 }
 
+validarCsrf();
+
 $id_usuario = idUsuarioActual();
 $nombre = trim($_POST["nombre"] ?? "");
 $email = strtolower(trim($_POST["email"] ?? ""));

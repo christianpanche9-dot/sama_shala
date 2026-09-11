@@ -285,6 +285,7 @@ Pagado
 <input type="hidden" name="tipo_origen" value="<?= escapar($pago['tipo_origen']) ?>">
 <input type="hidden" name="id_registro" value="<?= (int) $pago['id_registro'] ?>">
 <input type="hidden" name="accion" value="aprobar">
+<input type="hidden" name="csrf_token" value="<?= escapar(tokenCsrf()) ?>">
 <button type="submit" class="boton boton-secundario boton-pequeno">
 Aprobar
 </button>
@@ -297,6 +298,7 @@ onsubmit="return confirm('¿Seguro que quieres rechazar este pago?');"
 <input type="hidden" name="tipo_origen" value="<?= escapar($pago['tipo_origen']) ?>">
 <input type="hidden" name="id_registro" value="<?= (int) $pago['id_registro'] ?>">
 <input type="hidden" name="accion" value="rechazar">
+<input type="hidden" name="csrf_token" value="<?= escapar(tokenCsrf()) ?>">
 <button type="submit" class="boton boton-pequeno peligro">
 Rechazar
 </button>

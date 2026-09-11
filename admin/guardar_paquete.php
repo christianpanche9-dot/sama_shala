@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 header('Location: nuevo_paquete.php');
 exit;
 }
+validarCsrf();
 $nombre = trim($_POST['nombre'] ?? '');
 $numero_usos = $_POST['numero_usos'] ?? '';
 $precio = $_POST['precio'] ?? '';

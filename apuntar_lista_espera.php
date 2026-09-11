@@ -3,10 +3,16 @@ require_once "seguridad.php";
 require_once "conexion.php";
 require_once "funciones.php";
 
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    header("Location: index.php");
+    exit;
+}
+validarCsrf();
+
 $id_usuario = idUsuarioActual();
 
 $id_sesion = filter_input(
-    INPUT_GET,
+    INPUT_POST,
     "id",
     FILTER_VALIDATE_INT
 );

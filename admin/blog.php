@@ -198,6 +198,11 @@ type="hidden"
 name="id_entrada"
 value="<?= (int) $entrada['id_entrada'] ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <button type="submit">
 <?= (int) $entrada['activo'] === 1 ? 'Desactivar' : 'Activar' ?>
 </button>
@@ -211,6 +216,11 @@ onsubmit="return confirm('¿Seguro que quieres eliminar esta entrada?');"
 type="hidden"
 name="id_entrada"
 value="<?= (int) $entrada['id_entrada'] ?>"
+>
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
 >
 <button type="submit" class="peligro-texto">
 Eliminar

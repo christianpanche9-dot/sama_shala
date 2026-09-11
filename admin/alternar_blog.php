@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 header('Location: blog.php');
 exit;
 }
+validarCsrf();
 
 $id_entrada = filter_var(
 $_POST['id_entrada'] ?? '',

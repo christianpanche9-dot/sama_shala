@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 header('Location: tienda.php');
 exit;
 }
+validarCsrf();
 $metodo_pago_compra = trim($_POST['metodo_pago_compra'] ?? 'simulado');
 $es_transferencia = $metodo_pago_compra === 'transferencia';
 $titular = trim($_POST['titular'] ?? '');

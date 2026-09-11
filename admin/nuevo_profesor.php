@@ -46,6 +46,11 @@ action="guardar_profesor.php"
 method="post"
 enctype="multipart/form-data"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <div class="campo">
 <label for="nombre">Nombre</label>
 <input

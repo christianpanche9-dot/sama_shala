@@ -5,6 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 header('Location: tienda.php');
 exit;
 }
+validarCsrf();
 $id_producto = filter_var(
 $_POST['id_producto'] ?? '',
 FILTER_VALIDATE_INT

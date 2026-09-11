@@ -110,6 +110,11 @@ type="hidden"
 name="id_actividad"
 value="<?= (int) $actividad['id_actividad'] ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <div class="campo">
 <label for="nombre">
 Nombre

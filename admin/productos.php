@@ -217,6 +217,11 @@ type="hidden"
 name="id_producto"
 value="<?= (int) $producto['id_producto'] ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <button type="submit">
 <?= (int) $producto['activo'] === 1 ? 'Desactivar' : 'Activar' ?>
 </button>
@@ -230,6 +235,11 @@ onsubmit="return confirm('¿Seguro que quieres eliminar este producto?');"
 type="hidden"
 name="id_producto"
 value="<?= (int) $producto['id_producto'] ?>"
+>
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
 >
 <button type="submit" class="peligro-texto">
 Eliminar

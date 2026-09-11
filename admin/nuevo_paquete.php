@@ -42,6 +42,11 @@ class="formulario-admin"
 action="guardar_paquete.php"
 method="post"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <div class="campo">
 <label for="nombre">
 Nombre

@@ -81,6 +81,11 @@ type="hidden"
 name="token"
 value="<?= escapar($token) ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <div class="campo">
 <label for="password"><?= t("Nueva contraseña") ?></label>
 <input

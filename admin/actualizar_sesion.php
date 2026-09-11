@@ -2,6 +2,8 @@
 require_once "seguridad_admin.php";
 require_once "../conexion.php";
 
+validarCsrf();
+
 $id_sesion = filter_input(
 INPUT_POST,
 "id_sesion",

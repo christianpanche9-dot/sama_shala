@@ -367,12 +367,27 @@ style="width:
 
 <?php elseif ($lista_espera): ?>
 
-    <a
-        class="boton secundario"
-        href="apuntar_lista_espera.php?id=<?= (int)$sesion['id_sesion'] ?>"
+    <form
+        action="apuntar_lista_espera.php"
+        method="post"
     >
-        <?= t('Apuntarme a la lista de espera') ?>
-    </a>
+        <input
+            type="hidden"
+            name="id"
+            value="<?= (int)$sesion['id_sesion'] ?>"
+        >
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="<?= escapar(tokenCsrf()) ?>"
+        >
+        <button
+            type="submit"
+            class="boton secundario"
+        >
+            <?= t('Apuntarme a la lista de espera') ?>
+        </button>
+    </form>
 
 <?php endif; ?>
 </aside>

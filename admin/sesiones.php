@@ -196,6 +196,11 @@ type="hidden"
 name="id_sesion"
 value="<?= (int) $sesion['id_sesion'] ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <button class="boton peligro boton-pequeno" type="submit">
 Eliminar
 </button>

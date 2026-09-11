@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 header('Location: espacios.php');
 exit;
 }
+validarCsrf();
 
 $id_espacio = filter_input(
 INPUT_POST,

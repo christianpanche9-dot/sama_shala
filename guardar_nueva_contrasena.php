@@ -7,6 +7,8 @@ header("Location: recuperar_contrasena.php");
 exit;
 }
 
+validarCsrf();
+
 $token = trim($_POST["token"] ?? "");
 $password = $_POST["password"] ?? "";
 $repetir_password = $_POST["repetir_password"] ?? "";

@@ -1,6 +1,7 @@
 <?php
 require_once "seguridad_admin.php";
 require_once "../conexion.php";
+validarCsrf();
 $errores = [];
 $id_actividad = filter_input(
 INPUT_POST,

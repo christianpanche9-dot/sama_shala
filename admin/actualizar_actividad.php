@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 header('Location: actividades.php');
 exit;
 }
+validarCsrf();
 
 $id_actividad = filter_var(
 $_POST['id_actividad'] ?? '',

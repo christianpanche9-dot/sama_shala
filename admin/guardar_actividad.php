@@ -5,6 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 header('Location: nueva_actividad.php');
 exit;
 }
+validarCsrf();
 $nombre = trim($_POST['nombre'] ?? '');
 $descripcion = trim($_POST['descripcion'] ?? '');
 $categoria = trim($_POST['categoria'] ?? '');

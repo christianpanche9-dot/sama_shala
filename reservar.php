@@ -221,6 +221,11 @@ type="hidden"
 name="id_sesion"
 value="<?= $sesion["id_sesion"] ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <?php if ($plazas_disponibles <= 0): ?>
 <button type="submit" class="boton">
 <?= t("Confirmar solicitud") ?>

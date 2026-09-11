@@ -9,6 +9,8 @@ header("Location: mis_reservas.php");
 exit;
 }
 
+validarCsrf();
+
 $id_recurrente = filter_var(
 $_POST["id_recurrente"] ?? null,
 FILTER_VALIDATE_INT

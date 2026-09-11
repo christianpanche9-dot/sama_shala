@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 header('Location: profesores.php');
 exit;
 }
+validarCsrf();
 
 $id_profesor = filter_input(
 INPUT_POST,

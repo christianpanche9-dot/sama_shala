@@ -219,6 +219,11 @@ type="hidden"
 name="id_usuario"
 value="<?= (int) $usuario['id_usuario'] ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <button type="submit">
 <?= (int) $usuario['activo'] === 1
 ? 'Desactivar'
@@ -234,6 +239,11 @@ onsubmit="return confirm('¿Seguro que quieres eliminar este usuario?');"
 type="hidden"
 name="id_usuario"
 value="<?= (int) $usuario['id_usuario'] ?>"
+>
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
 >
 <button type="submit" class="peligro-texto">
 Eliminar

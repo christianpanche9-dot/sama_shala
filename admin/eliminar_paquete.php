@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 header('Location: paquetes.php');
 exit;
 }
+validarCsrf();
 
 $id_tipo_paquete = filter_input(
 INPUT_POST,

@@ -94,6 +94,11 @@ type="hidden"
 name="id_producto"
 value="<?= (int) $producto['id_producto'] ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <div class="campo">
 <label for="nombre">
 Nombre

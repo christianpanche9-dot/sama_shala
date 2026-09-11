@@ -4,6 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 header('Location: tienda.php');
 exit;
 }
+validarCsrf();
 $clave = trim($_POST['clave'] ?? '');
 if (isset($_SESSION['carrito'][$clave])) {
 unset($_SESSION['carrito'][$clave]);

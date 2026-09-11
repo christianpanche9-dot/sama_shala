@@ -251,6 +251,11 @@ value="<?=
 $reserva["id_reserva"]
 ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <button
 type="submit"
 class="boton peligro"
@@ -642,6 +647,11 @@ substr($recurrente['hora_inicio'], 0, 5)
 type="hidden"
 name="id_recurrente"
 value="<?= (int) $recurrente['id_recurrente'] ?>"
+>
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
 >
 <button type="submit" class="boton peligro">
 <?= t('Cancelar clase recurrente') ?>

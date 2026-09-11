@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 header('Location: pagos.php');
 exit;
 }
+validarCsrf();
 
 $tipo_origen = trim($_POST['tipo_origen'] ?? '');
 $id_registro = filter_var($_POST['id_registro'] ?? null, FILTER_VALIDATE_INT);

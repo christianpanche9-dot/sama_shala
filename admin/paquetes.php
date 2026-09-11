@@ -129,6 +129,11 @@ type="hidden"
 name="id_tipo_paquete"
 value="<?= (int) $paquete['id_tipo_paquete'] ?>"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <button class="boton peligro boton-pequeno" type="submit">
 Eliminar
 </button>

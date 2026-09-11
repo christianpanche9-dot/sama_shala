@@ -87,6 +87,11 @@ class="formulario-admin"
 action="guardar_sesion.php"
 method="post"
 >
+<input
+type="hidden"
+name="csrf_token"
+value="<?= escapar(tokenCsrf()) ?>"
+>
 <div class="campo">
 <label for="id_actividad">
 Actividad

@@ -133,6 +133,7 @@ alt="<?= escapar($producto['nombre']) ?>"
 <?php endif; ?>
 <form action="carrito_agregar.php" method="post">
 <input type="hidden" name="id_producto" value="<?= (int) $producto['id_producto'] ?>">
+<input type="hidden" name="csrf_token" value="<?= escapar(tokenCsrf()) ?>">
 <?php if (!empty($tallas_producto)): ?>
 <div class="campo">
 <label for="talla">

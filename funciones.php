@@ -3,6 +3,24 @@ if (session_status() === PHP_SESSION_NONE) {
 session_start();
 }
 
+function tokenCsrf(): string
+{
+    if (empty($_SESSION["csrf_token"])) {
+        $_SESSION["csrf_token"] = bin2hex(random_bytes(32));
+    }
+    return $_SESSION["csrf_token"];
+}
+
+function validarCsrf(): void
+{
+    $recibido = (string) ($_POST["csrf_token"] ?? "");
+    $guardado = (string) ($_SESSION["csrf_token"] ?? "");
+    if ($guardado === "" || !hash_equals($guardado, $recibido)) {
+        http_response_code(403);
+        exit("La petición no es válida. Recarga la página e inténtalo de nuevo.");
+    }
+}
+
 function escapar(?string $texto): string
 {
 return htmlspecialchars(

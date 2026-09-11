@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 header('Location: usuarios.php');
 exit;
 }
+validarCsrf();
 
 $id_usuario = filter_input(
 INPUT_POST,

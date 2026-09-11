@@ -116,6 +116,7 @@ class="formulario-agregar-carrito"
 >
 <input type="hidden" name="id_producto" value="<?= (int) $producto['id_producto'] ?>">
 <input type="hidden" name="volver" value="tienda.php">
+<input type="hidden" name="csrf_token" value="<?= escapar(tokenCsrf()) ?>">
 <label>
 <?= t('Cantidad') ?>
 <input type="number" name="cantidad" value="1" min="1" max="99">
@@ -158,6 +159,7 @@ class="formulario-agregar-carrito"
 <form action="carrito_quitar.php" method="post">
 <input type="hidden" name="clave" value="<?= escapar($item['clave']) ?>">
 <input type="hidden" name="volver" value="tienda.php">
+<input type="hidden" name="csrf_token" value="<?= escapar(tokenCsrf()) ?>">
 <button type="submit" class="enlace-quitar-carrito">
 <?= t('Quitar') ?>
 </button>
