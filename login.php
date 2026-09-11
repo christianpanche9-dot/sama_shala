@@ -52,6 +52,10 @@ content="width=device-width, initial-scale=1.0"
 <div class="mensaje error">
 <?= t("No se pudo iniciar sesión con Google. Inténtalo de nuevo.") ?>
 </div>
+<?php elseif ($error === "intentos"): ?>
+<div class="mensaje error">
+<?= t("Demasiados intentos. Espera unos minutos e inténtalo de nuevo.") ?>
+</div>
 <?php endif; ?>
 <form
 action="validar_login.php"

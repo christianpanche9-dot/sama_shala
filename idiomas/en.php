@@ -465,6 +465,7 @@ return [
 // login.php (Google)
 'Continuar con Google' => 'Continue with Google',
 'No se pudo iniciar sesión con Google. Inténtalo de nuevo.' => 'We couldn\'t sign you in with Google. Please try again.',
+'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.' => 'Too many attempts. Please wait a few minutes and try again.',
 
 // terminos.php / politica_privacidad.php
 'Legal' => 'Legal',

@@ -17,6 +17,11 @@ $password === ""
 header("Location: login.php?error=credenciales");
 exit;
 }
+$ip = ipCliente();
+if (demasiadosIntentosLogin($conexion, $email, $ip)) {
+header("Location: login.php?error=intentos");
+exit;
+}
 $sql = "
 SELECT
 id_usuario,
@@ -39,6 +44,7 @@ if (
 !$usuario ||
 !password_verify($password, $usuario["password"])
 ) {
+registrarIntentoLoginFallido($conexion, $email, $ip);
 $stmt->close();
 $conexion->close();
 header("Location: login.php?error=credenciales");
@@ -50,6 +56,7 @@ $conexion->close();
 header("Location: login.php?error=inactivo");
 exit;
 }
+limpiarIntentosLogin($conexion, $email);
 session_regenerate_id(true);
 $_SESSION["usuario"] = [
 "id_usuario" => (int) $usuario["id_usuario"],

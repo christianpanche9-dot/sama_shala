@@ -60,6 +60,49 @@ $traducciones = require __DIR__ . "/idiomas/en.php";
 }
 return $traducciones[$texto] ?? $texto;
 }
+const LIMITE_INTENTOS_LOGIN_POR_EMAIL = 5;
+const LIMITE_INTENTOS_LOGIN_POR_IP = 15;
+const VENTANA_INTENTOS_LOGIN_MINUTOS = 15;
+
+function ipCliente(): string
+{
+    return $_SERVER["REMOTE_ADDR"] ?? "0.0.0.0";
+}
+
+function demasiadosIntentosLogin(mysqli $conexion, string $email, string $ip): bool
+{
+    $sql = "
+        SELECT
+            (SELECT COUNT(*) FROM intentos_login
+                WHERE email = ? AND creado_en > (NOW() - INTERVAL ? MINUTE)) AS por_email,
+            (SELECT COUNT(*) FROM intentos_login
+                WHERE ip = ? AND creado_en > (NOW() - INTERVAL ? MINUTE)) AS por_ip
+    ";
+    $stmt = $conexion->prepare($sql);
+    $ventana = VENTANA_INTENTOS_LOGIN_MINUTOS;
+    $stmt->bind_param("sisi", $email, $ventana, $ip, $ventana);
+    $stmt->execute();
+    $fila = $stmt->get_result()->fetch_assoc();
+    return (int) $fila["por_email"] >= LIMITE_INTENTOS_LOGIN_POR_EMAIL
+        || (int) $fila["por_ip"] >= LIMITE_INTENTOS_LOGIN_POR_IP;
+}
+
+function registrarIntentoLoginFallido(mysqli $conexion, string $email, string $ip): void
+{
+    $stmt = $conexion->prepare(
+        "INSERT INTO intentos_login (email, ip) VALUES (?, ?)"
+    );
+    $stmt->bind_param("ss", $email, $ip);
+    $stmt->execute();
+}
+
+function limpiarIntentosLogin(mysqli $conexion, string $email): void
+{
+    $stmt = $conexion->prepare("DELETE FROM intentos_login WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+}
+
 function usuarioAutenticado(): bool
 {
 return isset($_SESSION["usuario"]["id_usuario"]);
