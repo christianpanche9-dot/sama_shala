@@ -129,6 +129,15 @@ function completarLoginOExigirTotp(array $usuario): void
     ];
 }
 
+function celdaCsvSegura(?string $valor): string
+{
+    $valor = (string) $valor;
+    if ($valor !== "" && strpbrk($valor[0], "=+-@\t\r") !== false) {
+        return "'" . $valor;
+    }
+    return $valor;
+}
+
 function usuarioAutenticado(): bool
 {
 return isset($_SESSION["usuario"]["id_usuario"]);
@@ -694,11 +703,98 @@ function extraer_id_youtube(?string $url): ?string
 
 function sanitizar_html_blog(string $html): string
 {
-    $etiquetas_permitidas = '<p><br><strong><b><em><i><u><s><a><ul><ol><li><h2><h3><blockquote><img>';
-    $html = strip_tags($html, $etiquetas_permitidas);
-    $html = preg_replace('/\son\w+\s*=\s*"[^"]*"/i', '', $html);
-    $html = preg_replace("/\son\w+\s*=\s*'[^']*'/i", '', $html);
-    $html = preg_replace('/(href|src)\s*=\s*"\s*javascript:[^"]*"/i', '$1="#"', $html);
-    $html = preg_replace("/(href|src)\s*=\s*'\s*javascript:[^']*'/i", "$1='#'", $html);
-    return $html;
+    $etiquetas_permitidas = [
+        'p' => [],
+        'br' => [],
+        'strong' => [],
+        'b' => [],
+        'em' => [],
+        'i' => [],
+        'u' => [],
+        's' => [],
+        'a' => ['href', 'title'],
+        'ul' => [],
+        'ol' => [],
+        'li' => [],
+        'h2' => [],
+        'h3' => [],
+        'blockquote' => [],
+        'img' => ['src', 'alt', 'title'],
+    ];
+
+    $documento = new DOMDocument();
+    libxml_use_internal_errors(true);
+    $documento->loadHTML(
+        '<?xml encoding="utf-8"?><div>' . $html . '</div>',
+        LIBXML_NOERROR | LIBXML_NOWARNING
+    );
+    libxml_clear_errors();
+
+    $raiz = $documento->getElementsByTagName('div')->item(0);
+    if (!$raiz) {
+        return '';
+    }
+
+    sanitizar_html_blog_nodo($documento, $raiz, $etiquetas_permitidas);
+
+    $resultado = '';
+    foreach (iterator_to_array($raiz->childNodes) as $hijo) {
+        $resultado .= $documento->saveHTML($hijo);
+    }
+    return $resultado;
+}
+
+function sanitizar_html_blog_nodo(DOMDocument $documento, DOMNode $nodo, array $etiquetas_permitidas): void
+{
+    foreach (iterator_to_array($nodo->childNodes) as $hijo) {
+        if ($hijo instanceof DOMComment) {
+            $nodo->removeChild($hijo);
+            continue;
+        }
+
+        if ($hijo instanceof DOMText) {
+            continue;
+        }
+
+        if (!$hijo instanceof DOMElement) {
+            $nodo->removeChild($hijo);
+            continue;
+        }
+
+        $etiqueta = strtolower($hijo->nodeName);
+        if (!array_key_exists($etiqueta, $etiquetas_permitidas)) {
+            sanitizar_html_blog_nodo($documento, $hijo, $etiquetas_permitidas);
+            while ($hijo->firstChild) {
+                $nodo->insertBefore($hijo->firstChild, $hijo);
+            }
+            $nodo->removeChild($hijo);
+            continue;
+        }
+
+        foreach (iterator_to_array($hijo->attributes ?? []) as $atributo) {
+            $nombre = strtolower($atributo->nodeName);
+            if (!in_array($nombre, $etiquetas_permitidas[$etiqueta], true)) {
+                $hijo->removeAttribute($atributo->nodeName);
+                continue;
+            }
+            if (
+                in_array($nombre, ['href', 'src'], true) &&
+                !url_blog_es_segura($atributo->nodeValue)
+            ) {
+                $hijo->removeAttribute($atributo->nodeName);
+            }
+        }
+
+        sanitizar_html_blog_nodo($documento, $hijo, $etiquetas_permitidas);
+    }
+}
+
+function url_blog_es_segura(string $url): bool
+{
+    $url = trim($url);
+    if ($url === '' || $url[0] === '#' || $url[0] === '/') {
+        return true;
+    }
+    $esquema = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+    return $esquema === '' || in_array($esquema, ['http', 'https', 'mailto'], true);
 }

@@ -67,11 +67,11 @@ while ($fila = $resultado->fetch_assoc()) {
 fputcsv(
 $salida,
 [
-$fila["nombre"],
-$fila["apellidos"],
-$fila["email"],
-$fila["telefono"],
-$fila["codigo_reserva"],
+celdaCsvSegura($fila["nombre"]),
+celdaCsvSegura($fila["apellidos"]),
+celdaCsvSegura($fila["email"]),
+celdaCsvSegura($fila["telefono"]),
+celdaCsvSegura($fila["codigo_reserva"]),
 $fila["cantidad"],
 $fila["asistencia"],
 $fila["fecha"],
@@ -80,7 +80,7 @@ $fila["hora_inicio"],
 0,
 5
 ),
-$fila["actividad"]
+celdaCsvSegura($fila["actividad"])
 ],
 ";"
 );
