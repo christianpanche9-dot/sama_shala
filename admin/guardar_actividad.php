@@ -229,19 +229,41 @@ $id_espacio_regular = filter_var(
 $_POST['id_espacio_regular'] ?? '',
 FILTER_VALIDATE_INT
 );
-$hora_inicio_regular = trim(
-$_POST['hora_inicio_regular'] ?? ''
-);
 $aforo_regular = filter_var(
 $_POST['aforo_regular'] ?? '',
 FILTER_VALIDATE_INT
 );
 $fechas_regulares = $_POST['fechas_regulares'] ?? [];
+$dias_regulares_activos = $_POST['dias_regulares'] ?? [];
+if (!is_array($dias_regulares_activos)) {
+$dias_regulares_activos = [];
+}
+$horarios_por_dia = [];
+foreach ($dias_regulares_activos as $dia_regular_valor) {
+$dia_regular_numero = filter_var(
+$dia_regular_valor,
+FILTER_VALIDATE_INT,
+[
+'options' => [
+'min_range' => 1,
+'max_range' => 7
+]
+]
+);
+if ($dia_regular_numero === false) {
+continue;
+}
+$hora_dia_regular = trim(
+$_POST['hora_regular_' . $dia_regular_numero] ?? ''
+);
+if ($hora_dia_regular !== '' && hora_valida($hora_dia_regular)) {
+$horarios_por_dia[$dia_regular_numero] = $hora_dia_regular;
+}
+}
 if (
 $id_profesor_regular &&
 $id_espacio_regular &&
-$hora_inicio_regular !== '' &&
-hora_valida($hora_inicio_regular) &&
+!empty($horarios_por_dia) &&
 $aforo_regular &&
 is_array($fechas_regulares)
 ) {
@@ -280,6 +302,15 @@ $conexion->prepare($sql_insertar_sesion_profesor);
 foreach ($fechas_regulares as $fecha_regular) {
 $fecha_regular = trim($fecha_regular);
 if (!fecha_valida($fecha_regular)) {
+$sesiones_omitidas++;
+continue;
+}
+$dia_semana_fecha = (int) DateTime::createFromFormat(
+'Y-m-d',
+$fecha_regular
+)->format('N');
+$hora_inicio_regular = $horarios_por_dia[$dia_semana_fecha] ?? null;
+if ($hora_inicio_regular === null) {
 $sesiones_omitidas++;
 continue;
 }

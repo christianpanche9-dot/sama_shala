@@ -306,9 +306,13 @@ id="bloque-regular"
 Programar sus sesiones regulares
 </legend>
 <p class="ayuda">
-Marca en el calendario las fechas en las que se repite
-esta actividad. Se creará una sesión para cada fecha
-marcada, con el mismo profesor, espacio, hora y aforo.
+Activa los días de la semana en los que se repite esta
+actividad y elige la hora de cada uno — pueden ser
+distintas. Al activarlos se marcarán automáticamente esos
+días en el calendario; puedes ajustar fechas sueltas a
+mano. Se creará una sesión para cada fecha marcada, con el
+horario de su día de la semana, y el mismo profesor,
+espacio y aforo.
 </p>
 <div class="formulario-admin">
 <div class="campo">
@@ -362,15 +366,33 @@ máximo
 <?php endwhile; ?>
 </select>
 </div>
-<div class="campo">
-<label for="hora_inicio_regular">
-Hora de inicio
+<div class="campo campo-completo">
+<label>
+Horario por día de la semana
+</label>
+<div class="horarios-dias-semana">
+<?php for ($dia_semana = 1; $dia_semana <= 7; $dia_semana++): ?>
+<div class="horario-dia-semana">
+<label class="campo-checkbox">
+<input
+type="checkbox"
+class="entrada-dia-activo"
+name="dias_regulares[]"
+value="<?= $dia_semana ?>"
+data-dia="<?= $dia_semana ?>"
+>
+<span><?= escapar(texto_dia_semana($dia_semana)) ?></span>
 </label>
 <input
 type="time"
-id="hora_inicio_regular"
-name="hora_inicio_regular"
+class="entrada-hora-dia"
+name="hora_regular_<?= $dia_semana ?>"
+data-dia="<?= $dia_semana ?>"
+disabled
 >
+</div>
+<?php endfor; ?>
+</div>
 </div>
 <div class="campo">
 <label for="aforo_regular">
@@ -423,6 +445,7 @@ type="checkbox"
 name="fechas_regulares[]"
 value="<?= $dia->format('Y-m-d') ?>"
 class="entrada-dia-calendario"
+data-dia-semana="<?= (int) $dia->format('N') ?>"
 >
 <span><?= (int) $dia->format('j') ?></span>
 </label>
@@ -512,6 +535,31 @@ ayudaAforo.textContent =
 }
 });
 }
+const casillasDiaActivo = document.querySelectorAll(
+".entrada-dia-activo"
+);
+function diasCalendarioDelDia(dia) {
+return document.querySelectorAll(
+'.entrada-dia-calendario[data-dia-semana="' + dia + '"]'
+);
+}
+casillasDiaActivo.forEach(function (casillaDia) {
+const dia = casillaDia.getAttribute("data-dia");
+const campoHoraDia = document.querySelector(
+'.entrada-hora-dia[data-dia="' + dia + '"]'
+);
+casillaDia.addEventListener("change", function () {
+if (campoHoraDia) {
+campoHoraDia.disabled = !casillaDia.checked;
+campoHoraDia.required = casillaDia.checked;
+}
+diasCalendarioDelDia(dia).forEach(function (diaCalendario) {
+if (!diaCalendario.disabled) {
+diaCalendario.checked = casillaDia.checked;
+}
+});
+});
+});
 })();
 </script>
 </body>

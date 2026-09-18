@@ -2060,6 +2060,27 @@ display: grid;
 margin: 0 0 16px;
 color: var(--color-texto-tenue);
 }
+.horarios-dias-semana {
+display: grid;
+grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+gap: 10px;
+}
+.horario-dia-semana {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 10px;
+padding: 8px 10px;
+background-color: white;
+border: 1px solid var(--color-borde);
+border-radius: 8px;
+}
+.horario-dia-semana .entrada-hora-dia {
+width: 110px;
+}
+.horario-dia-semana .entrada-hora-dia:disabled {
+opacity: 0.5;
+}
 .calendarios-regular {
 display: flex;
 margin-top: 20px;
