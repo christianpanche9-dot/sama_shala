@@ -2,6 +2,7 @@
 return [
 // Menú y navegación
 'Iniciar sesión' => 'Log in',
+'Tu sesión anterior había expirado y no se pudo enviar el formulario. Ya generamos una nueva: vuelve a intentarlo.' => 'Your previous session had expired, so the form could not be submitted. We generated a new one: please try again.',
 'Actividades' => 'Activities',
 'Lun' => 'Mon',
 'Mar' => 'Tue',

@@ -25,9 +25,30 @@ function validarCsrf(): void
     $recibido = (string) ($_POST["csrf_token"] ?? "");
     $guardado = (string) ($_SESSION["csrf_token"] ?? "");
     if ($guardado === "" || !hash_equals($guardado, $recibido)) {
-        http_response_code(403);
-        exit("La petición no es válida. Recarga la página e inténtalo de nuevo.");
+        $_SESSION["csrf_token"] = bin2hex(random_bytes(32));
+        header("Location: " . urlVolverTrasCsrfInvalido());
+        exit;
     }
+}
+
+function urlVolverTrasCsrfInvalido(): string
+{
+    $destino = "index.php";
+    $parametros = [];
+    $referer = $_SERVER["HTTP_REFERER"] ?? "";
+    if ($referer !== "") {
+        $partes_referer = parse_url($referer);
+        $mismo_sitio =
+            ($partes_referer["host"] ?? "") === ($_SERVER["HTTP_HOST"] ?? "");
+        if ($mismo_sitio) {
+            $destino = $partes_referer["path"] ?? "index.php";
+            if (!empty($partes_referer["query"])) {
+                parse_str($partes_referer["query"], $parametros);
+            }
+        }
+    }
+    $parametros["sesion_expirada"] = "1";
+    return $destino . "?" . http_build_query($parametros);
 }
 
 function escapar(?string $texto): string

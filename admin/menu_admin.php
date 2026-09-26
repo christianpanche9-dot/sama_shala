@@ -79,6 +79,13 @@ Más
 </nav>
 </div>
 </header>
+<?php if (($_GET["sesion_expirada"] ?? "") === "1"): ?>
+<div class="contenedor">
+<div class="mensaje mensaje-aviso">
+Tu sesión anterior había expirado y no se pudo enviar el formulario. Ya generamos una nueva: vuelve a intentarlo.
+</div>
+</div>
+<?php endif; ?>
 <script>
 (function () {
 const boton = document.querySelector("#boton-menu-movil-admin");
