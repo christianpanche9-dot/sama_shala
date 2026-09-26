@@ -85,6 +85,12 @@ Más
 Tu sesión anterior había expirado y no se pudo enviar el formulario. Ya generamos una nueva: vuelve a intentarlo.
 </div>
 </div>
+<?php elseif (($_GET["archivo_grande"] ?? "") === "1"): ?>
+<div class="contenedor">
+<div class="mensaje mensaje-error">
+El archivo que intentaste subir es demasiado grande para este servidor. Reduce su tamaño (o la cantidad de archivos) e inténtalo de nuevo.
+</div>
+</div>
 <?php endif; ?>
 <script>
 (function () {

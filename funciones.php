@@ -2,6 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
 $es_https = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== "off")
 || ($_SERVER["SERVER_PORT"] ?? "") === "443";
+ini_set("session.gc_maxlifetime", "7200");
 session_set_cookie_params([
 "lifetime" => 0,
 "path" => "/",
@@ -26,12 +27,21 @@ function validarCsrf(): void
     $guardado = (string) ($_SESSION["csrf_token"] ?? "");
     if ($guardado === "" || !hash_equals($guardado, $recibido)) {
         $_SESSION["csrf_token"] = bin2hex(random_bytes(32));
-        header("Location: " . urlVolverTrasCsrfInvalido());
+        $motivo = peticionDemasiadoGrande() ? "archivo_grande" : "sesion_expirada";
+        header("Location: " . urlVolverTrasCsrfInvalido($motivo));
         exit;
     }
 }
 
-function urlVolverTrasCsrfInvalido(): string
+function peticionDemasiadoGrande(): bool
+{
+    return ($_SERVER["REQUEST_METHOD"] ?? "") === "POST"
+        && empty($_POST)
+        && empty($_FILES)
+        && (int) ($_SERVER["CONTENT_LENGTH"] ?? 0) > 0;
+}
+
+function urlVolverTrasCsrfInvalido(string $motivo): string
 {
     $destino = "index.php";
     $parametros = [];
@@ -47,7 +57,8 @@ function urlVolverTrasCsrfInvalido(): string
             }
         }
     }
-    $parametros["sesion_expirada"] = "1";
+    unset($parametros["sesion_expirada"], $parametros["archivo_grande"]);
+    $parametros[$motivo] = "1";
     return $destino . "?" . http_build_query($parametros);
 }
 

@@ -3,6 +3,7 @@ return [
 // Menú y navegación
 'Iniciar sesión' => 'Log in',
 'Tu sesión anterior había expirado y no se pudo enviar el formulario. Ya generamos una nueva: vuelve a intentarlo.' => 'Your previous session had expired, so the form could not be submitted. We generated a new one: please try again.',
+'El archivo que intentaste subir es demasiado grande para este servidor. Reduce su tamaño (o la cantidad de archivos) e inténtalo de nuevo.' => 'The file you tried to upload is too large for this server. Reduce its size (or the number of files) and try again.',
 'Actividades' => 'Activities',
 'Lun' => 'Mon',
 'Mar' => 'Tue',
