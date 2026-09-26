@@ -2067,19 +2067,54 @@ gap: 10px;
 }
 .horario-dia-semana {
 display: flex;
-align-items: center;
-justify-content: space-between;
-gap: 10px;
+flex-direction: column;
+align-items: stretch;
+gap: 8px;
 padding: 8px 10px;
 background-color: white;
 border: 1px solid var(--color-borde);
 border-radius: 8px;
+}
+.horario-dia-semana-horas {
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+.horario-dia-semana-hora {
+display: flex;
+align-items: center;
+gap: 6px;
 }
 .horario-dia-semana .entrada-hora-dia {
 width: 110px;
 }
 .horario-dia-semana .entrada-hora-dia:disabled {
 opacity: 0.5;
+}
+.boton-quitar-hora {
+border: none;
+background: none;
+color: var(--color-texto-tenue);
+cursor: pointer;
+font-size: 16px;
+line-height: 1;
+padding: 4px 6px;
+}
+.boton-quitar-hora:hover {
+color: #842029;
+}
+.boton-agregar-hora {
+align-self: flex-start;
+border: none;
+background: none;
+color: var(--color-verde-oscuro);
+cursor: pointer;
+font-size: 13px;
+padding: 2px 0;
+}
+.boton-agregar-hora:disabled {
+opacity: 0.5;
+cursor: not-allowed;
 }
 .calendarios-regular {
 display: flex;

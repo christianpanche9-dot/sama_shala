@@ -253,11 +253,19 @@ FILTER_VALIDATE_INT,
 if ($dia_regular_numero === false) {
 continue;
 }
-$hora_dia_regular = trim(
-$_POST['hora_regular_' . $dia_regular_numero] ?? ''
-);
+$horas_dia_regular = $_POST['horas_regular_' . $dia_regular_numero] ?? [];
+if (!is_array($horas_dia_regular)) {
+$horas_dia_regular = [$horas_dia_regular];
+}
+$horas_validas_dia = [];
+foreach ($horas_dia_regular as $hora_dia_regular) {
+$hora_dia_regular = trim($hora_dia_regular);
 if ($hora_dia_regular !== '' && hora_valida($hora_dia_regular)) {
-$horarios_por_dia[$dia_regular_numero] = $hora_dia_regular;
+$horas_validas_dia[$hora_dia_regular] = $hora_dia_regular;
+}
+}
+if (!empty($horas_validas_dia)) {
+$horarios_por_dia[$dia_regular_numero] = array_values($horas_validas_dia);
 }
 }
 if (
@@ -309,11 +317,12 @@ $dia_semana_fecha = (int) DateTime::createFromFormat(
 'Y-m-d',
 $fecha_regular
 )->format('N');
-$hora_inicio_regular = $horarios_por_dia[$dia_semana_fecha] ?? null;
-if ($hora_inicio_regular === null) {
+$horas_del_dia = $horarios_por_dia[$dia_semana_fecha] ?? [];
+if (empty($horas_del_dia)) {
 $sesiones_omitidas++;
 continue;
 }
+foreach ($horas_del_dia as $hora_inicio_regular) {
 $inicio_regular = DateTime::createFromFormat(
 'Y-m-d H:i',
 $fecha_regular . ' ' . $hora_inicio_regular
@@ -357,6 +366,7 @@ $stmt_insertar_sesion_profesor->execute();
 $sesiones_creadas++;
 } else {
 $sesiones_omitidas++;
+}
 }
 }
 $stmt_conflicto->close();

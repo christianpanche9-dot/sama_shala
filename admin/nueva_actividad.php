@@ -308,10 +308,12 @@ Programar sus sesiones regulares
 <p class="ayuda">
 Activa los días de la semana en los que se repite esta
 actividad y elige la hora de cada uno — pueden ser
-distintas. Al activarlos se marcarán automáticamente esos
+distintas. Si un día tiene varios horarios (por ejemplo
+lunes 9:00 y lunes 18:30), pulsa "Añadir horario" para
+sumar más. Al activarlos se marcarán automáticamente esos
 días en el calendario; puedes ajustar fechas sueltas a
-mano. Se creará una sesión para cada fecha marcada, con el
-horario de su día de la semana, y el mismo profesor,
+mano. Se creará una sesión para cada fecha marcada y cada
+horario de su día de la semana, con el mismo profesor,
 espacio y aforo.
 </p>
 <div class="formulario-admin">
@@ -383,13 +385,36 @@ data-dia="<?= $dia_semana ?>"
 >
 <span><?= escapar(texto_dia_semana($dia_semana)) ?></span>
 </label>
+<div
+class="horario-dia-semana-horas"
+data-dia="<?= $dia_semana ?>"
+>
+<div class="horario-dia-semana-hora">
 <input
 type="time"
 class="entrada-hora-dia"
-name="hora_regular_<?= $dia_semana ?>"
+name="horas_regular_<?= $dia_semana ?>[]"
 data-dia="<?= $dia_semana ?>"
 disabled
 >
+<button
+type="button"
+class="boton-quitar-hora"
+data-dia="<?= $dia_semana ?>"
+hidden
+>
+&times;
+</button>
+</div>
+</div>
+<button
+type="button"
+class="boton-agregar-hora"
+data-dia="<?= $dia_semana ?>"
+disabled
+>
++ Añadir horario
+</button>
 </div>
 <?php endfor; ?>
 </div>
@@ -543,21 +568,70 @@ return document.querySelectorAll(
 '.entrada-dia-calendario[data-dia-semana="' + dia + '"]'
 );
 }
+function contenedorHorasDelDia(dia) {
+return document.querySelector(
+'.horario-dia-semana-horas[data-dia="' + dia + '"]'
+);
+}
+function crearFilaHora(dia) {
+const fila = document.createElement("div");
+fila.className = "horario-dia-semana-hora";
+const entrada = document.createElement("input");
+entrada.type = "time";
+entrada.className = "entrada-hora-dia";
+entrada.name = "horas_regular_" + dia + "[]";
+entrada.setAttribute("data-dia", dia);
+const botonQuitar = document.createElement("button");
+botonQuitar.type = "button";
+botonQuitar.className = "boton-quitar-hora";
+botonQuitar.setAttribute("data-dia", dia);
+botonQuitar.innerHTML = "&times;";
+botonQuitar.addEventListener("click", function () {
+fila.remove();
+});
+fila.appendChild(entrada);
+fila.appendChild(botonQuitar);
+return { fila, entrada };
+}
 casillasDiaActivo.forEach(function (casillaDia) {
 const dia = casillaDia.getAttribute("data-dia");
-const campoHoraDia = document.querySelector(
-'.entrada-hora-dia[data-dia="' + dia + '"]'
+const contenedorHoras = contenedorHorasDelDia(dia);
+const botonAgregar = document.querySelector(
+'.boton-agregar-hora[data-dia="' + dia + '"]'
 );
 casillaDia.addEventListener("change", function () {
-if (campoHoraDia) {
-campoHoraDia.disabled = !casillaDia.checked;
-campoHoraDia.required = casillaDia.checked;
+const activo = casillaDia.checked;
+if (contenedorHoras) {
+const entradas = contenedorHoras.querySelectorAll(
+".entrada-hora-dia"
+);
+entradas.forEach(function (entrada, indice) {
+entrada.disabled = !activo;
+entrada.required = activo && indice === 0;
+});
+}
+if (botonAgregar) {
+botonAgregar.disabled = !activo;
 }
 diasCalendarioDelDia(dia).forEach(function (diaCalendario) {
 if (!diaCalendario.disabled) {
-diaCalendario.checked = casillaDia.checked;
+diaCalendario.checked = activo;
 }
 });
+});
+});
+document.querySelectorAll(".boton-agregar-hora").forEach(function (
+boton
+) {
+const dia = boton.getAttribute("data-dia");
+boton.addEventListener("click", function () {
+const contenedorHoras = contenedorHorasDelDia(dia);
+if (!contenedorHoras) {
+return;
+}
+const { fila, entrada } = crearFilaHora(dia);
+contenedorHoras.appendChild(fila);
+entrada.focus();
 });
 });
 })();
