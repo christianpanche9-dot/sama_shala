@@ -26,9 +26,16 @@ function validarCsrf(): void
     $recibido = (string) ($_POST["csrf_token"] ?? "");
     $guardado = (string) ($_SESSION["csrf_token"] ?? "");
     if ($guardado === "" || !hash_equals($guardado, $recibido)) {
+        if (peticionDemasiadoGrande()) {
+            $_SESSION["csrf_token"] = bin2hex(random_bytes(32));
+            header("Location: " . urlVolverTrasCsrfInvalido("archivo_grande"));
+            exit;
+        }
+        if (usuarioAutenticado()) {
+            cerrarSesionYRedirigirALogin();
+        }
         $_SESSION["csrf_token"] = bin2hex(random_bytes(32));
-        $motivo = peticionDemasiadoGrande() ? "archivo_grande" : "sesion_expirada";
-        header("Location: " . urlVolverTrasCsrfInvalido($motivo));
+        header("Location: " . urlVolverTrasCsrfInvalido("sesion_expirada"));
         exit;
     }
 }
@@ -39,6 +46,45 @@ function peticionDemasiadoGrande(): bool
         && empty($_POST)
         && empty($_FILES)
         && (int) ($_SERVER["CONTENT_LENGTH"] ?? 0) > 0;
+}
+
+function rutaSeguraDesdeReferer(string $default = ""): string
+{
+    $referer = $_SERVER["HTTP_REFERER"] ?? "";
+    if ($referer !== "") {
+        $partes_referer = parse_url($referer);
+        $mismo_sitio =
+            ($partes_referer["host"] ?? "") === ($_SERVER["HTTP_HOST"] ?? "");
+        if ($mismo_sitio) {
+            return $partes_referer["path"] ?? $default;
+        }
+    }
+    return $default;
+}
+
+function cerrarSesionYRedirigirALogin(): void
+{
+    $volver = rutaSeguraDesdeReferer();
+    $_SESSION = [];
+    if (ini_get("session.use_cookies")) {
+        $parametros_cookie = session_get_cookie_params();
+        setcookie(
+            session_name(),
+            "",
+            time() - 42000,
+            $parametros_cookie["path"],
+            $parametros_cookie["domain"],
+            $parametros_cookie["secure"],
+            $parametros_cookie["httponly"]
+        );
+    }
+    session_destroy();
+    $destino = "/login.php?mensaje=sesion_expirada";
+    if ($volver !== "") {
+        $destino .= "&volver=" . urlencode($volver);
+    }
+    header("Location: " . $destino);
+    exit;
 }
 
 function urlVolverTrasCsrfInvalido(string $motivo): string

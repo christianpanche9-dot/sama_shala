@@ -35,6 +35,10 @@ content="width=device-width, initial-scale=1.0"
 <div class="mensaje exito">
 <?= t("Tu contraseña se ha actualizado. Ya puedes iniciar sesión.") ?>
 </div>
+<?php elseif ($mensaje === "sesion_expirada"): ?>
+<div class="mensaje mensaje-aviso">
+<?= t("Tu sesión anterior expiró por seguridad. Vuelve a iniciar sesión para continuar.") ?>
+</div>
 <?php endif; ?>
 <?php if ($error === "credenciales"): ?>
 <div class="mensaje error">
