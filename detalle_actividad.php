@@ -122,7 +122,7 @@ $stmt_sesiones->execute();
 $resultado_sesiones =
 $stmt_sesiones->get_result();
 $sesiones_actividad = $resultado_sesiones->fetch_all(MYSQLI_ASSOC);
-$sesiones_por_pagina = 5;
+$sesiones_por_pagina = 6;
 $total_paginas_sesiones = (int) ceil(
 count($sesiones_actividad) / $sesiones_por_pagina
 );
@@ -232,6 +232,16 @@ $aforo
 ?>
 <article class="tarjeta-sesion" data-pagina="<?= $pagina_sesion ?>">
 <div class="fecha-sesion">
+<span class="dia-semana-sesion">
+<?= escapar(
+texto_dia_semana(
+(int) DateTime::createFromFormat(
+'Y-m-d',
+$sesion['fecha']
+)->format('N')
+)
+) ?>
+</span>
 <span class="fecha-principal">
 <?= escapar(
 formatear_fecha(
@@ -254,29 +264,6 @@ $sesion['hora_fin']
 </span>
 </div>
 <div class="datos-sesion">
-<p>
-<strong><?= t('Espacio:') ?></strong>
-<?= escapar(
-$sesion['espacio']
-) ?>
-</p>
-<?php if (
-    !empty($sesion['ubicacion'])
-): ?>
-
-<p>
-<strong><?= t('Ubicación:') ?></strong>
-<?= escapar(
-$sesion['ubicacion']
-) ?>
-</p>
-<?php endif; ?>
-<p>
-<strong><?= str_contains($sesion['profesor'], ',') ? t('Profesores:') : t('Profesor:') ?></strong>
-<?= escapar(
-$sesion['profesor']
-) ?>
-</p>
 <p>
 <strong><?= t('Aforo:') ?></strong>
 <?= $aforo ?> <?= $aforo === 1 ? t('persona') : t('personas') ?>
