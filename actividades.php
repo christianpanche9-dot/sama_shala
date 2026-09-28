@@ -384,7 +384,7 @@ $sesiones_por_dia[$clave_dia] as $sesion_dia
 ): ?>
 <a
 class="item-actividad-dia"
-href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
+href="detalle_sesion.php?id=<?= (int) $sesion_dia['id_sesion'] ?>"
 >
 <span class="item-actividad-hora">
 <?= escapar(formatear_hora($sesion_dia['hora_inicio'])) ?> – <?= escapar(formatear_hora($sesion_dia['hora_fin'])) ?>
