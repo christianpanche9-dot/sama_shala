@@ -61,6 +61,9 @@ aria-label="Abrir menú"
 <a href="blog.php">
 <?= t('Blog') ?>
 </a>
+<a href="multimedia.php">
+<?= t('Multimedia') ?>
+</a>
 <a href="contactanos.php">
 <?= t('Contáctanos') ?>
 </a>

@@ -659,6 +659,7 @@ font-size: 1.8rem;
 .tarjeta-actividad,
 .tarjeta-sesion,
 .tarjeta-profesor,
+.tarjeta-multimedia,
 .panel-reserva,
 .informacion-sesion {
 background-color: white;
@@ -1593,7 +1594,8 @@ gap: 8px 18px;
 .rejilla-actividades,
 .rejilla-top-actividades,
 .rejilla-profesores,
-.lista-sesiones {
+.lista-sesiones,
+.rejilla-multimedia {
 grid-template-columns: 1fr 1fr;
 }
 .titulo-todas-actividades,
@@ -1679,7 +1681,8 @@ text-align: center;
 .rejilla-datos,
 .rejilla-top-actividades,
 .rejilla-profesores,
-.lista-sesiones {
+.lista-sesiones,
+.rejilla-multimedia {
 grid-template-columns: 1fr;
 }
 .columna-productos-tienda .rejilla-actividades {
@@ -3099,6 +3102,108 @@ overflow: hidden;
 width: 100%;
 height: 100%;
 border: 0;
+}
+.rejilla-multimedia {
+display: grid;
+grid-template-columns: repeat(3, minmax(0, 1fr));
+gap: 24px;
+align-items: start;
+}
+.tarjeta-multimedia .contenido-tarjeta h2 {
+margin-top: 0;
+}
+.miniatura-video {
+position: relative;
+display: block;
+width: 100%;
+aspect-ratio: 16 / 9;
+margin: 16px 0;
+padding: 0;
+border: 0;
+border-radius: 12px;
+overflow: hidden;
+cursor: pointer;
+background-color: black;
+}
+.miniatura-video img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+display: block;
+opacity: 0.85;
+transition: opacity 0.2s ease;
+}
+.miniatura-video-boton {
+position: absolute;
+inset: 0;
+display: grid;
+place-items: center;
+font-size: 1.4rem;
+color: white;
+background-color: rgba(0, 0, 0, 0.25);
+}
+.miniatura-video:hover img,
+.miniatura-video:focus-visible img {
+opacity: 1;
+}
+.spotify-embed {
+margin: 16px 0;
+border-radius: 12px;
+overflow: hidden;
+}
+.spotify-embed iframe {
+display: block;
+width: 100%;
+height: 100%;
+border: 0;
+}
+.modal-video[hidden] {
+display: none;
+}
+.modal-video {
+position: fixed;
+inset: 0;
+z-index: 1000;
+display: grid;
+place-items: center;
+padding: 24px;
+}
+.modal-video-fondo {
+position: absolute;
+inset: 0;
+background-color: rgba(0, 0, 0, 0.8);
+}
+.modal-video-contenido {
+position: relative;
+width: 100%;
+max-width: 900px;
+}
+.modal-video-marco {
+position: relative;
+aspect-ratio: 16 / 9;
+border-radius: 14px;
+overflow: hidden;
+background-color: black;
+}
+.modal-video-marco iframe {
+width: 100%;
+height: 100%;
+border: 0;
+}
+.modal-video-cerrar {
+position: absolute;
+top: -44px;
+right: 0;
+border: 0;
+background: none;
+color: white;
+font-size: 2rem;
+line-height: 1;
+cursor: pointer;
+padding: 6px;
+}
+body.bloquear-scroll {
+overflow: hidden;
 }
 .contenido-blog {
 margin-top: 20px;

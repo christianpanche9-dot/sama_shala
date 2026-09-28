@@ -47,6 +47,9 @@ Tienda
 <a href="blog.php">
 Blog
 </a>
+<a href="multimedia.php">
+Multimedia
+</a>
 <a href="pagos.php">
 Pagos
 </a>

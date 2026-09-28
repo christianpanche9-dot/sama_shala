@@ -779,6 +779,25 @@ function extraer_id_youtube(?string $url): ?string
     return null;
 }
 
+function datos_embed_spotify(?string $url): ?array
+{
+    $url = trim($url ?? '');
+    if ($url === '') {
+        return null;
+    }
+    $patron = '#open\.spotify\.com/(track|album|playlist|episode|show|artist)/([A-Za-z0-9]+)#';
+    if (!preg_match($patron, $url, $coincidencias)) {
+        return null;
+    }
+    $tipo = $coincidencias[1];
+    $id = $coincidencias[2];
+    $compacto = in_array($tipo, ['track', 'episode'], true);
+    return [
+        'url' => "https://open.spotify.com/embed/{$tipo}/{$id}",
+        'alto' => $compacto ? 152 : 352
+    ];
+}
+
 function sanitizar_html_blog(string $html): string
 {
     $etiquetas_permitidas = [

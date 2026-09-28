@@ -41,6 +41,7 @@ return [
 'Mis reservas' => 'My bookings',
 'Salir' => 'Log out',
 'Blog' => 'Blog',
+'Multimedia' => 'Multimedia',
 'Contáctanos' => 'Contact us',
 
 // pie.php
@@ -464,6 +465,14 @@ return [
 'Entrada no encontrada | Sama Shala' => 'Entry not found | Sama Shala',
 'Volver al blog' => 'Back to blog',
 'La entrada no existe o no está disponible.' => 'This entry doesn\'t exist or isn\'t available.',
+
+// multimedia.php
+'Multimedia | Sama Shala' => 'Multimedia | Sama Shala',
+'Conecta, escucha y medita' => 'Connect, listen and meditate',
+'Todavía no hay contenido multimedia publicado.' => 'No multimedia content published yet.',
+'Ver el video de %s' => 'Watch the video for %s',
+'Video' => 'Video',
+'Cerrar' => 'Close',
 
 // login.php (Google)
 'Continuar con Google' => 'Continue with Google',
