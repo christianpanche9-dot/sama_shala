@@ -6,6 +6,10 @@ if (!contenedorEditor || !campoContenido || !formulario) {
 return;
 }
 
+if (window.ImageResize) {
+Quill.register('modules/imageResize', window.ImageResize.default || window.ImageResize);
+}
+
 var quill = new Quill('#editor-contenido', {
 theme: 'snow',
 modules: {
@@ -21,6 +25,9 @@ container: [
 handlers: {
 image: subirImagen
 }
+},
+imageResize: {
+modules: ['Resize', 'DisplaySize', 'Toolbar']
 }
 }
 });

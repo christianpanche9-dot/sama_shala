@@ -158,6 +158,7 @@ Guardar cambios
 </form>
 </main>
 <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/quill-image-resize-module@3.0.0/image-resize.min.js"></script>
 <script src="editor_blog.js"></script>
 </body>
 </html>
