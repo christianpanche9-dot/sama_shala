@@ -18,6 +18,14 @@ $hay_youtube = true;
 }
 }
 unset($ficha);
+$fichas_audio = array_values(array_filter(
+$fichas,
+fn($ficha) => !$ficha['id_youtube']
+));
+$fichas_video = array_values(array_filter(
+$fichas,
+fn($ficha) => $ficha['id_youtube']
+));
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -48,28 +56,18 @@ content="width=device-width, initial-scale=1.0"
 <?php if (empty($fichas)): ?>
 <p><?= t('Todavía no hay contenido multimedia publicado.') ?></p>
 <?php else: ?>
-<div class="rejilla-multimedia">
-<?php foreach ($fichas as $ficha): ?>
+<div class="multimedia-columnas">
+<section class="multimedia-columna">
+<h2><?= t('Música y audio') ?></h2>
+<div class="multimedia-lista">
+<?php if (empty($fichas_audio)): ?>
+<p><?= t('Todavía no hay música publicada.') ?></p>
+<?php endif; ?>
+<?php foreach ($fichas_audio as $ficha): ?>
 <article class="tarjeta-multimedia">
 <div class="contenido-tarjeta">
-<h2><?= escapar($ficha['titulo']) ?></h2>
+<h3><?= escapar($ficha['titulo']) ?></h3>
 <p><?= escapar($ficha['descripcion']) ?></p>
-<?php if ($ficha['id_youtube']): ?>
-<button
-type="button"
-class="miniatura-video"
-data-id-youtube="<?= escapar($ficha['id_youtube']) ?>"
-data-titulo="<?= escapar($ficha['titulo']) ?>"
-aria-label="<?= escapar(sprintf(t('Ver el video de %s'), $ficha['titulo'])) ?>"
->
-<img
-src="https://i.ytimg.com/vi/<?= escapar($ficha['id_youtube']) ?>/hqdefault.jpg"
-alt=""
-loading="lazy"
->
-<span class="miniatura-video-boton">▶</span>
-</button>
-<?php endif; ?>
 <?php if ($ficha['embed_spotify']): ?>
 <div
 class="spotify-embed"
@@ -86,6 +84,51 @@ loading="lazy"
 </div>
 </article>
 <?php endforeach; ?>
+</div>
+</section>
+<section class="multimedia-columna">
+<h2><?= t('Videos') ?></h2>
+<div class="multimedia-lista">
+<?php if (empty($fichas_video)): ?>
+<p><?= t('Todavía no hay videos publicados.') ?></p>
+<?php endif; ?>
+<?php foreach ($fichas_video as $ficha): ?>
+<article class="tarjeta-multimedia">
+<div class="contenido-tarjeta">
+<h3><?= escapar($ficha['titulo']) ?></h3>
+<p><?= escapar($ficha['descripcion']) ?></p>
+<button
+type="button"
+class="miniatura-video"
+data-id-youtube="<?= escapar($ficha['id_youtube']) ?>"
+data-titulo="<?= escapar($ficha['titulo']) ?>"
+aria-label="<?= escapar(sprintf(t('Ver el video de %s'), $ficha['titulo'])) ?>"
+>
+<img
+src="https://i.ytimg.com/vi/<?= escapar($ficha['id_youtube']) ?>/hqdefault.jpg"
+alt=""
+loading="lazy"
+>
+<span class="miniatura-video-boton">▶</span>
+</button>
+<?php if ($ficha['embed_spotify']): ?>
+<div
+class="spotify-embed"
+style="height: <?= (int) $ficha['embed_spotify']['alto'] ?>px"
+>
+<iframe
+src="<?= escapar($ficha['embed_spotify']['url']) ?>"
+title="<?= escapar($ficha['titulo']) ?>"
+allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+loading="lazy"
+></iframe>
+</div>
+<?php endif; ?>
+</div>
+</article>
+<?php endforeach; ?>
+</div>
+</section>
 </div>
 <div class="modal-video" id="modal-video" hidden>
 <div class="modal-video-fondo" data-cerrar-modal-video></div>
