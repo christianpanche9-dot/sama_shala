@@ -41,6 +41,15 @@ $puede_crearse =
 $actividades->num_rows > 0
 && $espacios->num_rows > 0
 && $profesores->num_rows > 0;
+$hoy = new DateTime('today');
+$meses_calendario = [];
+for ($i = 0; $i <= 5; $i++) {
+$mes_recorrido = (clone $hoy)->modify("+$i month");
+$meses_calendario[] = [
+'anio' => (int) $mes_recorrido->format('Y'),
+'mes' => (int) $mes_recorrido->format('n')
+];
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -199,6 +208,18 @@ $profesor['especialidad']
 Selecciona uno o más profesores para esta sesión.
 </small>
 </div>
+<div class="campo-checkbox campo-completo">
+<label>
+<input
+type="checkbox"
+id="es_recurrente"
+name="es_recurrente"
+value="1"
+>
+¿Es una sesión recurrente (varias fechas y horarios)?
+</label>
+</div>
+<div class="campo-completo bloque-fecha-unica" id="bloque-fecha-unica">
 <div class="campo">
 <label for="fecha">
 Fecha
@@ -230,6 +251,123 @@ Hora final prevista:
 </p>
 
 </div>
+</div>
+<fieldset
+class="campo-completo bloque-regular"
+id="bloque-recurrente"
+>
+<legend>
+Programar varias sesiones
+</legend>
+<p class="ayuda">
+Activa los días de la semana en los que se repite esta
+sesión y elige la hora de cada uno — pueden ser distintas.
+Si un día tiene varios horarios (por ejemplo lunes 9:00 y
+lunes 18:30), pulsa "Añadir horario" para sumar más. Al
+activarlos se marcarán automáticamente esos días en el
+calendario; puedes ajustar fechas sueltas a mano. Se creará
+una sesión para cada fecha marcada y cada horario de su día
+de la semana, con la misma actividad, espacio, profesores,
+duración y aforo indicados arriba.
+</p>
+<div class="campo campo-completo">
+<label>
+Horario por día de la semana
+</label>
+<div class="horarios-dias-semana">
+<?php for ($dia_semana = 1; $dia_semana <= 7; $dia_semana++): ?>
+<div class="horario-dia-semana">
+<label class="campo-checkbox">
+<input
+type="checkbox"
+class="entrada-dia-activo"
+name="dias_recurrentes[]"
+value="<?= $dia_semana ?>"
+data-dia="<?= $dia_semana ?>"
+>
+<span><?= escapar(texto_dia_semana($dia_semana)) ?></span>
+</label>
+<div
+class="horario-dia-semana-horas"
+data-dia="<?= $dia_semana ?>"
+>
+<div class="horario-dia-semana-hora">
+<input
+type="time"
+class="entrada-hora-dia"
+name="horas_recurrente_<?= $dia_semana ?>[]"
+data-dia="<?= $dia_semana ?>"
+disabled
+>
+<button
+type="button"
+class="boton-quitar-hora"
+data-dia="<?= $dia_semana ?>"
+hidden
+>
+&times;
+</button>
+</div>
+</div>
+<button
+type="button"
+class="boton-agregar-hora"
+data-dia="<?= $dia_semana ?>"
+disabled
+>
++ Añadir horario
+</button>
+</div>
+<?php endfor; ?>
+</div>
+</div>
+<div class="calendarios-regular">
+<?php foreach ($meses_calendario as $mes_info): ?>
+<div class="calendario-mes">
+<p class="calendario-mes-titulo">
+<?= escapar(texto_mes($mes_info['mes'])) ?> <?= $mes_info['anio'] ?>
+</p>
+<div class="calendario-mes-cabecera">
+<?php for ($d = 1; $d <= 7; $d++): ?>
+<span>
+<?= escapar(texto_dia_semana_abreviado($d)) ?>
+</span>
+<?php endfor; ?>
+</div>
+<div class="calendario-mes-grilla">
+<?php
+$semanas = generar_calendario_mes(
+$mes_info['anio'],
+$mes_info['mes']
+);
+?>
+<?php foreach ($semanas as $semana): ?>
+<?php foreach ($semana as $dia): ?>
+<?php if ($dia === null): ?>
+<span class="dia-calendario dia-calendario-vacio"></span>
+<?php elseif ($dia < $hoy): ?>
+<span class="dia-calendario dia-calendario-pasado">
+<?= (int) $dia->format('j') ?>
+</span>
+<?php else: ?>
+<label class="dia-calendario">
+<input
+type="checkbox"
+name="fechas_recurrentes[]"
+value="<?= $dia->format('Y-m-d') ?>"
+class="entrada-dia-calendario"
+data-dia-semana="<?= (int) $dia->format('N') ?>"
+>
+<span><?= (int) $dia->format('j') ?></span>
+</label>
+<?php endif; ?>
+<?php endforeach; ?>
+<?php endforeach; ?>
+</div>
+</div>
+<?php endforeach; ?>
+</div>
+</fieldset>
 <div class="campo">
 <label for="duracion">
 Duración en minutos
@@ -308,5 +446,102 @@ function calcularHoraFinal() {
 
 campoHora.addEventListener("input", calcularHoraFinal);
 campoDuracion.addEventListener("input", calcularHoraFinal);
+
+(function () {
+    const casillaRecurrente = document.querySelector("#es_recurrente");
+    const bloqueFechaUnica = document.querySelector("#bloque-fecha-unica");
+    const bloqueRecurrente = document.querySelector("#bloque-recurrente");
+    if (casillaRecurrente && bloqueFechaUnica && bloqueRecurrente) {
+        function actualizarModoRecurrente() {
+            const recurrente = casillaRecurrente.checked;
+            bloqueFechaUnica.classList.toggle("oculto", recurrente);
+            bloqueRecurrente.classList.toggle("visible", recurrente);
+            campoHora.disabled = recurrente;
+            campoHora.required = !recurrente;
+            const campoFechaUnica = document.querySelector("#fecha");
+            if (campoFechaUnica) {
+                campoFechaUnica.disabled = recurrente;
+                campoFechaUnica.required = !recurrente;
+            }
+        }
+        casillaRecurrente.addEventListener("change", actualizarModoRecurrente);
+        actualizarModoRecurrente();
+    }
+
+    const casillasDiaActivo = document.querySelectorAll(
+        ".entrada-dia-activo"
+    );
+    function diasCalendarioDelDia(dia) {
+        return document.querySelectorAll(
+            '.entrada-dia-calendario[data-dia-semana="' + dia + '"]'
+        );
+    }
+    function contenedorHorasDelDia(dia) {
+        return document.querySelector(
+            '.horario-dia-semana-horas[data-dia="' + dia + '"]'
+        );
+    }
+    function crearFilaHora(dia) {
+        const fila = document.createElement("div");
+        fila.className = "horario-dia-semana-hora";
+        const entrada = document.createElement("input");
+        entrada.type = "time";
+        entrada.className = "entrada-hora-dia";
+        entrada.name = "horas_recurrente_" + dia + "[]";
+        entrada.setAttribute("data-dia", dia);
+        const botonQuitar = document.createElement("button");
+        botonQuitar.type = "button";
+        botonQuitar.className = "boton-quitar-hora";
+        botonQuitar.setAttribute("data-dia", dia);
+        botonQuitar.innerHTML = "&times;";
+        botonQuitar.addEventListener("click", function () {
+            fila.remove();
+        });
+        fila.appendChild(entrada);
+        fila.appendChild(botonQuitar);
+        return { fila, entrada };
+    }
+    casillasDiaActivo.forEach(function (casillaDia) {
+        const dia = casillaDia.getAttribute("data-dia");
+        const contenedorHoras = contenedorHorasDelDia(dia);
+        const botonAgregar = document.querySelector(
+            '.boton-agregar-hora[data-dia="' + dia + '"]'
+        );
+        casillaDia.addEventListener("change", function () {
+            const activo = casillaDia.checked;
+            if (contenedorHoras) {
+                const entradas = contenedorHoras.querySelectorAll(
+                    ".entrada-hora-dia"
+                );
+                entradas.forEach(function (entrada, indice) {
+                    entrada.disabled = !activo;
+                    entrada.required = activo && indice === 0;
+                });
+            }
+            if (botonAgregar) {
+                botonAgregar.disabled = !activo;
+            }
+            diasCalendarioDelDia(dia).forEach(function (diaCalendario) {
+                if (!diaCalendario.disabled) {
+                    diaCalendario.checked = activo;
+                }
+            });
+        });
+    });
+    document.querySelectorAll(".boton-agregar-hora").forEach(function (
+        boton
+    ) {
+        const dia = boton.getAttribute("data-dia");
+        boton.addEventListener("click", function () {
+            const contenedorHoras = contenedorHorasDelDia(dia);
+            if (!contenedorHoras) {
+                return;
+            }
+            const { fila, entrada } = crearFilaHora(dia);
+            contenedorHoras.appendChild(fila);
+            entrada.focus();
+        });
+    });
+})();
 </script>
 </main>

@@ -79,6 +79,18 @@ La sesión se ha creado correctamente.
 </div>
 <?php endif; ?>
 <?php if (
+($_GET["mensaje"] ?? "") === "sesiones_recurrentes_creadas"
+): ?>
+<div class="mensaje mensaje-exito">
+<?php $numero_sesiones_creadas = (int) ($_GET["creadas"] ?? 0); ?>
+Se <?= $numero_sesiones_creadas === 1 ? 'ha creado' : 'han creado' ?> <?= $numero_sesiones_creadas ?> <?= $numero_sesiones_creadas === 1 ? 'sesión' : 'sesiones' ?>.
+<?php $numero_sesiones_omitidas = (int) ($_GET["omitidas"] ?? 0); ?>
+<?php if ($numero_sesiones_omitidas > 0): ?>
+Se <?= $numero_sesiones_omitidas === 1 ? 'ha omitido' : 'han omitido' ?> <?= $numero_sesiones_omitidas ?> por conflicto de horario o por no tener un horario válido para su día.
+<?php endif; ?>
+</div>
+<?php endif; ?>
+<?php if (
 ($_GET["mensaje"] ?? "") === "sesion_actualizada"
 ): ?>
 <div class="mensaje mensaje-exito">

@@ -33,6 +33,7 @@ INPUT_POST,
 FILTER_VALIDATE_INT
 );
 $observaciones = trim($_POST["observaciones"] ?? "");
+$es_recurrente = isset($_POST["es_recurrente"]);
 /*
 |--------------------------------------------------------------------------
 | 1. Validaciones básicas
@@ -49,10 +50,10 @@ $errores[] = "Debes seleccionar un espacio válido.";
 if (empty($profesores_seleccionados)) {
 $errores[] = "Debes seleccionar al menos un profesor.";
 }
-if ($fecha === "") {
+if (!$es_recurrente && $fecha === "") {
     $errores[] = "Debes indicar una fecha.";
 }
-if ($hora_inicio === "") {
+if (!$es_recurrente && $hora_inicio === "") {
 $errores[] = "Debes indicar una hora de inicio.";
 }
 if ($duracion === false || $duracion === null) {
@@ -74,6 +75,7 @@ $inicio = false;
 $fin = false;
 $hora_fin = null;
 if (
+!$es_recurrente &&
 $fecha !== "" &&
 $hora_inicio !== "" &&
 $duracion !== false &&
@@ -122,6 +124,112 @@ $errores[] =
 $hora_inicio = $inicio->format("H:i:s");
 $hora_fin = $fin->format("H:i:s");
 $fecha = $inicio->format("Y-m-d");
+}
+}
+/*
+|--------------------------------------------------------------------------
+| 2b. Validar y generar las ocurrencias de una sesión recurrente
+|--------------------------------------------------------------------------
+*/
+$ocurrencias_recurrentes = [];
+$sesiones_recurrentes_omitidas = 0;
+if ($es_recurrente) {
+$dias_recurrentes_activos = $_POST["dias_recurrentes"] ?? [];
+if (!is_array($dias_recurrentes_activos)) {
+$dias_recurrentes_activos = [];
+}
+$horarios_por_dia_recurrente = [];
+foreach ($dias_recurrentes_activos as $dia_recurrente_valor) {
+$dia_recurrente_numero = filter_var(
+$dia_recurrente_valor,
+FILTER_VALIDATE_INT,
+[
+"options" => [
+"min_range" => 1,
+"max_range" => 7
+]
+]
+);
+if ($dia_recurrente_numero === false) {
+continue;
+}
+$horas_dia_recurrente =
+$_POST["horas_recurrente_" . $dia_recurrente_numero] ?? [];
+if (!is_array($horas_dia_recurrente)) {
+$horas_dia_recurrente = [$horas_dia_recurrente];
+}
+$horas_validas_dia_recurrente = [];
+foreach ($horas_dia_recurrente as $hora_dia_recurrente) {
+$hora_dia_recurrente = trim($hora_dia_recurrente);
+if (
+$hora_dia_recurrente !== "" &&
+hora_valida($hora_dia_recurrente)
+) {
+$horas_validas_dia_recurrente[$hora_dia_recurrente] =
+$hora_dia_recurrente;
+}
+}
+if (!empty($horas_validas_dia_recurrente)) {
+$horarios_por_dia_recurrente[$dia_recurrente_numero] =
+array_values($horas_validas_dia_recurrente);
+}
+}
+$fechas_recurrentes = $_POST["fechas_recurrentes"] ?? [];
+if (!is_array($fechas_recurrentes)) {
+$fechas_recurrentes = [];
+}
+if (empty($horarios_por_dia_recurrente) || empty($fechas_recurrentes)) {
+$errores[] =
+"Debes marcar al menos un día con un horario y al menos una fecha en el calendario.";
+}
+if (
+$duracion !== false &&
+$duracion !== null &&
+$duracion >= 15 &&
+$duracion <= 480
+) {
+$ahora_recurrente = new DateTime();
+foreach ($fechas_recurrentes as $fecha_recurrente) {
+$fecha_recurrente = trim($fecha_recurrente);
+if (!fecha_valida($fecha_recurrente)) {
+$sesiones_recurrentes_omitidas++;
+continue;
+}
+$dia_semana_fecha_recurrente = (int) DateTime::createFromFormat(
+"Y-m-d",
+$fecha_recurrente
+)->format("N");
+$horas_del_dia_recurrente =
+$horarios_por_dia_recurrente[$dia_semana_fecha_recurrente] ?? [];
+if (empty($horas_del_dia_recurrente)) {
+$sesiones_recurrentes_omitidas++;
+continue;
+}
+foreach ($horas_del_dia_recurrente as $hora_inicio_recurrente) {
+$inicio_recurrente = DateTime::createFromFormat(
+"Y-m-d H:i",
+$fecha_recurrente . " " . $hora_inicio_recurrente
+);
+if (!$inicio_recurrente || $inicio_recurrente <= $ahora_recurrente) {
+$sesiones_recurrentes_omitidas++;
+continue;
+}
+$fin_recurrente = clone $inicio_recurrente;
+$fin_recurrente->modify("+{$duracion} minutes");
+$ocurrencias_recurrentes[] = [
+"fecha" => $fecha_recurrente,
+"hora_inicio" => $inicio_recurrente->format("H:i:s"),
+"hora_fin" => $fin_recurrente->format("H:i:s")
+];
+}
+}
+if (
+empty($errores) &&
+empty($ocurrencias_recurrentes)
+) {
+$errores[] =
+"No se ha podido generar ninguna sesión válida con los días, horarios y fechas indicados.";
+}
 }
 }
 /*
@@ -236,7 +344,7 @@ $stmt_profesor->close();
 | 6. Comprobar solapamientos
 |--------------------------------------------------------------------------
 */
-if (empty($errores)) {
+if (!$es_recurrente && empty($errores)) {
 /*
 |--------------------------------------------------------------------------
 | 6.1 Conflicto del espacio
@@ -394,6 +502,145 @@ exit;
 |--------------------------------------------------------------------------
 */
 $id_profesor_principal = $profesores_seleccionados[0];
+if ($es_recurrente) {
+$conexion->begin_transaction();
+try {
+$sql_conflicto_espacio_recurrente = "
+SELECT id_sesion
+FROM sesiones
+WHERE fecha = ?
+AND id_espacio = ?
+AND estado <> 'cancelada'
+AND hora_inicio < ?
+AND hora_fin > ?
+LIMIT 1
+";
+$stmt_conflicto_espacio_recurrente =
+$conexion->prepare($sql_conflicto_espacio_recurrente);
+$sql_conflicto_profesor_recurrente = "
+SELECT s.id_sesion
+FROM sesiones s
+INNER JOIN sesiones_profesores sp
+ON sp.id_sesion = s.id_sesion
+WHERE s.fecha = ?
+AND sp.id_profesor = ?
+AND s.estado <> 'cancelada'
+AND s.hora_inicio < ?
+AND s.hora_fin > ?
+LIMIT 1
+";
+$stmt_conflicto_profesor_recurrente =
+$conexion->prepare($sql_conflicto_profesor_recurrente);
+$sql_insertar_recurrente = "
+INSERT INTO sesiones (
+id_actividad,
+id_espacio,
+id_profesor,
+fecha,
+hora_inicio,
+hora_fin,
+aforo,
+estado,
+observaciones
+)
+VALUES (?, ?, ?, ?, ?, ?, ?, 'programada', ?)
+";
+$stmt_insertar_recurrente =
+$conexion->prepare($sql_insertar_recurrente);
+$sql_insertar_profesores_recurrente = "
+INSERT INTO sesiones_profesores (id_sesion, id_profesor)
+VALUES (?, ?)
+";
+$stmt_insertar_profesores_recurrente =
+$conexion->prepare($sql_insertar_profesores_recurrente);
+$sesiones_recurrentes_creadas = 0;
+foreach ($ocurrencias_recurrentes as $ocurrencia) {
+$fecha_ocurrencia = $ocurrencia["fecha"];
+$hora_inicio_ocurrencia = $ocurrencia["hora_inicio"];
+$hora_fin_ocurrencia = $ocurrencia["hora_fin"];
+$inicio_comprobacion_ocurrencia = DateTime::createFromFormat(
+"Y-m-d H:i:s",
+$fecha_ocurrencia . " " . $hora_inicio_ocurrencia
+)->modify("-15 minutes")->format("H:i:s");
+$fin_comprobacion_ocurrencia = DateTime::createFromFormat(
+"Y-m-d H:i:s",
+$fecha_ocurrencia . " " . $hora_fin_ocurrencia
+)->modify("+15 minutes")->format("H:i:s");
+$stmt_conflicto_espacio_recurrente->bind_param(
+"siss",
+$fecha_ocurrencia,
+$id_espacio,
+$fin_comprobacion_ocurrencia,
+$inicio_comprobacion_ocurrencia
+);
+$stmt_conflicto_espacio_recurrente->execute();
+$hay_conflicto_ocurrencia =
+$stmt_conflicto_espacio_recurrente->get_result()->num_rows > 0;
+if (!$hay_conflicto_ocurrencia) {
+foreach ($profesores_seleccionados as $id_profesor_conflicto_recurrente) {
+$stmt_conflicto_profesor_recurrente->bind_param(
+"siss",
+$fecha_ocurrencia,
+$id_profesor_conflicto_recurrente,
+$fin_comprobacion_ocurrencia,
+$inicio_comprobacion_ocurrencia
+);
+$stmt_conflicto_profesor_recurrente->execute();
+if ($stmt_conflicto_profesor_recurrente->get_result()->num_rows > 0) {
+$hay_conflicto_ocurrencia = true;
+break;
+}
+}
+}
+if ($hay_conflicto_ocurrencia) {
+$sesiones_recurrentes_omitidas++;
+continue;
+}
+$stmt_insertar_recurrente->bind_param(
+"iiisssis",
+$id_actividad,
+$id_espacio,
+$id_profesor_principal,
+$fecha_ocurrencia,
+$hora_inicio_ocurrencia,
+$hora_fin_ocurrencia,
+$aforo,
+$observaciones
+);
+if (!$stmt_insertar_recurrente->execute()) {
+$sesiones_recurrentes_omitidas++;
+continue;
+}
+$id_sesion_recurrente_creada = $conexion->insert_id;
+foreach ($profesores_seleccionados as $id_profesor_asignado_recurrente) {
+$stmt_insertar_profesores_recurrente->bind_param(
+"ii",
+$id_sesion_recurrente_creada,
+$id_profesor_asignado_recurrente
+);
+$stmt_insertar_profesores_recurrente->execute();
+}
+$sesiones_recurrentes_creadas++;
+}
+$stmt_conflicto_espacio_recurrente->close();
+$stmt_conflicto_profesor_recurrente->close();
+$stmt_insertar_recurrente->close();
+$stmt_insertar_profesores_recurrente->close();
+$conexion->commit();
+$conexion->close();
+header(
+"Location: sesiones.php?mensaje=sesiones_recurrentes_creadas" .
+"&creadas=" . $sesiones_recurrentes_creadas .
+"&omitidas=" . $sesiones_recurrentes_omitidas
+);
+exit;
+} catch (Throwable $error) {
+$conexion->rollback();
+$conexion->close();
+echo "No se han podido guardar las sesiones.";
+exit;
+}
+}
 $conexion->begin_transaction();
 try {
 $sql_insertar = "

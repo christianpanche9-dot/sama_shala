@@ -2043,6 +2043,9 @@ padding: 0 6px;
 .bloque-precio-actividad {
 display: none;
 }
+.bloque-fecha-unica.oculto {
+display: none;
+}
 .bloque-regular.visible,
 .bloque-top.visible {
 display: block;
