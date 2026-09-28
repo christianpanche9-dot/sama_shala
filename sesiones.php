@@ -280,7 +280,7 @@ $es_pasado = $dia < $hoy;
 <?php foreach ($sesiones_por_dia[$clave_dia] as $sesion_dia): ?>
 <a
 class="sesion-calendario-chip sesion-calendario-chip-<?= escapar($sesion_dia['tipo']) ?>"
-href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
+href="detalle_sesion.php?id=<?= (int) $sesion_dia['id_sesion'] ?>"
 >
 <span class="sesion-calendario-hora">
 <?= escapar(formatear_hora($sesion_dia['hora_inicio'])) ?>
@@ -352,7 +352,7 @@ $sesiones_por_dia[$clave_dia] as $indice_sesion_dia => $sesion_dia
 <a
 class="item-actividad-dia"
 data-pagina="<?= intdiv($indice_sesion_dia, $sesiones_por_pagina_dia) ?>"
-href="detalle_actividad.php?id=<?= (int) $sesion_dia['id_actividad'] ?>"
+href="detalle_sesion.php?id=<?= (int) $sesion_dia['id_sesion'] ?>"
 >
 <span class="item-actividad-hora">
 <?= escapar(formatear_hora($sesion_dia['hora_inicio'])) ?> – <?= escapar(formatear_hora($sesion_dia['hora_fin'])) ?>
