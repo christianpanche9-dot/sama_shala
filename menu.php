@@ -24,6 +24,10 @@ English
 <a href="login.php">
 <?= t('Iniciar sesión') ?>
 </a>
+<?php else: ?>
+<a href="logout.php" class="barra-utilidad-salir">
+<?= t('Salir') ?>
+</a>
 <?php endif; ?>
 </div>
 </div>
@@ -80,9 +84,6 @@ aria-label="Abrir menú"
 <?= t('Mis reservas') ?>
 </a>
 <?php endif; ?>
-<a href="logout.php">
-<?= t('Salir') ?>
-</a>
 <?php endif; ?>
 </div>
 </div>
