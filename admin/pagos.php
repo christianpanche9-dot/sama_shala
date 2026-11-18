@@ -41,7 +41,7 @@ bc.referencia_pago,
 bc.comprobante_pago,
 CASE
 WHEN bc.estado = 'pendiente' THEN 'pendiente'
-WHEN bc.estado = 'cancelado' AND bc.metodo_pago = 'transferencia' THEN 'rechazado'
+WHEN bc.estado = 'cancelado' AND bc.metodo_pago IN ('transferencia', 'payphone') THEN 'rechazado'
 ELSE 'pagado'
 END AS estado_pago,
 'paquete' AS tipo_origen,

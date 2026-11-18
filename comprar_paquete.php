@@ -81,7 +81,7 @@ content="width=device-width, initial-scale=1.0"
 </div>
 <?php if ($error === 'pago'): ?>
 <div class="mensaje mensaje-error">
-<?= t('No se ha podido procesar el pago simulado. Inténtalo de nuevo.') ?>
+<?= t('No se ha podido iniciar el pago. Inténtalo de nuevo.') ?>
 </div>
 <?php endif; ?>
 </section>
@@ -109,11 +109,11 @@ value="<?= escapar(tokenCsrf()) ?>"
 <input
 type="radio"
 name="metodo_pago_compra"
-value="simulado"
+value="payphone"
 checked
 data-metodo-pago
 >
-<?= t('Pago simulado') ?>
+<?= t('Tarjeta (PayPhone)') ?>
 </label>
 <label class="opcion-pago">
 <input
@@ -125,35 +125,10 @@ data-metodo-pago
 <?= t('Transferencia bancaria') ?>
 </label>
 </fieldset>
-<div id="bloque-pago-simulado">
+<div id="bloque-pago-payphone">
 <p>
-<?= t('Este proyecto no cobra dinero real: al confirmar se registra la compra directamente como pagada.') ?>
+<?= t('Serás redirigido a PayPhone para completar el pago de forma segura con tu tarjeta.') ?>
 </p>
-<div class="campo">
-<label for="titular">
-<?= t('Nombre del titular') ?>
-</label>
-<input
-type="text"
-id="titular"
-name="titular"
-maxlength="150"
-data-requerido-simulado
->
-</div>
-<div class="campo">
-<label for="tarjeta">
-<?= t('Número de tarjeta (simulado)') ?>
-</label>
-<input
-type="text"
-id="tarjeta"
-name="tarjeta"
-maxlength="19"
-placeholder="4111 1111 1111 1111"
-data-requerido-simulado
->
-</div>
 </div>
 <div id="bloque-pago-transferencia" hidden>
 <?php require __DIR__ . '/datos_transferencia.php'; ?>
@@ -183,16 +158,13 @@ data-requerido-transferencia
 <script>
 (function () {
 var formulario = document.getElementById('formulario-pago-paquete');
-var bloqueSimulado = document.getElementById('bloque-pago-simulado');
+var bloquePayphone = document.getElementById('bloque-pago-payphone');
 var bloqueTransferencia = document.getElementById('bloque-pago-transferencia');
 var radios = formulario.querySelectorAll('[data-metodo-pago]');
 function actualizarModoPago() {
 var esTransferencia = formulario.querySelector('[data-metodo-pago]:checked').value === 'transferencia';
-bloqueSimulado.hidden = esTransferencia;
+bloquePayphone.hidden = esTransferencia;
 bloqueTransferencia.hidden = !esTransferencia;
-formulario.querySelectorAll('[data-requerido-simulado]').forEach(function (campo) {
-campo.required = !esTransferencia;
-});
 formulario.querySelectorAll('[data-requerido-transferencia]').forEach(function (campo) {
 campo.required = esTransferencia;
 });
