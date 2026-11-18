@@ -23,25 +23,15 @@ header('Location: usuarios.php?error=propio_usuario');
 exit;
 }
 
-$sql_uso = "
-SELECT COUNT(*) AS total
-FROM reservas
-WHERE id_usuario = ?
-AND estado = 'confirmada'
-";
-$stmt_uso = $conexion->prepare($sql_uso);
-$stmt_uso->bind_param('i', $id_usuario);
-$stmt_uso->execute();
-$fila_uso = $stmt_uso->get_result()->fetch_assoc();
-if ((int) $fila_uso['total'] > 0) {
-header('Location: usuarios.php?error=en_uso');
-exit;
-}
-
+try {
 $sql = "DELETE FROM usuarios WHERE id_usuario = ?";
 $stmt = $conexion->prepare($sql);
 $stmt->bind_param('i', $id_usuario);
 $stmt->execute();
+} catch (Throwable $error) {
+header('Location: usuarios.php?error=en_uso');
+exit;
+}
 
 header('Location: usuarios.php?mensaje=eliminado');
 exit;

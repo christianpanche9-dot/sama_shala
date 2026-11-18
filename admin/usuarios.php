@@ -83,7 +83,7 @@ El usuario se ha eliminado correctamente.
 <?php endif; ?>
 <?php if (($_GET['error'] ?? '') === 'en_uso'): ?>
 <div class="mensaje mensaje-error">
-No se puede eliminar el usuario porque tiene reservas asociadas.
+No se puede eliminar el usuario porque tiene reservas, paquetes o compras asociadas.
 Desactívalo si no quieres que pueda iniciar sesión.
 </div>
 <?php endif; ?>
