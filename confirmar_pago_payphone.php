@@ -38,6 +38,8 @@ if ($id_payphone !== '' && $referencia !== '') {
         $aprobado = $confirmacion['ok'] && $confirmacion['aprobado'] && $monto_coincide;
 
         if ($aprobado) {
+            $cliente = '';
+            $detalle = '';
             if ($pendiente['tipo'] === 'paquete') {
                 $sql = "
                     UPDATE paquetes_clientes
@@ -53,6 +55,20 @@ if ($id_payphone !== '' && $referencia !== '') {
                 if ($actualizado) {
                     activarPreReservasPendientes($conexion, $pendiente['id_usuario'], $pendiente['id']);
                 }
+                $sql_datos = "
+                    SELECT CONCAT(u.nombre, ' ', u.apellidos) AS cliente, tp.nombre AS detalle
+                    FROM paquetes_clientes pc
+                    INNER JOIN usuarios u ON pc.id_usuario = u.id_usuario
+                    INNER JOIN tipos_paquete tp ON pc.id_tipo_paquete = tp.id_tipo_paquete
+                    WHERE pc.id_paquete_cliente = ?
+                ";
+                $stmt_datos = $conexion->prepare($sql_datos);
+                $stmt_datos->bind_param('i', $pendiente['id']);
+                $stmt_datos->execute();
+                $datos = $stmt_datos->get_result()->fetch_assoc();
+                $stmt_datos->close();
+                $cliente = $datos['cliente'] ?? '';
+                $detalle = $datos['detalle'] ?? 'Paquete';
                 $vista['enlace_texto'] = t('Ver mis paquetes');
                 $vista['enlace_url'] = 'mis_paquetes.php';
             } elseif ($pendiente['tipo'] === 'reserva') {
@@ -67,6 +83,21 @@ if ($id_payphone !== '' && $referencia !== '') {
                 $stmt->bind_param('si', $id_payphone, $pendiente['id']);
                 $stmt->execute();
                 $stmt->close();
+                $sql_datos = "
+                    SELECT CONCAT(u.nombre, ' ', u.apellidos) AS cliente, a.nombre AS detalle
+                    FROM reservas r
+                    INNER JOIN usuarios u ON r.id_usuario = u.id_usuario
+                    INNER JOIN sesiones s ON r.id_sesion = s.id_sesion
+                    INNER JOIN actividades a ON s.id_actividad = a.id_actividad
+                    WHERE r.id_reserva = ?
+                ";
+                $stmt_datos = $conexion->prepare($sql_datos);
+                $stmt_datos->bind_param('i', $pendiente['id']);
+                $stmt_datos->execute();
+                $datos = $stmt_datos->get_result()->fetch_assoc();
+                $stmt_datos->close();
+                $cliente = $datos['cliente'] ?? '';
+                $detalle = $datos['detalle'] ?? 'Reserva';
                 $vista['enlace_texto'] = t('Ver mis reservas');
                 $vista['enlace_url'] = 'mis_reservas.php';
             } else {
@@ -80,9 +111,28 @@ if ($id_payphone !== '' && $referencia !== '') {
                 $stmt->bind_param('ss', $id_payphone, $referencia);
                 $stmt->execute();
                 $stmt->close();
+                $sql_datos = "
+                    SELECT
+                        CONCAT(u.nombre, ' ', u.apellidos) AS cliente,
+                        GROUP_CONCAT(CONCAT(p.nombre, ' x', cp.cantidad) SEPARATOR ', ') AS detalle
+                    FROM compras_productos cp
+                    INNER JOIN usuarios u ON cp.id_usuario = u.id_usuario
+                    INNER JOIN productos p ON cp.id_producto = p.id_producto
+                    WHERE cp.referencia_pago = ?
+                    GROUP BY u.nombre, u.apellidos
+                ";
+                $stmt_datos = $conexion->prepare($sql_datos);
+                $stmt_datos->bind_param('s', $referencia);
+                $stmt_datos->execute();
+                $datos = $stmt_datos->get_result()->fetch_assoc();
+                $stmt_datos->close();
+                $cliente = $datos['cliente'] ?? '';
+                $detalle = $datos['detalle'] ?? 'Compra en tienda';
                 $vista['enlace_texto'] = t('Ver mis compras');
                 $vista['enlace_url'] = 'mis_compras.php';
             }
+
+            notificarPagoPayphone($pendiente['tipo'], $referencia, $pendiente['monto'], $cliente, $detalle);
 
             $vista['aprobado'] = true;
             $vista['titulo'] = t('¡Pago aprobado!');

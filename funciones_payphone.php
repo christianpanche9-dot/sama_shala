@@ -6,6 +6,23 @@ function generarReferenciaPayphone(): string
     return 'PP' . strtoupper(bin2hex(random_bytes(6)));
 }
 
+function notificarPagoPayphone(string $tipo, string $referencia, float $monto, string $cliente, string $descripcion): void
+{
+    require_once __DIR__ . '/correo.php';
+    $asunto = 'Nuevo pago con PayPhone (' . $tipo . ') | Sama Shala';
+    $cuerpo = '
+        <p>Se ha confirmado un nuevo pago con PayPhone.</p>
+        <ul>
+            <li><strong>Tipo:</strong> ' . htmlspecialchars($tipo, ENT_QUOTES, 'UTF-8') . '</li>
+            <li><strong>Cliente:</strong> ' . htmlspecialchars($cliente, ENT_QUOTES, 'UTF-8') . '</li>
+            <li><strong>Detalle:</strong> ' . htmlspecialchars($descripcion, ENT_QUOTES, 'UTF-8') . '</li>
+            <li><strong>Monto:</strong> $' . number_format($monto, 2) . '</li>
+            <li><strong>Referencia:</strong> ' . htmlspecialchars($referencia, ENT_QUOTES, 'UTF-8') . '</li>
+        </ul>
+    ';
+    enviar_correo('reservas@samashala.com', $asunto, $cuerpo);
+}
+
 function payphonePrepararPago(float $monto, string $referencia, string $descripcion): array
 {
     global $payphone_token, $payphone_store_id, $payphone_response_url;
