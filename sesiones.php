@@ -222,6 +222,16 @@ window.addEventListener("resize", ajustarTamano);
 })();
 </script>
 <div class="contenedor seccion">
+<div class="buscador-sesiones">
+<input
+type="search"
+id="buscador-sesiones-input"
+placeholder="<?= escapar(t('Buscar por actividad o profesor...')) ?>"
+aria-label="<?= escapar(t('Buscar sesión')) ?>"
+autocomplete="off"
+>
+<div class="resultados-buscador-sesiones" id="resultados-buscador-sesiones" hidden></div>
+</div>
 <div class="navegacion-mes">
 <?php if ($mostrar_mes_anterior): ?>
 <a
@@ -480,6 +490,72 @@ panel.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 });
 actualizar();
+});
+})();
+</script>
+<script>
+(function () {
+var entrada = document.getElementById("buscador-sesiones-input");
+var resultados = document.getElementById("resultados-buscador-sesiones");
+var temporizador = null;
+
+function ocultarResultados() {
+resultados.hidden = true;
+resultados.innerHTML = "";
+}
+
+function pintarResultados(sesiones) {
+resultados.innerHTML = "";
+if (sesiones.length === 0) {
+var vacio = document.createElement("p");
+vacio.className = "resultado-sesion-vacio";
+vacio.textContent = <?= json_encode(t('No se encontraron sesiones.')) ?>;
+resultados.appendChild(vacio);
+resultados.hidden = false;
+return;
+}
+sesiones.forEach(function (sesion) {
+var enlace = document.createElement("a");
+enlace.className = "resultado-sesion-item";
+enlace.href = "detalle_sesion.php?id=" + encodeURIComponent(sesion.id);
+
+var nombre = document.createElement("span");
+nombre.className = "resultado-sesion-nombre";
+nombre.textContent = sesion.actividad;
+
+var detalle = document.createElement("span");
+detalle.className = "resultado-sesion-detalle";
+detalle.textContent = sesion.fecha + " · " + sesion.hora +
+(sesion.profesor ? " · " + sesion.profesor : "");
+
+enlace.appendChild(nombre);
+enlace.appendChild(detalle);
+resultados.appendChild(enlace);
+});
+resultados.hidden = false;
+}
+
+entrada.addEventListener("input", function () {
+var consulta = entrada.value.trim();
+clearTimeout(temporizador);
+if (consulta.length < 2) {
+ocultarResultados();
+return;
+}
+temporizador = setTimeout(function () {
+fetch("buscar_sesiones.php?q=" + encodeURIComponent(consulta))
+.then(function (respuesta) {
+return respuesta.json();
+})
+.then(pintarResultados)
+.catch(ocultarResultados);
+}, 300);
+});
+
+document.addEventListener("click", function (evento) {
+if (!evento.target.closest(".buscador-sesiones")) {
+ocultarResultados();
+}
 });
 })();
 </script>
