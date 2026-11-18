@@ -1,6 +1,8 @@
 <?php
 require_once "seguridad_admin.php";
 require_once "../conexion.php";
+$buscar = trim($_GET["buscar"] ?? "");
+$patron = "%" . $buscar . "%";
 $sql = "
 SELECT
 s.id_sesion,
@@ -34,11 +36,25 @@ s.aforo,
 s.estado,
 a.nombre,
 e.nombre
+HAVING
+? = ''
+OR a.nombre LIKE ?
+OR e.nombre LIKE ?
+OR profesores LIKE ?
 ORDER BY
 s.fecha ASC,
 s.hora_inicio ASC
 ";
-$resultado = $conexion->query($sql);
+$stmt = $conexion->prepare($sql);
+$stmt->bind_param(
+"ssss",
+$buscar,
+$patron,
+$patron,
+$patron
+);
+$stmt->execute();
+$resultado = $stmt->get_result();
 $sesiones = $resultado->fetch_all(MYSQLI_ASSOC);
 $sesiones_por_mes = [];
 foreach ($sesiones as $sesion) {
@@ -115,12 +131,39 @@ apuntes en lista de espera asociados.
 <a class="boton" href="nueva_sesion.php">
 Programar una sesión
 </a>
+<form method="get" class="filtros">
+<div class="campo">
+<label for="buscar">
+Buscar sesión
+</label>
+<input
+type="search"
+id="buscar"
+name="buscar"
+value="<?= escapar($buscar) ?>"
+placeholder="Actividad, espacio o profesor"
+>
+</div>
+<div class="campo campo-acciones-filtro">
+<div class="acciones-filtro">
+<button type="submit" class="boton">
+Aplicar filtros
+</button>
+<a
+href="sesiones.php"
+class="boton boton-secundario"
+>
+Limpiar
+</a>
+</div>
+</div>
+</form>
 <?php if (count($sesiones) === 0): ?>
-<p>No existen sesiones programadas.</p>
+<p><?= $buscar === '' ? 'No existen sesiones programadas.' : 'No se han encontrado sesiones con ese criterio.' ?></p>
 <?php else: ?>
 <?php foreach ($sesiones_por_mes as $clave_mes => $sesiones_del_mes): ?>
 <?php $fecha_mes = DateTime::createFromFormat('Y-m-d', $clave_mes . '-01'); ?>
-<details class="grupo-mes-admin" <?= $clave_mes === $mes_actual ? 'open' : '' ?>>
+<details class="grupo-mes-admin" <?= ($buscar !== '' || $clave_mes === $mes_actual) ? 'open' : '' ?>>
 <summary class="resumen-mes-admin">
 <span>
 <?= escapar(texto_mes((int) $fecha_mes->format('n'))) ?> <?= $fecha_mes->format('Y') ?>
