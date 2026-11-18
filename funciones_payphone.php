@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/funciones.php';
 require_once __DIR__ . '/payphone_config.php';
 
 function generarReferenciaPayphone(): string
@@ -8,19 +9,15 @@ function generarReferenciaPayphone(): string
 
 function notificarPagoPayphone(string $tipo, string $referencia, float $monto, string $cliente, string $descripcion): void
 {
-    require_once __DIR__ . '/correo.php';
-    $asunto = 'Nuevo pago con PayPhone (' . $tipo . ') | Sama Shala';
-    $cuerpo = '
-        <p>Se ha confirmado un nuevo pago con PayPhone.</p>
-        <ul>
-            <li><strong>Tipo:</strong> ' . htmlspecialchars($tipo, ENT_QUOTES, 'UTF-8') . '</li>
-            <li><strong>Cliente:</strong> ' . htmlspecialchars($cliente, ENT_QUOTES, 'UTF-8') . '</li>
-            <li><strong>Detalle:</strong> ' . htmlspecialchars($descripcion, ENT_QUOTES, 'UTF-8') . '</li>
-            <li><strong>Monto:</strong> $' . number_format($monto, 2) . '</li>
-            <li><strong>Referencia:</strong> ' . htmlspecialchars($referencia, ENT_QUOTES, 'UTF-8') . '</li>
-        </ul>
-    ';
-    enviar_correo('reservas@samashala.com', $asunto, $cuerpo);
+    notificarPagoAdmin(
+        'Nuevo pago con PayPhone (' . $tipo . ') | Sama Shala',
+        'Se ha confirmado un nuevo pago con PayPhone.',
+        $tipo,
+        $referencia,
+        $monto,
+        $cliente,
+        $descripcion
+    );
 }
 
 function payphonePrepararPago(float $monto, string $referencia, string $descripcion): array

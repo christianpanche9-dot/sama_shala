@@ -766,6 +766,40 @@ function enviar_correo_recuperacion(string $email, string $enlace): bool
     return $resultado['ok'];
 }
 
+function notificarPagoAdmin(
+    string $asunto,
+    string $intro,
+    string $tipo,
+    string $referencia,
+    float $monto,
+    string $cliente,
+    string $detalle
+): void {
+    require_once __DIR__ . '/correo.php';
+    $cuerpo = '
+        <p>' . htmlspecialchars($intro, ENT_QUOTES, 'UTF-8') . '</p>
+        <ul>
+            <li><strong>Tipo:</strong> ' . htmlspecialchars($tipo, ENT_QUOTES, 'UTF-8') . '</li>
+            <li><strong>Cliente:</strong> ' . htmlspecialchars($cliente, ENT_QUOTES, 'UTF-8') . '</li>
+            <li><strong>Detalle:</strong> ' . htmlspecialchars($detalle, ENT_QUOTES, 'UTF-8') . '</li>
+            <li><strong>Monto:</strong> $' . number_format($monto, 2) . '</li>
+            <li><strong>Referencia:</strong> ' . htmlspecialchars($referencia, ENT_QUOTES, 'UTF-8') . '</li>
+        </ul>
+    ';
+    enviar_correo('reservas@samashala.com', $asunto, $cuerpo);
+}
+
+function nombreClienteActual(mysqli $conexion, int $id_usuario): string
+{
+    $sql = "SELECT CONCAT(nombre, ' ', apellidos) AS cliente FROM usuarios WHERE id_usuario = ?";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param('i', $id_usuario);
+    $stmt->execute();
+    $fila = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    return $fila['cliente'] ?? '';
+}
+
 function extraer_id_youtube(?string $url): ?string
 {
     $url = trim($url ?? '');

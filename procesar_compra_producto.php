@@ -93,6 +93,19 @@ header('Location: ' . $resultado_pago['url_pago']);
 exit;
 }
 
+notificarPagoAdmin(
+'Nuevo comprobante de transferencia (Producto) | Sama Shala',
+'Un cliente subió un comprobante de transferencia bancaria, pendiente de revisión.',
+'Producto',
+$referencia_pago,
+(float) $detalle_carrito['total'],
+nombreClienteActual($conexion, $id_usuario),
+implode(', ', array_map(
+fn ($item) => $item['nombre'] . ' x' . $item['cantidad'],
+$detalle_carrito['items']
+))
+);
+
 header('Location: mis_compras.php?mensaje=comprado');
 exit;
 } catch (Throwable $error) {

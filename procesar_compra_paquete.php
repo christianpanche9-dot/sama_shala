@@ -148,6 +148,16 @@ header('Location: ' . $resultado_pago['url_pago']);
 exit;
 }
 
+notificarPagoAdmin(
+'Nuevo comprobante de transferencia (Paquete) | Sama Shala',
+'Un cliente subió un comprobante de transferencia bancaria, pendiente de revisión.',
+'Paquete',
+$referencia_pago,
+(float) $tipo_paquete['precio'],
+nombreClienteActual($conexion, $id_usuario),
+$tipo_paquete['nombre']
+);
+
 header(
 'Location: mis_paquetes.php?mensaje=comprado'
 );

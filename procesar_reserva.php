@@ -460,6 +460,23 @@ $id_sesion
 $stmt_estado->execute();
 $stmt_estado->close();
 $conexion->commit();
+if ($estado_pago === "pendiente") {
+$sql_nombre_actividad = "SELECT nombre FROM actividades WHERE id_actividad = ?";
+$stmt_nombre_actividad = $conexion->prepare($sql_nombre_actividad);
+$stmt_nombre_actividad->bind_param("i", $sesion["id_actividad"]);
+$stmt_nombre_actividad->execute();
+$nombre_actividad = $stmt_nombre_actividad->get_result()->fetch_assoc()["nombre"] ?? "Reserva";
+$stmt_nombre_actividad->close();
+notificarPagoAdmin(
+"Nuevo comprobante de transferencia (Reserva) | Sama Shala",
+"Un cliente subió un comprobante de transferencia bancaria, pendiente de revisión.",
+"Reserva",
+$referencia_pago,
+(float) $precio_pagado,
+nombreClienteActual($conexion, $id_usuario),
+$nombre_actividad . ($cantidad > 1 ? " x{$cantidad}" : "")
+);
+}
 $resumen_recurrente = "";
 if ($tipo_pago === "paquete" && $repetir_semanal) {
 $dia_semana_sesion = (int) (new DateTime($sesion["fecha"]))->format("N");
