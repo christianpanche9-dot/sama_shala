@@ -20,6 +20,8 @@ s.hora_fin,
 s.aforo,
 s.estado,
 a.nombre AS actividad,
+a.tipo AS tipo_actividad,
+a.precio AS precio_actividad,
 e.nombre AS espacio
 FROM sesiones s
 INNER JOIN actividades a
@@ -131,6 +133,17 @@ $sesion["aforo"] *
 )
 : 0;
 $mensaje = $_GET["mensaje"] ?? "";
+$sql_clientes = "
+SELECT id_usuario, nombre, apellidos, email
+FROM usuarios
+WHERE rol = 'cliente'
+ORDER BY apellidos, nombre
+";
+$clientes = $conexion->query($sql_clientes)->fetch_all(MYSQLI_ASSOC);
+$pago_con_precio_fijo =
+$sesion["tipo_actividad"] !== "clase" &&
+$sesion["precio_actividad"] !== null;
+$hay_cupo = $total_confirmadas < (int) $sesion["aforo"];
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -161,6 +174,16 @@ La asistencia se ha actualizado.
 <div class="mensaje mensaje-exito">
 La reserva se ha cancelado y se ha
 revisado la lista de espera.
+</div>
+<?php elseif ($mensaje === "reserva_creada"): ?>
+<div class="mensaje mensaje-exito">
+La reserva se registró como pagada en efectivo.
+</div>
+<?php elseif ($mensaje === "error_reserva"): ?>
+<div class="mensaje mensaje-error">
+No se pudo registrar la reserva. Revisa que haya cupo
+disponible y que el cliente no tenga ya una reserva en
+esta sesión.
 </div>
 <?php endif; ?>
 <section class="resumen-sesion-admin">
@@ -229,6 +252,55 @@ $id_sesion
 Exportar CSV
 </a>
 </div>
+<section>
+<h2>Registrar pago en efectivo</h2>
+<?php if (!$hay_cupo): ?>
+<p>No hay cupo disponible en esta sesión.</p>
+<?php elseif (empty($clientes)): ?>
+<p>No hay clientes registrados.</p>
+<?php else: ?>
+<form
+action="guardar_reserva_efectivo.php"
+method="post"
+class="formulario-inline"
+>
+<input type="hidden" name="id_sesion" value="<?= $id_sesion ?>">
+<input type="hidden" name="csrf_token" value="<?= escapar(tokenCsrf()) ?>">
+<select name="id_usuario" required>
+<option value="">Selecciona un cliente</option>
+<?php foreach ($clientes as $cliente): ?>
+<option value="<?= $cliente["id_usuario"] ?>">
+<?= escapar($cliente["apellidos"] . ", " . $cliente["nombre"] . " — " . $cliente["email"]) ?>
+</option>
+<?php endforeach; ?>
+</select>
+<?php if ($pago_con_precio_fijo): ?>
+<label for="cantidad">Cantidad</label>
+<input
+type="number"
+name="cantidad"
+id="cantidad"
+value="1"
+min="1"
+max="<?= LIMITE_PLAZAS_POR_RESERVA ?>"
+>
+<?php endif; ?>
+<label for="precio_pagado">Monto cobrado ($)</label>
+<input
+type="number"
+step="0.01"
+min="0"
+name="precio_pagado"
+id="precio_pagado"
+value="<?= $pago_con_precio_fijo ? escapar((string) $sesion["precio_actividad"]) : "" ?>"
+placeholder="Opcional"
+>
+<button type="submit" class="boton">
+Registrar reserva pagada en efectivo
+</button>
+</form>
+<?php endif; ?>
+</section>
 <section>
 <h2>Participantes</h2>
 <?php if (
