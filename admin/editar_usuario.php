@@ -189,7 +189,7 @@ Guardar cambios
 </div>
 </form>
 <?php if ($usuario['rol'] === 'cliente'): ?>
-<h2>Paquetes</h2>
+<h2 id="paquetes">Paquetes</h2>
 <?php if ($mensaje === 'paquete_creado'): ?>
 <div class="mensaje mensaje-exito">
 El paquete se registró como pagado en efectivo.
@@ -237,11 +237,13 @@ No se pudo registrar el paquete. Revisa el tipo de paquete seleccionado.
 <form
 action="guardar_paquete_efectivo.php"
 method="post"
-class="formulario-inline"
+class="formulario-admin"
 >
 <input type="hidden" name="id_usuario" value="<?= (int) $usuario['id_usuario'] ?>">
 <input type="hidden" name="csrf_token" value="<?= escapar(tokenCsrf()) ?>">
-<select name="id_tipo_paquete" required>
+<div class="campo campo-completo">
+<label for="id_tipo_paquete">Tipo de paquete</label>
+<select id="id_tipo_paquete" name="id_tipo_paquete" required>
 <option value="">Selecciona un paquete</option>
 <?php foreach ($tipos_paquete_disponibles as $tipo): ?>
 <option value="<?= $tipo['id_tipo_paquete'] ?>">
@@ -250,6 +252,8 @@ class="formulario-inline"
 </option>
 <?php endforeach; ?>
 </select>
+</div>
+<div class="campo">
 <label for="precio_pagado_paquete">Monto cobrado ($)</label>
 <input
 type="number"
@@ -259,9 +263,12 @@ name="precio_pagado"
 id="precio_pagado_paquete"
 placeholder="Precio de lista si se deja vacío"
 >
+</div>
+<div class="campo-completo">
 <button type="submit" class="boton">
 Registrar paquete pagado en efectivo
 </button>
+</div>
 </form>
 <?php endif; ?>
 <?php endif; ?>

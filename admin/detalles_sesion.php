@@ -262,11 +262,13 @@ Exportar CSV
 <form
 action="guardar_reserva_efectivo.php"
 method="post"
-class="formulario-inline"
+class="formulario-admin"
 >
 <input type="hidden" name="id_sesion" value="<?= $id_sesion ?>">
 <input type="hidden" name="csrf_token" value="<?= escapar(tokenCsrf()) ?>">
-<select name="id_usuario" required>
+<div class="campo campo-completo">
+<label for="id_usuario">Cliente</label>
+<select id="id_usuario" name="id_usuario" required>
 <option value="">Selecciona un cliente</option>
 <?php foreach ($clientes as $cliente): ?>
 <option value="<?= $cliente["id_usuario"] ?>">
@@ -274,7 +276,9 @@ class="formulario-inline"
 </option>
 <?php endforeach; ?>
 </select>
+</div>
 <?php if ($pago_con_precio_fijo): ?>
+<div class="campo">
 <label for="cantidad">Cantidad</label>
 <input
 type="number"
@@ -284,7 +288,9 @@ value="1"
 min="1"
 max="<?= LIMITE_PLAZAS_POR_RESERVA ?>"
 >
+</div>
 <?php endif; ?>
+<div class="campo">
 <label for="precio_pagado">Monto cobrado ($)</label>
 <input
 type="number"
@@ -295,9 +301,12 @@ id="precio_pagado"
 value="<?= $pago_con_precio_fijo ? escapar((string) $sesion["precio_actividad"]) : "" ?>"
 placeholder="Opcional"
 >
+</div>
+<div class="campo-completo">
 <button type="submit" class="boton">
 Registrar reserva pagada en efectivo
 </button>
+</div>
 </form>
 <?php endif; ?>
 </section>

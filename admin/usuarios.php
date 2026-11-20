@@ -207,6 +207,11 @@ Acciones
 <a href="editar_usuario.php?id_usuario=<?= (int) $usuario['id_usuario'] ?>">
 Editar
 </a>
+<?php if ($usuario['rol'] === 'cliente'): ?>
+<a href="editar_usuario.php?id_usuario=<?= (int) $usuario['id_usuario'] ?>#paquetes">
+Pago en efectivo
+</a>
+<?php endif; ?>
 <a href="ver_inscripcion.php?id_usuario=<?= (int) $usuario['id_usuario'] ?>">
 Ver inscripción
 </a>
