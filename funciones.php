@@ -809,21 +809,32 @@ function notificarTelegram(string $mensaje): void
         return;
     }
     $url = "https://api.telegram.org/bot{$telegram_bot_token}/sendMessage";
-    $contexto = stream_context_create([
-        'http' => [
-            'method' => 'POST',
-            'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
-            'content' => http_build_query([
-                'chat_id' => $telegram_chat_id,
-                'text' => $mensaje,
-                'parse_mode' => 'HTML',
-            ]),
-            'timeout' => 5,
-            'ignore_errors' => true,
-        ],
-    ]);
+    $datos = [
+        'chat_id' => $telegram_chat_id,
+        'text' => $mensaje,
+        'parse_mode' => 'HTML',
+    ];
     try {
-        @file_get_contents($url, false, $contexto);
+        if (function_exists('curl_init')) {
+            $peticion = curl_init($url);
+            curl_setopt($peticion, CURLOPT_POST, true);
+            curl_setopt($peticion, CURLOPT_POSTFIELDS, http_build_query($datos));
+            curl_setopt($peticion, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($peticion, CURLOPT_TIMEOUT, 5);
+            curl_exec($peticion);
+            curl_close($peticion);
+        } elseif (ini_get('allow_url_fopen')) {
+            $contexto = stream_context_create([
+                'http' => [
+                    'method' => 'POST',
+                    'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
+                    'content' => http_build_query($datos),
+                    'timeout' => 5,
+                    'ignore_errors' => true,
+                ],
+            ]);
+            @file_get_contents($url, false, $contexto);
+        }
     } catch (Throwable $error) {
         // Una notificación de Telegram no debe romper el flujo de reserva/pago.
     }
