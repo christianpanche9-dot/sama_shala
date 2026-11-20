@@ -460,13 +460,14 @@ $id_sesion
 $stmt_estado->execute();
 $stmt_estado->close();
 $conexion->commit();
-if ($estado_pago === "pendiente") {
 $sql_nombre_actividad = "SELECT nombre FROM actividades WHERE id_actividad = ?";
 $stmt_nombre_actividad = $conexion->prepare($sql_nombre_actividad);
 $stmt_nombre_actividad->bind_param("i", $sesion["id_actividad"]);
 $stmt_nombre_actividad->execute();
 $nombre_actividad = $stmt_nombre_actividad->get_result()->fetch_assoc()["nombre"] ?? "Reserva";
 $stmt_nombre_actividad->close();
+$detalle_actividad = $nombre_actividad . ($cantidad > 1 ? " x{$cantidad}" : "");
+if ($estado_pago === "pendiente") {
 notificarPagoAdmin(
 "Nuevo comprobante de transferencia (Reserva) | Sama Shala",
 "Un cliente subió un comprobante de transferencia bancaria, pendiente de revisión.",
@@ -474,7 +475,14 @@ notificarPagoAdmin(
 $referencia_pago,
 (float) $precio_pagado,
 nombreClienteActual($conexion, $id_usuario),
-$nombre_actividad . ($cantidad > 1 ? " x{$cantidad}" : "")
+$detalle_actividad
+);
+} else {
+notificarTelegram(
+"<b>Nueva reserva confirmada</b>\n" .
+"Cliente: " . htmlspecialchars(nombreClienteActual($conexion, $id_usuario), ENT_QUOTES, 'UTF-8') . "\n" .
+"Actividad: " . htmlspecialchars($detalle_actividad, ENT_QUOTES, 'UTF-8') . "\n" .
+"Tipo de pago: " . htmlspecialchars($tipo_pago, ENT_QUOTES, 'UTF-8')
 );
 }
 $resumen_recurrente = "";

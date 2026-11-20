@@ -787,6 +787,46 @@ function notificarPagoAdmin(
         </ul>
     ';
     enviar_correo('reservas@samashala.com', $asunto, $cuerpo);
+
+    notificarTelegram(
+        '<b>' . htmlspecialchars($intro, ENT_QUOTES, 'UTF-8') . "</b>\n" .
+        'Tipo: ' . htmlspecialchars($tipo, ENT_QUOTES, 'UTF-8') . "\n" .
+        'Cliente: ' . htmlspecialchars($cliente, ENT_QUOTES, 'UTF-8') . "\n" .
+        'Detalle: ' . htmlspecialchars($detalle, ENT_QUOTES, 'UTF-8') . "\n" .
+        'Monto: $' . number_format($monto, 2) . "\n" .
+        'Referencia: ' . htmlspecialchars($referencia, ENT_QUOTES, 'UTF-8')
+    );
+}
+
+function notificarTelegram(string $mensaje): void
+{
+    $archivo_config = __DIR__ . '/telegram_config.php';
+    if (!file_exists($archivo_config)) {
+        return;
+    }
+    require_once $archivo_config;
+    if (empty($telegram_bot_token) || empty($telegram_chat_id)) {
+        return;
+    }
+    $url = "https://api.telegram.org/bot{$telegram_bot_token}/sendMessage";
+    $contexto = stream_context_create([
+        'http' => [
+            'method' => 'POST',
+            'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
+            'content' => http_build_query([
+                'chat_id' => $telegram_chat_id,
+                'text' => $mensaje,
+                'parse_mode' => 'HTML',
+            ]),
+            'timeout' => 5,
+            'ignore_errors' => true,
+        ],
+    ]);
+    try {
+        @file_get_contents($url, false, $contexto);
+    } catch (Throwable $error) {
+        // Una notificación de Telegram no debe romper el flujo de reserva/pago.
+    }
 }
 
 function nombreClienteActual(mysqli $conexion, int $id_usuario): string

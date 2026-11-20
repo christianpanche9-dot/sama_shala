@@ -21,6 +21,10 @@ ExpiresByType text/css "access plus 1 year"
 ExpiresByType application/javascript "access plus 1 year"
 </IfModule>
 
+<FilesMatch "^(conexion\.php|.*_config\.php)$">
+Require all denied
+</FilesMatch>
+
 <IfModule mod_headers.c>
 Header always set X-Content-Type-Options "nosniff"
 Header always set X-Frame-Options "SAMEORIGIN"
