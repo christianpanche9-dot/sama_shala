@@ -1923,6 +1923,9 @@ border-radius: 14px;
 box-shadow: 0 8px 22px
 var(--sombra-tarjeta-suave);
 }
+.formulario-admin.ancho-completo {
+max-width: none;
+}
 .formulario-admin .campo {
 min-width: 0;
 }

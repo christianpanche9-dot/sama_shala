@@ -262,7 +262,7 @@ Exportar CSV
 <form
 action="guardar_reserva_efectivo.php"
 method="post"
-class="formulario-admin"
+class="formulario-admin ancho-completo"
 >
 <input type="hidden" name="id_sesion" value="<?= $id_sesion ?>">
 <input type="hidden" name="csrf_token" value="<?= escapar(tokenCsrf()) ?>">

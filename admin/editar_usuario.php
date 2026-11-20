@@ -102,7 +102,7 @@ Ya existe otro usuario con ese correo.
 </div>
 <?php endif; ?>
 <form
-class="formulario-admin"
+class="formulario-admin ancho-completo"
 action="actualizar_usuario.php"
 method="post"
 >
@@ -237,7 +237,7 @@ No se pudo registrar el paquete. Revisa el tipo de paquete seleccionado.
 <form
 action="guardar_paquete_efectivo.php"
 method="post"
-class="formulario-admin"
+class="formulario-admin ancho-completo"
 >
 <input type="hidden" name="id_usuario" value="<?= (int) $usuario['id_usuario'] ?>">
 <input type="hidden" name="csrf_token" value="<?= escapar(tokenCsrf()) ?>">
