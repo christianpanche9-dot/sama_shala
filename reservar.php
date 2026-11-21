@@ -1,5 +1,4 @@
 <?php
-require_once "seguridad.php";
 require_once "conexion.php";
 require_once "funciones.php";
 $id_sesion = filter_input(
@@ -69,12 +68,15 @@ $max_plazas_compra = min(
 $plazas_disponibles,
 LIMITE_PLAZAS_POR_RESERVA
 );
+$tiene_precio_sesion = $sesion["precio_actividad"] !== null;
 $pago_con_precio_fijo =
 $sesion["tipo_actividad"] !== "clase" &&
-$sesion["precio_actividad"] !== null;
+$tiene_precio_sesion;
+$es_invitado = !usuarioAutenticado();
+$puede_pagar_invitado = $es_invitado && $tiene_precio_sesion;
 $descuento_usuario = null;
 $precio_final = null;
-if ($pago_con_precio_fijo) {
+if ($pago_con_precio_fijo && !$es_invitado) {
 $descuento_usuario = mejorDescuentoEventoTerapia(
 $conexion,
 idUsuarioActual()
@@ -85,9 +87,11 @@ $precio_final = $descuento_usuario !== null
 $descuento_usuario["descuento"]
 )
 : (float) $sesion["precio_actividad"];
+} elseif ($puede_pagar_invitado) {
+$precio_final = (float) $sesion["precio_actividad"];
 }
 $paquetes_disponibles = [];
-if (!$pago_con_precio_fijo) {
+if (!$pago_con_precio_fijo && !$es_invitado) {
 $sql_paquetes = "
 SELECT
 bc.id_paquete_cliente,
@@ -119,7 +123,7 @@ $stmt_paquetes->close();
 $id_actividad_sesion = null;
 $dia_semana_sesion = (int) (new DateTime($sesion['fecha']))->format('N');
 $recurrente_activa = null;
-if (!$pago_con_precio_fijo) {
+if (!$pago_con_precio_fijo && !$es_invitado) {
 $sql_id_actividad = "SELECT id_actividad FROM sesiones WHERE id_sesion = ?";
 $stmt_id_actividad = $conexion->prepare($sql_id_actividad);
 $stmt_id_actividad->bind_param("i", $id_sesion);
@@ -193,6 +197,27 @@ content="width=device-width, initial-scale=1.0"
 </strong>
 <?= escapar(nombresProfesores($profesores_sesion_reserva)) ?>
 </p>
+<?php if ($es_invitado && !$tiene_precio_sesion): ?>
+<div class="mensaje aviso">
+<?= t("Para reservar esta clase necesitas iniciar sesión.") ?>
+</div>
+<a
+class="boton"
+href="login.php?error=acceso&volver=<?= urlencode('/reservar.php?id=' . $id_sesion) ?>"
+>
+<?= t("Iniciar sesión") ?>
+</a>
+<?php elseif ($es_invitado && $plazas_disponibles <= 0): ?>
+<div class="mensaje aviso">
+<?= t("Esta sesión está completa. Inicia sesión para unirte a la lista de espera.") ?>
+</div>
+<a
+class="boton"
+href="login.php?error=acceso&volver=<?= urlencode('/reservar.php?id=' . $id_sesion) ?>"
+>
+<?= t("Iniciar sesión") ?>
+</a>
+<?php else: ?>
 <?php if ($plazas_disponibles > 0): ?>
 <div class="mensaje exito">
 <?= $plazas_disponibles === 1
@@ -229,6 +254,119 @@ value="<?= escapar(tokenCsrf()) ?>"
 <?php if ($plazas_disponibles <= 0): ?>
 <button type="submit" class="boton">
 <?= t("Confirmar solicitud") ?>
+</button>
+<?php elseif ($puede_pagar_invitado): ?>
+<fieldset class="campo-completo">
+<legend><?= t("Precio de esta sesión") ?></legend>
+<p class="precio-sesion">
+<strong><?= formatear_precio($precio_final) ?></strong>
+</p>
+<?php if ($max_plazas_compra > 1): ?>
+<div class="campo">
+<label for="cantidad">
+<?= t("Número de plazas") ?>
+</label>
+<input
+type="number"
+id="cantidad"
+name="cantidad"
+value="1"
+min="1"
+max="<?= $max_plazas_compra ?>"
+data-precio-primera="<?= $precio_final ?>"
+data-precio-unidad="<?= (float) $sesion["precio_actividad"] ?>"
+oninput="actualizarTotalReserva(this)"
+>
+</div>
+<p>
+<?= t("Total a pagar:") ?>
+<strong id="total-reserva">
+<?= formatear_precio($precio_final) ?>
+</strong>
+</p>
+<script>
+function actualizarTotalReserva(campo) {
+var cantidad = parseInt(campo.value, 10) || 1;
+var precioPrimera = parseFloat(campo.dataset.precioPrimera);
+var precioUnidad = parseFloat(campo.dataset.precioUnidad);
+var total = precioPrimera + precioUnidad * (cantidad - 1);
+var totalFormateado = "$" + total.toFixed(2);
+document.getElementById("total-reserva").textContent = totalFormateado;
+document.getElementById("total-boton").textContent = totalFormateado;
+}
+</script>
+<?php endif; ?>
+</fieldset>
+<fieldset class="campo-completo">
+<legend><?= t("Tus datos") ?></legend>
+<p class="ayuda">
+<?= t("No necesitas crear una cuenta: paga con tarjeta y listo.") ?>
+</p>
+<div class="campo">
+<label for="nombre_invitado">
+<?= t("Nombre") ?>
+</label>
+<input
+type="text"
+id="nombre_invitado"
+name="nombre"
+maxlength="80"
+required
+>
+</div>
+<div class="campo">
+<label for="apellidos_invitado">
+<?= t("Apellidos") ?>
+</label>
+<input
+type="text"
+id="apellidos_invitado"
+name="apellidos"
+maxlength="120"
+required
+>
+</div>
+<div class="campo">
+<label for="email_invitado">
+<?= t("Correo electrónico") ?>
+</label>
+<input
+type="email"
+id="email_invitado"
+name="email"
+maxlength="150"
+required
+>
+<small>
+<?= t("Te enviaremos aquí la confirmación de tu reserva.") ?>
+</small>
+</div>
+<div class="campo">
+<label for="telefono_invitado">
+<?= t("Teléfono") ?>
+</label>
+<input
+type="tel"
+id="telefono_invitado"
+name="telefono"
+maxlength="30"
+>
+</div>
+</fieldset>
+<p class="campo-trampa-bot" aria-hidden="true">
+<label for="sitio_web">Sitio web</label>
+<input
+type="text"
+id="sitio_web"
+name="sitio_web"
+tabindex="-1"
+autocomplete="off"
+>
+</p>
+<button type="submit" class="boton">
+<?= t("Pagar") ?>
+<span id="total-boton"><?= formatear_precio($precio_final) ?></span>
+<?= t("con tarjeta") ?>
 </button>
 <?php elseif ($pago_con_precio_fijo): ?>
 <input type="hidden" name="metodo_pago" value="evento">
@@ -467,6 +605,7 @@ actualizarRepetir();
 </button>
 <?php endif; ?>
 </form>
+<?php endif; ?>
 </section>
 </main>
 <?php require_once __DIR__ . '/pie.php'; ?>

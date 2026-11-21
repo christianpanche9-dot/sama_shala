@@ -164,9 +164,13 @@ min="0"
 step="0.01"
 >
 <small>
-Precio fijo de este evento o terapia. Se paga
-directamente al reservar, no admite paquetes ni
-clase suelta.
+Precio fijo. Obligatorio para eventos, terapias y
+talleres: se paga directamente al reservar, no
+admite paquetes ni clase suelta. Para una clase es
+opcional: si lo defines, cualquier visitante sin
+cuenta podrá reservarla y pagarla con tarjeta; si lo
+dejas vacío, esta clase sigue siendo gratis para
+reservar con cuenta (paquete o en persona).
 </small>
 </div>
 <div class="campo">
@@ -496,10 +500,9 @@ const bloquePrecio = document.querySelector("#bloque-precio-actividad");
 const campoPrecio = document.querySelector("#precio");
 if (selectTipo && bloquePrecio) {
 function actualizarBloquePrecio() {
-const visible = selectTipo.value !== "clase";
-bloquePrecio.classList.toggle("visible", visible);
+bloquePrecio.classList.add("visible");
 if (campoPrecio) {
-campoPrecio.required = visible;
+campoPrecio.required = selectTipo.value !== "clase";
 }
 }
 selectTipo.addEventListener("change", actualizarBloquePrecio);

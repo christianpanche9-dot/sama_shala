@@ -2471,6 +2471,14 @@ margin-top: 0.4rem;
 color: var(--color-texto-tenue);
 font-size: 0.9rem;
 }
+.campo-trampa-bot {
+position: absolute;
+width: 1px;
+height: 1px;
+overflow: hidden;
+clip: rect(0, 0, 0, 0);
+white-space: nowrap;
+}
 .opciones-radio {
 display: flex;
 flex-wrap: wrap;

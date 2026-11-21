@@ -1,8 +1,8 @@
 <?php
-require_once "seguridad.php";
 require_once "conexion.php";
 require_once "funciones.php";
 require_once "funciones_reservas.php";
+require_once "funciones_payphone.php";
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 header("Location: sesiones.php");
 exit;
@@ -12,12 +12,41 @@ $id_sesion = filter_var(
 $_POST["id_sesion"] ?? null,
 FILTER_VALIDATE_INT
 );
-$id_usuario = idUsuarioActual();
-if (!$id_sesion || !$id_usuario) {
+if (!$id_sesion) {
 header("Location: sesiones.php?error=datos");
 exit;
 }
-$metodo_pago_enviado = trim($_POST["metodo_pago"] ?? "suelta");
+$es_invitado = !usuarioAutenticado();
+if ($es_invitado) {
+if (trim($_POST["sitio_web"] ?? "") !== "") {
+header("Location: sesiones.php");
+exit;
+}
+$resultado_invitado = obtenerOCrearUsuarioInvitado(
+$conexion,
+trim($_POST["nombre"] ?? ""),
+trim($_POST["apellidos"] ?? ""),
+trim($_POST["email"] ?? ""),
+trim($_POST["telefono"] ?? "")
+);
+if (!$resultado_invitado["ok"]) {
+header(
+"Location: detalle_sesion.php?id=" .
+$id_sesion .
+"&error=" .
+urlencode($resultado_invitado["error"])
+);
+exit;
+}
+$id_usuario = $resultado_invitado["id_usuario"];
+} else {
+$id_usuario = idUsuarioActual();
+}
+if (!$id_usuario) {
+header("Location: sesiones.php?error=datos");
+exit;
+}
+$metodo_pago_enviado = $es_invitado ? "evento" : trim($_POST["metodo_pago"] ?? "suelta");
 $tipo_pago = "suelta";
 $id_paquete_cliente = null;
 $precio_pagado = null;
@@ -57,7 +86,7 @@ $cantidad = max(
 1,
 min($cantidad, LIMITE_PLAZAS_POR_RESERVA)
 );
-$metodo_pago_compra = trim($_POST["metodo_pago_compra"] ?? "simulado");
+$metodo_pago_compra = $es_invitado ? "payphone" : trim($_POST["metodo_pago_compra"] ?? "simulado");
 if ($metodo_pago_compra === "transferencia") {
 $resultado_comprobante = procesar_imagen_subida(
 "comprobante_pago",
@@ -74,6 +103,8 @@ urlencode("Adjunta la foto del comprobante de la transferencia.")
 exit;
 }
 $comprobante_pago = $resultado_comprobante["archivo"];
+$estado_pago = "pendiente";
+} elseif ($metodo_pago_compra === "payphone") {
 $estado_pago = "pendiente";
 }
 }
@@ -119,7 +150,6 @@ $stmt_actividad->close();
 if ($tipo_pago === "evento") {
 if (
 !$actividad ||
-$actividad["tipo"] === "clase" ||
 $actividad["precio"] === null
 ) {
 throw new Exception(
@@ -143,8 +173,16 @@ $precio_pagado = precio_total_evento_terapia(
 $cantidad,
 $descuento_usuario !== null ? $descuento_usuario["descuento"] : 0
 );
-$metodo_pago_simulado = $estado_pago === "pendiente" ? "transferencia" : "simulado";
-$referencia_pago = ($estado_pago === "pendiente" ? "TRANSF-" : "SIM-") . strtoupper(bin2hex(random_bytes(8)));
+if ($metodo_pago_compra === "transferencia") {
+$metodo_pago_simulado = "transferencia";
+$referencia_pago = "TRANSF-" . strtoupper(bin2hex(random_bytes(8)));
+} elseif ($metodo_pago_compra === "payphone") {
+$metodo_pago_simulado = "payphone";
+$referencia_pago = generarReferenciaPayphone();
+} else {
+$metodo_pago_simulado = "simulado";
+$referencia_pago = "SIM-" . strtoupper(bin2hex(random_bytes(8)));
+}
 }
 if (
 !in_array(
@@ -416,6 +454,9 @@ $codigo_reserva
 );
 }
 $stmt_guardar->execute();
+$id_reserva_actual = $reserva_anterior
+? (int) $reserva_anterior["id_reserva"]
+: (int) $conexion->insert_id;
 $stmt_guardar->close();
 /*
 | Si existía una antigua solicitud de espera,
@@ -467,6 +508,25 @@ $stmt_nombre_actividad->execute();
 $nombre_actividad = $stmt_nombre_actividad->get_result()->fetch_assoc()["nombre"] ?? "Reserva";
 $stmt_nombre_actividad->close();
 $detalle_actividad = $nombre_actividad . ($cantidad > 1 ? " x{$cantidad}" : "");
+if ($metodo_pago_simulado === "payphone") {
+$resultado_pago = payphonePrepararPago(
+(float) $precio_pagado,
+$referencia_pago,
+$detalle_actividad
+);
+if (!$resultado_pago["ok"]) {
+cancelarReservaYPromocionar($conexion, $id_reserva_actual);
+header(
+"Location: detalle_sesion.php?id=" .
+$id_sesion .
+"&error=" .
+urlencode("No se pudo iniciar el pago con tarjeta. Intenta de nuevo.")
+);
+exit;
+}
+header("Location: " . $resultado_pago["url_pago"]);
+exit;
+}
 if ($estado_pago === "pendiente") {
 notificarPagoAdmin(
 "Nuevo comprobante de transferencia (Reserva) | Sama Shala",

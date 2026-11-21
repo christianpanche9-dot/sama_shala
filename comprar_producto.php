@@ -1,10 +1,10 @@
 <?php
-require_once __DIR__ . '/seguridad.php';
 require_once __DIR__ . '/conexion.php';
 require_once __DIR__ . '/funciones.php';
 $carrito = $_SESSION['carrito'] ?? [];
 $detalle_carrito = obtenerCarritoDetallado($conexion, $carrito);
 $error = $_GET['error'] ?? '';
+$es_invitado = !usuarioAutenticado();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -73,6 +73,10 @@ alt="<?= escapar($item['nombre']) ?>"
 <div class="mensaje mensaje-error">
 <?= t('No se ha podido iniciar el pago. Inténtalo de nuevo.') ?>
 </div>
+<?php elseif ($error !== ''): ?>
+<div class="mensaje mensaje-error">
+<?= escapar($error) ?>
+</div>
 <?php endif; ?>
 </section>
 <aside class="panel-reserva">
@@ -89,6 +93,38 @@ type="hidden"
 name="csrf_token"
 value="<?= escapar(tokenCsrf()) ?>"
 >
+<?php if ($es_invitado): ?>
+<fieldset class="campo-completo">
+<legend><?= t('Tus datos') ?></legend>
+<p class="ayuda">
+<?= t('No necesitas crear una cuenta: paga con tarjeta y listo.') ?>
+</p>
+<div class="campo">
+<label for="nombre_invitado"><?= t('Nombre') ?></label>
+<input type="text" id="nombre_invitado" name="nombre" maxlength="80" required>
+</div>
+<div class="campo">
+<label for="apellidos_invitado"><?= t('Apellidos') ?></label>
+<input type="text" id="apellidos_invitado" name="apellidos" maxlength="120" required>
+</div>
+<div class="campo">
+<label for="email_invitado"><?= t('Correo electrónico') ?></label>
+<input type="email" id="email_invitado" name="email" maxlength="150" required>
+<small><?= t('Te enviaremos aquí la confirmación de tu compra.') ?></small>
+</div>
+<div class="campo">
+<label for="telefono_invitado"><?= t('Teléfono') ?></label>
+<input type="tel" id="telefono_invitado" name="telefono" maxlength="30">
+</div>
+</fieldset>
+<p class="campo-trampa-bot" aria-hidden="true">
+<label for="sitio_web">Sitio web</label>
+<input type="text" id="sitio_web" name="sitio_web" tabindex="-1" autocomplete="off">
+</p>
+<p>
+<?= t('Serás redirigido a PayPhone para completar el pago de forma segura con tu tarjeta.') ?>
+</p>
+<?php else: ?>
 <fieldset class="campo-completo">
 <label class="opcion-pago">
 <input
@@ -133,6 +169,7 @@ data-requerido-transferencia
 <?= t('Tu compra quedará pendiente de revisión hasta que confirmemos el pago.') ?>
 </p>
 </div>
+<?php endif; ?>
 <button type="submit" class="boton boton-bloque">
 <?= t('Confirmar compra de') ?> <?= formatear_precio($detalle_carrito['total']) ?>
 </button>
@@ -146,7 +183,11 @@ var bloquePayphone = document.getElementById('bloque-pago-payphone');
 var bloqueTransferencia = document.getElementById('bloque-pago-transferencia');
 var radios = formulario.querySelectorAll('[data-metodo-pago]');
 function actualizarModoPago() {
-var esTransferencia = formulario.querySelector('[data-metodo-pago]:checked').value === 'transferencia';
+var seleccionado = formulario.querySelector('[data-metodo-pago]:checked');
+if (!seleccionado) {
+return;
+}
+var esTransferencia = seleccionado.value === 'transferencia';
 bloquePayphone.hidden = esTransferencia;
 bloqueTransferencia.hidden = !esTransferencia;
 formulario.querySelectorAll('[data-requerido-transferencia]').forEach(function (campo) {

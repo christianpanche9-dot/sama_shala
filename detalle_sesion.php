@@ -345,13 +345,15 @@ style="width:
 
 <?php elseif ($plazas > 0): ?>
 
-    <?php if ($usuario_autenticado): ?>
+    <?php if ($usuario_autenticado || $sesion['precio'] !== null): ?>
 
         <a
             class="boton boton-bloque"
             href="reservar.php?id=<?= (int)$sesion['id_sesion'] ?>"
         >
-            <?= t('Reservar una plaza') ?>
+            <?= $usuario_autenticado
+                ? t('Reservar una plaza')
+                : t('Reservar y pagar con tarjeta') ?>
         </a>
 
     <?php else: ?>

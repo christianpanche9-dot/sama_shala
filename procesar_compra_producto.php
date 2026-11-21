@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . '/seguridad.php';
 require_once __DIR__ . '/conexion.php';
 require_once __DIR__ . '/funciones.php';
 require_once __DIR__ . '/funciones_payphone.php';
@@ -8,9 +7,33 @@ header('Location: tienda.php');
 exit;
 }
 validarCsrf();
-$metodo_pago_compra = trim($_POST['metodo_pago_compra'] ?? 'payphone');
-$es_transferencia = $metodo_pago_compra === 'transferencia';
+$es_invitado = !usuarioAutenticado();
+if ($es_invitado) {
+if (trim($_POST['sitio_web'] ?? '') !== '') {
+header('Location: tienda.php');
+exit;
+}
+$resultado_invitado = obtenerOCrearUsuarioInvitado(
+$conexion,
+trim($_POST['nombre'] ?? ''),
+trim($_POST['apellidos'] ?? ''),
+trim($_POST['email'] ?? ''),
+trim($_POST['telefono'] ?? '')
+);
+if (!$resultado_invitado['ok']) {
+header('Location: comprar_producto.php?error=' . urlencode($resultado_invitado['error']));
+exit;
+}
+$id_usuario = $resultado_invitado['id_usuario'];
+} else {
 $id_usuario = idUsuarioActual();
+}
+if (!$id_usuario) {
+header('Location: comprar_producto.php?error=pago');
+exit;
+}
+$metodo_pago_compra = $es_invitado ? 'payphone' : trim($_POST['metodo_pago_compra'] ?? 'payphone');
+$es_transferencia = $metodo_pago_compra === 'transferencia';
 $carrito = $_SESSION['carrito'] ?? [];
 $detalle_carrito = obtenerCarritoDetallado($conexion, $carrito);
 if (empty($detalle_carrito['items'])) {

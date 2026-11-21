@@ -91,7 +91,23 @@ true
 $errores[] = 'El tipo no es válido.';
 }
 if ($tipo === 'clase') {
+if (trim($precio) === '') {
 $precio = null;
+} else {
+$precio = filter_var(
+$precio,
+FILTER_VALIDATE_FLOAT,
+[
+'options' => [
+'min_range' => 0.01
+]
+]
+);
+if ($precio === false) {
+$errores[] =
+'El precio de una clase debe ser mayor que 0, o déjalo vacío si no se reserva ni paga en línea.';
+}
+}
 } else {
 $precio = filter_var(
 $precio,

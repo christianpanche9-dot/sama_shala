@@ -840,6 +840,57 @@ function notificarTelegram(string $mensaje): void
     }
 }
 
+function obtenerOCrearUsuarioInvitado(
+    mysqli $conexion,
+    string $nombre,
+    string $apellidos,
+    string $email,
+    string $telefono
+): array {
+    $nombre = trim($nombre);
+    $apellidos = trim($apellidos);
+    $email = strtolower(trim($email));
+    $telefono = trim($telefono);
+    if ($nombre === '' || $apellidos === '') {
+        return ['ok' => false, 'id_usuario' => null, 'error' => 'Completa tu nombre y apellidos.'];
+    }
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return ['ok' => false, 'id_usuario' => null, 'error' => 'Ingresa un correo electrónico válido.'];
+    }
+    $sql_existente = "SELECT id_usuario, es_invitado FROM usuarios WHERE email = ?";
+    $stmt = $conexion->prepare($sql_existente);
+    $stmt->bind_param('s', $email);
+    $stmt->execute();
+    $existente = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    if ($existente) {
+        if ((int) $existente['es_invitado'] !== 1) {
+            return [
+                'ok' => false,
+                'id_usuario' => null,
+                'error' => 'Ya existe una cuenta con este correo. Inicia sesión para continuar.',
+            ];
+        }
+        $sql_actualizar = "UPDATE usuarios SET nombre = ?, apellidos = ?, telefono = ? WHERE id_usuario = ?";
+        $stmt = $conexion->prepare($sql_actualizar);
+        $stmt->bind_param('sssi', $nombre, $apellidos, $telefono, $existente['id_usuario']);
+        $stmt->execute();
+        $stmt->close();
+        return ['ok' => true, 'id_usuario' => (int) $existente['id_usuario'], 'error' => null];
+    }
+    $password_aleatoria = password_hash(bin2hex(random_bytes(32)), PASSWORD_DEFAULT);
+    $sql_crear = "
+        INSERT INTO usuarios (nombre, apellidos, email, password, telefono, rol, activo, es_invitado)
+        VALUES (?, ?, ?, ?, ?, 'cliente', 1, 1)
+    ";
+    $stmt = $conexion->prepare($sql_crear);
+    $stmt->bind_param('sssss', $nombre, $apellidos, $email, $password_aleatoria, $telefono);
+    $stmt->execute();
+    $id_usuario = (int) $conexion->insert_id;
+    $stmt->close();
+    return ['ok' => true, 'id_usuario' => $id_usuario, 'error' => null];
+}
+
 function nombreClienteActual(mysqli $conexion, int $id_usuario): string
 {
     $sql = "SELECT CONCAT(nombre, ' ', apellidos) AS cliente FROM usuarios WHERE id_usuario = ?";
