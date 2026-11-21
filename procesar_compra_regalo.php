@@ -119,6 +119,7 @@ header('Location: ' . $resultado_pago['url_pago']);
 exit;
 } catch (Throwable $error) {
 $conexion->rollback();
-header('Location: comprar_regalo.php?error=' . urlencode('No se pudo registrar la tarjeta de regalo.'));
+error_log('[tarjeta_regalo] ' . $error->getMessage());
+header('Location: comprar_regalo.php?error=' . urlencode($error->getMessage()));
 exit;
 }
