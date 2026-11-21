@@ -33,15 +33,32 @@ header('Location: comprar_regalo.php?error=pago');
 exit;
 }
 $categoria = trim($_POST['categoria'] ?? '');
+$categorias_validas = ['saldo', 'tienda', 'paquetes', 'eventos', 'terapias'];
+if (!in_array($categoria, $categorias_validas, true)) {
+header('Location: comprar_regalo.php?error=' . urlencode('Selecciona qué deseas regalar.'));
+exit;
+}
+$nombre_item = null;
+$precio_item = null;
+if ($categoria === 'saldo') {
+$monto_libre = filter_var(
+$_POST['monto_libre'] ?? '',
+FILTER_VALIDATE_FLOAT,
+['options' => ['min_range' => 1]]
+);
+if ($monto_libre === false) {
+header('Location: comprar_regalo.php?error=' . urlencode('Ingresa un monto válido (mínimo $1).'));
+exit;
+}
+$nombre_item = 'Saldo de regalo libre';
+$precio_item = round($monto_libre, 2);
+} else {
 $id_item = filter_var($_POST['id_item'] ?? null, FILTER_VALIDATE_INT);
-$categorias_validas = ['tienda', 'paquetes', 'eventos', 'terapias'];
-if (!in_array($categoria, $categorias_validas, true) || !$id_item) {
+if (!$id_item) {
 header('Location: comprar_regalo.php?error=' . urlencode('Selecciona qué deseas regalar.'));
 exit;
 }
 $id_tenant = idTenantActual();
-$nombre_item = null;
-$precio_item = null;
 if ($categoria === 'tienda') {
 $sql = "SELECT nombre, precio FROM productos WHERE id_producto = ? AND activo = 1";
 $stmt = $conexion->prepare($sql);
@@ -71,6 +88,7 @@ exit;
 }
 $nombre_item = $item['nombre'];
 $precio_item = (float) $item['precio'];
+}
 try {
 $conexion->begin_transaction();
 $codigo = generarCodigoTarjetaRegalo();

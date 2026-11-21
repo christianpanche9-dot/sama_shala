@@ -19,12 +19,13 @@ $stmt_actividades->close();
 $eventos = array_values(array_filter($actividades_con_precio, fn ($a) => $a['tipo'] === 'evento' || $a['tipo'] === 'taller'));
 $terapias = array_values(array_filter($actividades_con_precio, fn ($a) => $a['tipo'] === 'terapia'));
 $categorias = [
+'saldo' => ['etiqueta' => t('Regalar un monto libre'), 'items' => [], 'carpeta_imagen' => null],
 'tienda' => ['etiqueta' => t('Tienda'), 'items' => $productos, 'carpeta_imagen' => 'productos'],
 'paquetes' => ['etiqueta' => t('Paquetes'), 'items' => $paquetes, 'carpeta_imagen' => null],
 'eventos' => ['etiqueta' => t('Eventos y talleres'), 'items' => $eventos, 'carpeta_imagen' => 'actividades'],
 'terapias' => ['etiqueta' => t('Terapias'), 'items' => $terapias, 'carpeta_imagen' => 'actividades'],
 ];
-$hay_items = array_sum(array_map(fn ($c) => count($c['items']), $categorias)) > 0;
+$hay_items = true;
 $es_invitado = !usuarioAutenticado();
 $error = $_GET['error'] ?? '';
 ?>
@@ -69,7 +70,7 @@ id="formulario-regalo"
 <?= t('Selecciona una categoría') ?>
 </option>
 <?php foreach ($categorias as $clave => $categoria): ?>
-<option value="<?= escapar($clave) ?>" <?= empty($categoria['items']) ? 'disabled' : '' ?>>
+<option value="<?= escapar($clave) ?>" <?= ($clave !== 'saldo' && empty($categoria['items'])) ? 'disabled' : '' ?>>
 <?= escapar($categoria['etiqueta']) ?>
 </option>
 <?php endforeach; ?>
@@ -77,6 +78,24 @@ id="formulario-regalo"
 </div>
 <div class="campo-completo">
 <?php foreach ($categorias as $clave => $categoria): ?>
+<?php if ($clave === 'saldo'): ?>
+<div
+class="campo rejilla-regalo"
+data-grid-categoria="saldo"
+hidden
+>
+<label for="monto_libre"><?= t('¿Cuánto deseas regalar? (USD)') ?></label>
+<input
+type="number"
+id="monto_libre"
+name="monto_libre"
+min="1"
+step="0.5"
+placeholder="<?= t('Ej. 25.00') ?>"
+>
+</div>
+<?php continue; ?>
+<?php endif; ?>
 <div
 class="rejilla-actividades rejilla-regalo"
 data-grid-categoria="<?= escapar($clave) ?>"
@@ -178,6 +197,7 @@ var totalBoton = document.getElementById('total-boton-regalo');
 var avisoSinSeleccion = document.getElementById('aviso-sin-seleccion');
 var formulario = document.getElementById('formulario-regalo');
 var rejillas = document.querySelectorAll('.rejilla-regalo');
+var campoMontoLibre = document.getElementById('monto_libre');
 function formatearPrecio(precio) {
 return '$' + parseFloat(precio).toFixed(2);
 }
@@ -190,6 +210,7 @@ document.querySelectorAll('.tarjeta-seleccionable-regalo.seleccionada').forEach(
 tarjeta.classList.remove('seleccionada');
 });
 campoItem.value = '';
+campoMontoLibre.value = '';
 actualizarValor(0);
 }
 function mostrarRejillaActiva() {
@@ -218,9 +239,17 @@ seleccionarTarjeta(tarjeta);
 }
 });
 });
+campoMontoLibre.addEventListener('input', function () {
+actualizarValor(parseFloat(campoMontoLibre.value || '0'));
+avisoSinSeleccion.hidden = true;
+});
 selectCategoria.addEventListener('change', mostrarRejillaActiva);
 formulario.addEventListener('submit', function (evento) {
-if (!campoItem.value) {
+var esSaldoLibre = selectCategoria.value === 'saldo';
+var seleccionValida = esSaldoLibre
+? parseFloat(campoMontoLibre.value || '0') >= 1
+: !!campoItem.value;
+if (!seleccionValida) {
 evento.preventDefault();
 avisoSinSeleccion.hidden = false;
 avisoSinSeleccion.scrollIntoView({ behavior: 'smooth', block: 'center' });
