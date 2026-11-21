@@ -253,7 +253,7 @@ strtotime($pago['fecha_pago'])
 ) ?>
 </td>
 <td>
-<?= escapar(ucfirst($pago['metodo_pago'])) ?>
+<?= escapar(ucfirst(str_replace('_', ' ', $pago['metodo_pago']))) ?>
 </td>
 <td>
 <?= escapar($pago['referencia_pago']) ?>

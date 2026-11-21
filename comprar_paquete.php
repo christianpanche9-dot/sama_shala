@@ -83,6 +83,10 @@ content="width=device-width, initial-scale=1.0"
 <div class="mensaje mensaje-error">
 <?= t('No se ha podido iniciar el pago. Inténtalo de nuevo.') ?>
 </div>
+<?php elseif ($error !== ''): ?>
+<div class="mensaje mensaje-error">
+<?= escapar($error) ?>
+</div>
 <?php endif; ?>
 </section>
 <aside class="panel-reserva">
@@ -104,6 +108,17 @@ type="hidden"
 name="csrf_token"
 value="<?= escapar(tokenCsrf()) ?>"
 >
+<div class="campo campo-completo">
+<label for="codigo_regalo"><?= t('¿Tienes una tarjeta de regalo? (opcional)') ?></label>
+<input
+type="text"
+id="codigo_regalo"
+name="codigo_regalo"
+maxlength="20"
+placeholder="REGALO-XXXXXXXXXX"
+>
+<small><?= t('Si usas una tarjeta de regalo, el resto se cobra con tarjeta (no admite transferencia).') ?></small>
+</div>
 <fieldset class="campo-completo">
 <label class="opcion-pago">
 <input

@@ -47,6 +47,7 @@ header("Location: sesiones.php?error=datos");
 exit;
 }
 $metodo_pago_enviado = $es_invitado ? "evento" : trim($_POST["metodo_pago"] ?? "suelta");
+$codigo_regalo = trim($_POST["codigo_regalo"] ?? "");
 $tipo_pago = "suelta";
 $id_paquete_cliente = null;
 $precio_pagado = null;
@@ -54,6 +55,8 @@ $metodo_pago_simulado = null;
 $referencia_pago = null;
 $estado_pago = "pagado";
 $comprobante_pago = null;
+$monto_tarjeta_regalo = null;
+$id_tarjeta_regalo_usada = null;
 $titular_pago = trim($_POST["titular"] ?? "");
 $tarjeta_pago = trim($_POST["tarjeta"] ?? "");
 $repetir_semanal = isset($_POST["repetir_semanal"]);
@@ -86,7 +89,7 @@ $cantidad = max(
 1,
 min($cantidad, LIMITE_PLAZAS_POR_RESERVA)
 );
-$metodo_pago_compra = $es_invitado ? "payphone" : trim($_POST["metodo_pago_compra"] ?? "simulado");
+$metodo_pago_compra = ($es_invitado || $codigo_regalo !== "") ? "payphone" : trim($_POST["metodo_pago_compra"] ?? "simulado");
 if ($metodo_pago_compra === "transferencia") {
 $resultado_comprobante = procesar_imagen_subida(
 "comprobante_pago",
@@ -184,7 +187,21 @@ $precio_pagado = precio_total_evento_terapia(
 $cantidad,
 $descuento_usuario !== null ? $descuento_usuario["descuento"] : 0
 );
-if ($metodo_pago_compra === "transferencia") {
+$precio_a_cobrar = $precio_pagado;
+if ($codigo_regalo !== "") {
+$resultado_regalo = aplicarTarjetaRegalo($conexion, $codigo_regalo, $precio_pagado);
+if (!$resultado_regalo["ok"]) {
+throw new Exception($resultado_regalo["error"]);
+}
+$monto_tarjeta_regalo = $resultado_regalo["monto_cubierto"];
+$id_tarjeta_regalo_usada = $resultado_regalo["id_tarjeta_regalo"];
+$precio_a_cobrar = $resultado_regalo["monto_pendiente"];
+}
+if ($precio_a_cobrar <= 0) {
+$metodo_pago_simulado = "tarjeta_regalo";
+$referencia_pago = "REGALOPAGO-" . strtoupper(bin2hex(random_bytes(6)));
+$estado_pago = "pagado";
+} elseif ($metodo_pago_compra === "transferencia") {
 $metodo_pago_simulado = "transferencia";
 $referencia_pago = "TRANSF-" . strtoupper(bin2hex(random_bytes(8)));
 } elseif ($metodo_pago_compra === "payphone") {
@@ -396,13 +413,15 @@ precio_pagado = ?,
 metodo_pago = ?,
 referencia_pago = ?,
 estado_pago = ?,
-comprobante_pago = ?
+comprobante_pago = ?,
+monto_tarjeta_regalo = ?,
+id_tarjeta_regalo_usada = ?
 WHERE id_reserva = ?
 ";
 $stmt_guardar =
 $conexion->prepare($sql_guardar);
 $stmt_guardar->bind_param(
-"sisidssssi",
+"sisidssssdii",
 $codigo_reserva,
 $id_paquete_cliente,
 $tipo_pago,
@@ -412,6 +431,8 @@ $metodo_pago_simulado,
 $referencia_pago,
 $estado_pago,
 $comprobante_pago,
+$monto_tarjeta_regalo,
+$id_tarjeta_regalo_usada,
 $reserva_anterior["id_reserva"]
 );
 } else {
@@ -427,11 +448,15 @@ metodo_pago,
 referencia_pago,
 estado_pago,
 comprobante_pago,
+monto_tarjeta_regalo,
+id_tarjeta_regalo_usada,
 estado,
 asistencia,
 codigo_reserva
 )
 VALUES (
+?,
+?,
 ?,
 ?,
 ?,
@@ -450,7 +475,7 @@ VALUES (
 $stmt_guardar =
 $conexion->prepare($sql_guardar);
 $stmt_guardar->bind_param(
-"iiisidsssss",
+"iiisidssssdis",
 $id_sesion,
 $id_usuario,
 $id_paquete_cliente,
@@ -461,6 +486,8 @@ $metodo_pago_simulado,
 $referencia_pago,
 $estado_pago,
 $comprobante_pago,
+$monto_tarjeta_regalo,
+$id_tarjeta_regalo_usada,
 $codigo_reserva
 );
 }
@@ -519,9 +546,19 @@ $stmt_nombre_actividad->execute();
 $nombre_actividad = $stmt_nombre_actividad->get_result()->fetch_assoc()["nombre"] ?? "Reserva";
 $stmt_nombre_actividad->close();
 $detalle_actividad = $nombre_actividad . ($cantidad > 1 ? " x{$cantidad}" : "");
+if ($metodo_pago_simulado === "tarjeta_regalo") {
+notificarTelegram(
+"<b>Reserva pagada con tarjeta de regalo</b>\n" .
+"Cliente: " . htmlspecialchars(nombreClienteActual($conexion, $id_usuario), ENT_QUOTES, 'UTF-8') . "\n" .
+"Actividad: " . htmlspecialchars($detalle_actividad, ENT_QUOTES, 'UTF-8') . "\n" .
+"Monto: $" . number_format((float) $precio_pagado, 2)
+);
+header("Location: mis_reservas.php?mensaje=confirmada");
+exit;
+}
 if ($metodo_pago_simulado === "payphone") {
 $resultado_pago = payphonePrepararPago(
-(float) $precio_pagado,
+$precio_a_cobrar,
 $referencia_pago,
 $detalle_actividad
 );

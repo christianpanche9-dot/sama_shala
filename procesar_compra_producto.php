@@ -32,7 +32,8 @@ if (!$id_usuario) {
 header('Location: comprar_producto.php?error=pago');
 exit;
 }
-$metodo_pago_compra = $es_invitado ? 'payphone' : trim($_POST['metodo_pago_compra'] ?? 'payphone');
+$codigo_regalo = trim($_POST['codigo_regalo'] ?? '');
+$metodo_pago_compra = ($es_invitado || $codigo_regalo !== '') ? 'payphone' : trim($_POST['metodo_pago_compra'] ?? 'payphone');
 $es_transferencia = $metodo_pago_compra === 'transferencia';
 $carrito = $_SESSION['carrito'] ?? [];
 $detalle_carrito = obtenerCarritoDetallado($conexion, $carrito);
@@ -55,10 +56,31 @@ $comprobante_pago = $resultado_comprobante['archivo'];
 }
 try {
 $conexion->begin_transaction();
+$total_original = (float) $detalle_carrito['total'];
+$total_a_cobrar = $total_original;
+$monto_tarjeta_regalo = null;
+$id_tarjeta_regalo_usada = null;
+if ($codigo_regalo !== '') {
+$resultado_regalo = aplicarTarjetaRegalo($conexion, $codigo_regalo, $total_original);
+if (!$resultado_regalo['ok']) {
+throw new Exception($resultado_regalo['error']);
+}
+$monto_tarjeta_regalo = $resultado_regalo['monto_cubierto'];
+$id_tarjeta_regalo_usada = $resultado_regalo['id_tarjeta_regalo'];
+$total_a_cobrar = $resultado_regalo['monto_pendiente'];
+}
+$pagado_con_regalo_completo = $total_a_cobrar <= 0;
+if ($pagado_con_regalo_completo) {
+$metodo_pago = 'tarjeta_regalo';
+$referencia_pago = 'REGALOPAGO-' . strtoupper(bin2hex(random_bytes(6)));
+$estado_inicial = 'pagado';
+} else {
+$metodo_pago = $es_transferencia ? 'transferencia' : 'payphone';
 $referencia_pago = $es_transferencia
 ? ('TRANSF-' . strtoupper(bin2hex(random_bytes(8))))
 : generarReferenciaPayphone();
-$metodo_pago = $es_transferencia ? 'transferencia' : 'payphone';
+$estado_inicial = 'pendiente';
+}
 $sql_compra = "
 INSERT INTO compras_productos (
 id_usuario,
@@ -69,14 +91,16 @@ precio_pagado,
 metodo_pago,
 referencia_pago,
 comprobante_pago,
+monto_tarjeta_regalo,
+id_tarjeta_regalo_usada,
 estado
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pendiente')
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ";
 $stmt_compra = $conexion->prepare($sql_compra);
 foreach ($detalle_carrito['items'] as $item) {
 $stmt_compra->bind_param(
-'iisidsss',
+'iisidsssdis',
 $id_usuario,
 $item['id_producto'],
 $item['talla'],
@@ -84,7 +108,10 @@ $item['cantidad'],
 $item['subtotal'],
 $metodo_pago,
 $referencia_pago,
-$comprobante_pago
+$comprobante_pago,
+$monto_tarjeta_regalo,
+$id_tarjeta_regalo_usada,
+$estado_inicial
 );
 $stmt_compra->execute();
 }
@@ -92,9 +119,26 @@ $stmt_compra->close();
 $conexion->commit();
 $_SESSION['carrito'] = [];
 
+if ($pagado_con_regalo_completo) {
+notificarPagoAdmin(
+'Compra pagada con tarjeta de regalo (Producto) | Sama Shala',
+'Un cliente pagó una compra en la tienda usando el saldo de una tarjeta de regalo.',
+'Producto',
+$referencia_pago,
+$total_original,
+nombreClienteActual($conexion, $id_usuario),
+implode(', ', array_map(
+fn ($item) => $item['nombre'] . ' x' . $item['cantidad'],
+$detalle_carrito['items']
+))
+);
+header('Location: mis_compras.php?mensaje=comprado');
+exit;
+}
+
 if (!$es_transferencia) {
 $resultado_pago = payphonePrepararPago(
-(float) $detalle_carrito['total'],
+$total_a_cobrar,
 $referencia_pago,
 'Compra en tienda Sama Shala'
 );
@@ -121,7 +165,7 @@ notificarPagoAdmin(
 'Un cliente subió un comprobante de transferencia bancaria, pendiente de revisión.',
 'Producto',
 $referencia_pago,
-(float) $detalle_carrito['total'],
+$total_a_cobrar,
 nombreClienteActual($conexion, $id_usuario),
 implode(', ', array_map(
 fn ($item) => $item['nombre'] . ' x' . $item['cantidad'],
@@ -133,6 +177,6 @@ header('Location: mis_compras.php?mensaje=comprado');
 exit;
 } catch (Throwable $error) {
 $conexion->rollback();
-header('Location: comprar_producto.php?error=pago');
+header('Location: comprar_producto.php?error=' . urlencode($error->getMessage()));
 exit;
 }

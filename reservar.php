@@ -362,6 +362,17 @@ maxlength="30"
 >
 </div>
 </fieldset>
+<div class="campo campo-completo">
+<label for="codigo_regalo"><?= t("¿Tienes una tarjeta de regalo? (opcional)") ?></label>
+<input
+type="text"
+id="codigo_regalo"
+name="codigo_regalo"
+maxlength="20"
+placeholder="REGALO-XXXXXXXXXX"
+>
+<small><?= t("Si el saldo no cubre todo, pagas la diferencia con tarjeta.") ?></small>
+</div>
 <p class="campo-trampa-bot" aria-hidden="true">
 <label for="sitio_web">Sitio web</label>
 <input
@@ -538,6 +549,17 @@ radio.addEventListener('change', actualizarModoPago);
 actualizarModoPago();
 })();
 </script>
+<div class="campo campo-completo">
+<label for="codigo_regalo"><?= t("¿Tienes una tarjeta de regalo? (opcional)") ?></label>
+<input
+type="text"
+id="codigo_regalo"
+name="codigo_regalo"
+maxlength="20"
+placeholder="REGALO-XXXXXXXXXX"
+>
+<small><?= t("Si usas una tarjeta de regalo, el resto se cobra con tarjeta (no admite transferencia).") ?></small>
+</div>
 <button type="submit" class="boton">
 <?= t("Pagar") ?>
 <span id="total-boton"><?= formatear_precio($precio_final) ?></span>

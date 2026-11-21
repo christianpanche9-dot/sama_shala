@@ -13,7 +13,8 @@ $id_tipo_paquete = filter_var(
 $_POST['id_tipo_paquete'] ?? null,
 FILTER_VALIDATE_INT
 );
-$metodo_pago_compra = trim($_POST['metodo_pago_compra'] ?? 'payphone');
+$codigo_regalo = trim($_POST['codigo_regalo'] ?? '');
+$metodo_pago_compra = $codigo_regalo !== '' ? 'payphone' : trim($_POST['metodo_pago_compra'] ?? 'payphone');
 $es_transferencia = $metodo_pago_compra === 'transferencia';
 $id_usuario = idUsuarioActual();
 $id_tenant = idTenantActual();
@@ -68,10 +69,31 @@ $stmt_paquete->close();
 if (!$tipo_paquete) {
 throw new Exception('El paquete seleccionado no existe.');
 }
+$precio_paquete = (float) $tipo_paquete['precio'];
+$precio_a_cobrar = $precio_paquete;
+$monto_tarjeta_regalo = null;
+$id_tarjeta_regalo_usada = null;
+if ($codigo_regalo !== '') {
+$resultado_regalo = aplicarTarjetaRegalo($conexion, $codigo_regalo, $precio_paquete);
+if (!$resultado_regalo['ok']) {
+throw new Exception($resultado_regalo['error']);
+}
+$monto_tarjeta_regalo = $resultado_regalo['monto_cubierto'];
+$id_tarjeta_regalo_usada = $resultado_regalo['id_tarjeta_regalo'];
+$precio_a_cobrar = $resultado_regalo['monto_pendiente'];
+}
+$pagado_con_regalo_completo = $precio_a_cobrar <= 0;
+if ($pagado_con_regalo_completo) {
+$metodo_pago = 'tarjeta_regalo';
+$referencia_pago = 'REGALOPAGO-' . strtoupper(bin2hex(random_bytes(6)));
+$estado_inicial = 'activo';
+} else {
+$metodo_pago = $es_transferencia ? 'transferencia' : 'payphone';
 $referencia_pago = $es_transferencia
 ? ('TRANSF-' . strtoupper(bin2hex(random_bytes(8))))
 : generarReferenciaPayphone();
-$metodo_pago = $es_transferencia ? 'transferencia' : 'payphone';
+$estado_inicial = 'pendiente';
+}
 $numero_usos = (int) $tipo_paquete['numero_usos'];
 $fecha_caducidad = date('Y-m-d', strtotime('+1 month'));
 $sql_compra = "
@@ -86,6 +108,8 @@ precio_pagado,
 metodo_pago,
 referencia_pago,
 comprobante_pago,
+monto_tarjeta_regalo,
+id_tarjeta_regalo_usada,
 estado
 )
 VALUES (
@@ -99,30 +123,49 @@ NOW(),
 ?,
 ?,
 ?,
-'pendiente'
+?,
+?,
+?
 )
 ";
 $stmt_compra = $conexion->prepare($sql_compra);
 $stmt_compra->bind_param(
-'iisiidsss',
+'iisiidsssdis',
 $id_usuario,
 $id_tipo_paquete,
 $fecha_caducidad,
 $numero_usos,
 $numero_usos,
-$tipo_paquete['precio'],
+$precio_paquete,
 $metodo_pago,
 $referencia_pago,
-$comprobante_pago
+$comprobante_pago,
+$monto_tarjeta_regalo,
+$id_tarjeta_regalo_usada,
+$estado_inicial
 );
 $stmt_compra->execute();
 $id_paquete_cliente_nuevo = $conexion->insert_id;
 $stmt_compra->close();
 $conexion->commit();
 
+if ($pagado_con_regalo_completo) {
+notificarPagoAdmin(
+'Paquete pagado con tarjeta de regalo | Sama Shala',
+'Un cliente activó un paquete usando el saldo de una tarjeta de regalo.',
+'Paquete',
+$referencia_pago,
+$precio_paquete,
+nombreClienteActual($conexion, $id_usuario),
+$tipo_paquete['nombre']
+);
+header('Location: mis_paquetes.php?mensaje=comprado');
+exit;
+}
+
 if (!$es_transferencia) {
 $resultado_pago = payphonePrepararPago(
-(float) $tipo_paquete['precio'],
+$precio_a_cobrar,
 $referencia_pago,
 'Paquete: ' . $tipo_paquete['nombre']
 );
@@ -167,7 +210,7 @@ $conexion->rollback();
 header(
 'Location: comprar_paquete.php?id=' .
 $id_tipo_paquete .
-'&error=pago'
+'&error=' . urlencode($error->getMessage())
 );
 exit;
 }

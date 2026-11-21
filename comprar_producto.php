@@ -93,6 +93,17 @@ type="hidden"
 name="csrf_token"
 value="<?= escapar(tokenCsrf()) ?>"
 >
+<div class="campo campo-completo">
+<label for="codigo_regalo"><?= t('¿Tienes una tarjeta de regalo? (opcional)') ?></label>
+<input
+type="text"
+id="codigo_regalo"
+name="codigo_regalo"
+maxlength="20"
+placeholder="REGALO-XXXXXXXXXX"
+>
+<small><?= t('Si el saldo no cubre todo, pagas la diferencia con tarjeta.') ?></small>
+</div>
 <?php if ($es_invitado): ?>
 <fieldset class="campo-completo">
 <legend><?= t('Tus datos') ?></legend>
