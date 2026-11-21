@@ -195,5 +195,27 @@ function buscarPagoPendientePayphone(mysqli $conexion, string $referencia): ?arr
         ];
     }
 
+    $sql_tarjeta_regalo = "
+        SELECT id_tarjeta_regalo AS id, id_usuario, saldo_inicial AS monto
+        FROM tarjetas_regalo
+        WHERE referencia_pago = ?
+        AND metodo_pago = 'payphone'
+        AND estado = 'pendiente'
+        LIMIT 1
+    ";
+    $stmt = $conexion->prepare($sql_tarjeta_regalo);
+    $stmt->bind_param('s', $referencia);
+    $stmt->execute();
+    $fila = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    if ($fila) {
+        return [
+            'tipo' => 'tarjeta_regalo',
+            'id' => (int) $fila['id'],
+            'id_usuario' => (int) $fila['id_usuario'],
+            'monto' => (float) $fila['monto'],
+        ];
+    }
+
     return null;
 }

@@ -2471,6 +2471,24 @@ margin-top: 0.4rem;
 color: var(--color-texto-tenue);
 font-size: 0.9rem;
 }
+.banner-tarjeta-regalo {
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+justify-content: space-between;
+gap: 1rem;
+margin-bottom: 1.5rem;
+}
+.tarjeta-regalo-vista {
+max-width: 600px;
+margin: 1.5rem 0;
+}
+.tarjeta-regalo-imagen {
+width: 100%;
+height: auto;
+border-radius: 14px;
+box-shadow: 0 8px 22px var(--sombra-tarjeta-suave);
+}
 .campo-trampa-bot {
 position: absolute;
 width: 1px;

@@ -100,7 +100,7 @@ if ($id_payphone !== '' && $referencia !== '') {
                 $detalle = $datos['detalle'] ?? 'Reserva';
                 $vista['enlace_texto'] = t('Ver mis reservas');
                 $vista['enlace_url'] = 'mis_reservas.php';
-            } else {
+            } elseif ($pendiente['tipo'] === 'producto') {
                 $sql = "
                     UPDATE compras_productos
                     SET estado = 'pagado', id_transaccion_payphone = ?
@@ -130,6 +130,32 @@ if ($id_payphone !== '' && $referencia !== '') {
                 $detalle = $datos['detalle'] ?? 'Compra en tienda';
                 $vista['enlace_texto'] = t('Ver mis compras');
                 $vista['enlace_url'] = 'mis_compras.php';
+            } else {
+                $sql = "
+                    UPDATE tarjetas_regalo
+                    SET estado = 'activa', fecha_activacion = NOW(), fecha_caducidad = DATE_ADD(CURDATE(), INTERVAL 6 MONTH)
+                    WHERE id_tarjeta_regalo = ?
+                    AND estado = 'pendiente'
+                ";
+                $stmt = $conexion->prepare($sql);
+                $stmt->bind_param('i', $pendiente['id']);
+                $stmt->execute();
+                $stmt->close();
+                $sql_datos = "
+                    SELECT CONCAT(u.nombre, ' ', u.apellidos) AS cliente, tr.codigo AS codigo
+                    FROM tarjetas_regalo tr
+                    INNER JOIN usuarios u ON tr.id_usuario = u.id_usuario
+                    WHERE tr.id_tarjeta_regalo = ?
+                ";
+                $stmt_datos = $conexion->prepare($sql_datos);
+                $stmt_datos->bind_param('i', $pendiente['id']);
+                $stmt_datos->execute();
+                $datos = $stmt_datos->get_result()->fetch_assoc();
+                $stmt_datos->close();
+                $cliente = $datos['cliente'] ?? '';
+                $detalle = 'Tarjeta de regalo';
+                $vista['enlace_texto'] = t('Ver mi tarjeta de regalo');
+                $vista['enlace_url'] = 'tarjeta_regalo.php?codigo=' . urlencode($datos['codigo'] ?? '');
             }
 
             notificarPagoPayphone($pendiente['tipo'], $referencia, $pendiente['monto'], $cliente, $detalle);
@@ -155,7 +181,7 @@ if ($id_payphone !== '' && $referencia !== '') {
                 cancelarReservaYPromocionar($conexion, $pendiente['id'], $pendiente['id_usuario']);
                 $vista['enlace_texto'] = t('Ver sesiones');
                 $vista['enlace_url'] = 'sesiones.php';
-            } else {
+            } elseif ($pendiente['tipo'] === 'producto') {
                 $sql = "
                     UPDATE compras_productos
                     SET estado = 'rechazado'
@@ -168,6 +194,18 @@ if ($id_payphone !== '' && $referencia !== '') {
                 $stmt->close();
                 $vista['enlace_texto'] = t('Volver a la tienda');
                 $vista['enlace_url'] = 'tienda.php';
+            } else {
+                $sql = "
+                    DELETE FROM tarjetas_regalo
+                    WHERE id_tarjeta_regalo = ?
+                    AND estado = 'pendiente'
+                ";
+                $stmt = $conexion->prepare($sql);
+                $stmt->bind_param('i', $pendiente['id']);
+                $stmt->execute();
+                $stmt->close();
+                $vista['enlace_texto'] = t('Volver a tarjetas de regalo');
+                $vista['enlace_url'] = 'comprar_regalo.php';
             }
 
             $vista['titulo'] = t('El pago no se completó');

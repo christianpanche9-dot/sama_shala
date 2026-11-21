@@ -126,6 +126,14 @@ window.addEventListener("resize", ajustarTamano);
 })();
 </script>
 <div class="contenedor seccion">
+<div class="mensaje mensaje-exito banner-tarjeta-regalo">
+<span>
+<?= t('🎁 ¿Buscas un regalo? Compra una tarjeta de regalo para usar en la tienda, paquetes, eventos o terapias.') ?>
+</span>
+<a class="boton boton-secundario" href="comprar_regalo.php">
+<?= t('Comprar tarjeta de regalo') ?>
+</a>
+</div>
 <?php if (count($paquetes) === 0): ?>
 <div class="mensaje mensaje-aviso">
 <?= t('No hay paquetes disponibles en este momento.') ?>

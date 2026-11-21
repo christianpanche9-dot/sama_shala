@@ -911,6 +911,78 @@ function obtenerPaqueteInvitadoClaseSuelta(mysqli $conexion): ?array
     return $paquete ?: null;
 }
 
+function generarCodigoTarjetaRegalo(): string
+{
+    return 'REGALO-' . strtoupper(bin2hex(random_bytes(5)));
+}
+
+function validarTarjetaRegalo(mysqli $conexion, string $codigo): array
+{
+    $codigo = strtoupper(trim($codigo));
+    if ($codigo === '') {
+        return ['ok' => false, 'tarjeta' => null, 'error' => t('Ingresa un código de tarjeta de regalo.')];
+    }
+    $sql = "
+        SELECT id_tarjeta_regalo, saldo_disponible, estado, fecha_caducidad
+        FROM tarjetas_regalo
+        WHERE codigo = ?
+        FOR UPDATE
+    ";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param('s', $codigo);
+    $stmt->execute();
+    $tarjeta = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    if (!$tarjeta) {
+        return ['ok' => false, 'tarjeta' => null, 'error' => t('El código de la tarjeta de regalo no existe.')];
+    }
+    if ($tarjeta['estado'] !== 'activa') {
+        return ['ok' => false, 'tarjeta' => null, 'error' => t('Esta tarjeta de regalo no está activa.')];
+    }
+    if ($tarjeta['fecha_caducidad'] !== null && strtotime($tarjeta['fecha_caducidad']) < strtotime('today')) {
+        return ['ok' => false, 'tarjeta' => null, 'error' => t('Esta tarjeta de regalo ha caducado.')];
+    }
+    if ((float) $tarjeta['saldo_disponible'] <= 0) {
+        return ['ok' => false, 'tarjeta' => null, 'error' => t('Esta tarjeta de regalo no tiene saldo disponible.')];
+    }
+    return ['ok' => true, 'tarjeta' => $tarjeta, 'error' => null];
+}
+
+function aplicarTarjetaRegalo(mysqli $conexion, string $codigo, float $monto_compra): array
+{
+    $validacion = validarTarjetaRegalo($conexion, $codigo);
+    if (!$validacion['ok']) {
+        return [
+            'ok' => false,
+            'error' => $validacion['error'],
+            'id_tarjeta_regalo' => null,
+            'monto_cubierto' => 0.0,
+            'monto_pendiente' => round($monto_compra, 2),
+        ];
+    }
+    $tarjeta = $validacion['tarjeta'];
+    $saldo_disponible = (float) $tarjeta['saldo_disponible'];
+    $monto_cubierto = round(min($saldo_disponible, $monto_compra), 2);
+    $nuevo_saldo = round($saldo_disponible - $monto_cubierto, 2);
+    $nuevo_estado = $nuevo_saldo <= 0 ? 'agotada' : 'activa';
+    $sql = "
+        UPDATE tarjetas_regalo
+        SET saldo_disponible = ?, estado = ?
+        WHERE id_tarjeta_regalo = ?
+    ";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param('dsi', $nuevo_saldo, $nuevo_estado, $tarjeta['id_tarjeta_regalo']);
+    $stmt->execute();
+    $stmt->close();
+    return [
+        'ok' => true,
+        'error' => null,
+        'id_tarjeta_regalo' => (int) $tarjeta['id_tarjeta_regalo'],
+        'monto_cubierto' => $monto_cubierto,
+        'monto_pendiente' => round($monto_compra - $monto_cubierto, 2),
+    ];
+}
+
 function nombreClienteActual(mysqli $conexion, int $id_usuario): string
 {
     $sql = "SELECT CONCAT(nombre, ' ', apellidos) AS cliente FROM usuarios WHERE id_usuario = ?";
