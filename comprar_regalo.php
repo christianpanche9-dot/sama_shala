@@ -19,11 +19,11 @@ $stmt_actividades->close();
 $eventos = array_values(array_filter($actividades_con_precio, fn ($a) => $a['tipo'] === 'evento' || $a['tipo'] === 'taller'));
 $terapias = array_values(array_filter($actividades_con_precio, fn ($a) => $a['tipo'] === 'terapia'));
 $categorias = [
-'saldo' => ['etiqueta' => t('Regalar un monto libre'), 'items' => [], 'carpeta_imagen' => null],
 'tienda' => ['etiqueta' => t('Tienda'), 'items' => $productos, 'carpeta_imagen' => 'productos'],
 'paquetes' => ['etiqueta' => t('Paquetes'), 'items' => $paquetes, 'carpeta_imagen' => null],
 'eventos' => ['etiqueta' => t('Eventos y talleres'), 'items' => $eventos, 'carpeta_imagen' => 'actividades'],
 'terapias' => ['etiqueta' => t('Terapias'), 'items' => $terapias, 'carpeta_imagen' => 'actividades'],
+'saldo' => ['etiqueta' => t('Regalar un monto libre'), 'items' => [], 'carpeta_imagen' => null],
 ];
 $hay_items = true;
 $es_invitado = !usuarioAutenticado();
