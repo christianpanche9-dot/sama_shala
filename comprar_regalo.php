@@ -25,13 +25,6 @@ $categorias = [
 'terapias' => ['etiqueta' => t('Terapias'), 'items' => $terapias, 'carpeta_imagen' => 'actividades'],
 ];
 $hay_items = array_sum(array_map(fn ($c) => count($c['items']), $categorias)) > 0;
-$primera_categoria_con_items = null;
-foreach ($categorias as $clave => $categoria) {
-if (!empty($categoria['items'])) {
-$primera_categoria_con_items = $clave;
-break;
-}
-}
 $es_invitado = !usuarioAutenticado();
 $error = $_GET['error'] ?? '';
 ?>
@@ -70,8 +63,11 @@ id="formulario-regalo"
 <input type="hidden" name="csrf_token" value="<?= escapar(tokenCsrf()) ?>">
 <input type="hidden" name="id_item" id="item_regalo" value="">
 <div class="campo campo-completo">
-<label for="categoria_regalo"><?= t('Categoría') ?></label>
+<label for="categoria_regalo"><?= t('¿Qué deseas regalar?') ?></label>
 <select id="categoria_regalo" name="categoria">
+<option value="" selected disabled>
+<?= t('Selecciona una categoría') ?>
+</option>
 <?php foreach ($categorias as $clave => $categoria): ?>
 <option value="<?= escapar($clave) ?>" <?= empty($categoria['items']) ? 'disabled' : '' ?>>
 <?= escapar($categoria['etiqueta']) ?>
@@ -80,12 +76,11 @@ id="formulario-regalo"
 </select>
 </div>
 <div class="campo-completo">
-<p><?= t('¿Qué deseas regalar?') ?></p>
 <?php foreach ($categorias as $clave => $categoria): ?>
 <div
 class="rejilla-actividades rejilla-regalo"
 data-grid-categoria="<?= escapar($clave) ?>"
-<?= $clave !== $primera_categoria_con_items ? 'hidden' : '' ?>
+hidden
 >
 <?php if (empty($categoria['items'])): ?>
 <p><?= t('No hay artículos disponibles en esta categoría.') ?></p>
