@@ -2471,6 +2471,24 @@ margin-top: 0.4rem;
 color: var(--color-texto-tenue);
 font-size: 0.9rem;
 }
+.rejilla-regalo {
+margin: 1rem 0;
+}
+.tarjeta-seleccionable-regalo {
+cursor: pointer;
+transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+.tarjeta-seleccionable-regalo:hover {
+transform: translateY(-2px);
+}
+.tarjeta-seleccionable-regalo:focus-visible {
+outline: 3px solid var(--color-verde-oscuro);
+outline-offset: 2px;
+}
+.tarjeta-seleccionable-regalo.seleccionada {
+border-color: var(--color-verde-oscuro);
+box-shadow: 0 0 0 3px var(--color-verde-claro);
+}
 .banner-tarjeta-regalo {
 display: flex;
 flex-wrap: wrap;
