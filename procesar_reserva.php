@@ -147,6 +147,17 @@ $stmt_actividad->bind_param("i", $sesion["id_actividad"]);
 $stmt_actividad->execute();
 $actividad = $stmt_actividad->get_result()->fetch_assoc();
 $stmt_actividad->close();
+if (
+$es_invitado &&
+$actividad &&
+$actividad["tipo"] === "clase" &&
+$actividad["precio"] === null
+) {
+$paquete_invitado_clase_suelta = obtenerPaqueteInvitadoClaseSuelta($conexion);
+if ($paquete_invitado_clase_suelta !== null) {
+$actividad["precio"] = (float) $paquete_invitado_clase_suelta["precio"];
+}
+}
 if ($tipo_pago === "evento") {
 if (
 !$actividad ||

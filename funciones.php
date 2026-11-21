@@ -891,6 +891,26 @@ function obtenerOCrearUsuarioInvitado(
     return ['ok' => true, 'id_usuario' => $id_usuario, 'error' => null];
 }
 
+function obtenerPaqueteInvitadoClaseSuelta(mysqli $conexion): ?array
+{
+    $id_tenant = idTenantActual();
+    $sql = "
+        SELECT id_tipo_paquete, nombre, precio
+        FROM tipos_paquete
+        WHERE numero_usos = 1
+        AND activo = 1
+        AND id_tenant = ?
+        ORDER BY precio ASC
+        LIMIT 1
+    ";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param('i', $id_tenant);
+    $stmt->execute();
+    $paquete = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+    return $paquete ?: null;
+}
+
 function nombreClienteActual(mysqli $conexion, int $id_usuario): string
 {
     $sql = "SELECT CONCAT(nombre, ' ', apellidos) AS cliente FROM usuarios WHERE id_usuario = ?";

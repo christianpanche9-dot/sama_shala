@@ -73,6 +73,18 @@ $pago_con_precio_fijo =
 $sesion["tipo_actividad"] !== "clase" &&
 $tiene_precio_sesion;
 $es_invitado = !usuarioAutenticado();
+$paquete_invitado_clase_suelta = null;
+if (
+$es_invitado &&
+$sesion["tipo_actividad"] === "clase" &&
+!$tiene_precio_sesion
+) {
+$paquete_invitado_clase_suelta = obtenerPaqueteInvitadoClaseSuelta($conexion);
+if ($paquete_invitado_clase_suelta !== null) {
+$sesion["precio_actividad"] = (float) $paquete_invitado_clase_suelta["precio"];
+$tiene_precio_sesion = true;
+}
+}
 $puede_pagar_invitado = $es_invitado && $tiene_precio_sesion;
 $descuento_usuario = null;
 $precio_final = null;

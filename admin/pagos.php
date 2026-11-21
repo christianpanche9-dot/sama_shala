@@ -64,6 +64,7 @@ END AS concepto,
 CASE a.tipo
 WHEN 'terapia' THEN 'Terapia'
 WHEN 'taller' THEN 'Taller'
+WHEN 'clase' THEN 'Clase (invitado)'
 ELSE 'Evento'
 END AS tipo_registro,
 r.precio_pagado,

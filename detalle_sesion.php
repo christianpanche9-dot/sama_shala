@@ -122,6 +122,13 @@ $conexion,
 idUsuarioActual()
 );
 }
+$tiene_precio_invitado =
+$sesion['precio'] !== null ||
+(
+!$usuario_autenticado &&
+$sesion['tipo'] === 'clase' &&
+obtenerPaqueteInvitadoClaseSuelta($conexion) !== null
+);
 
 $lista_espera =
     !$sesion_terminada &&
@@ -345,7 +352,7 @@ style="width:
 
 <?php elseif ($plazas > 0): ?>
 
-    <?php if ($usuario_autenticado || $sesion['precio'] !== null): ?>
+    <?php if ($usuario_autenticado || $tiene_precio_invitado): ?>
 
         <a
             class="boton boton-bloque"
