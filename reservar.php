@@ -311,9 +311,6 @@ document.getElementById("total-boton").textContent = totalFormateado;
 </fieldset>
 <fieldset class="campo-completo">
 <legend><?= t("Tus datos") ?></legend>
-<p class="ayuda">
-<?= t("No necesitas crear una cuenta: paga con tarjeta y listo.") ?>
-</p>
 <div class="campo">
 <label for="nombre_invitado">
 <?= t("Nombre") ?>

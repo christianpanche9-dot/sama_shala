@@ -96,9 +96,6 @@ value="<?= escapar(tokenCsrf()) ?>"
 <?php if ($es_invitado): ?>
 <fieldset class="campo-completo">
 <legend><?= t('Tus datos') ?></legend>
-<p class="ayuda">
-<?= t('No necesitas crear una cuenta: paga con tarjeta y listo.') ?>
-</p>
 <div class="campo">
 <label for="nombre_invitado"><?= t('Nombre') ?></label>
 <input type="text" id="nombre_invitado" name="nombre" maxlength="80" required>
