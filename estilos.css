@@ -2474,6 +2474,9 @@ font-size: 0.9rem;
 .rejilla-regalo {
 margin: 1rem 0;
 }
+.rejilla-regalo[hidden] {
+display: none;
+}
 .tarjeta-seleccionable-regalo {
 cursor: pointer;
 transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
