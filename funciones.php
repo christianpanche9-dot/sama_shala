@@ -814,30 +814,62 @@ function notificarTelegram(string $mensaje): void
         'text' => $mensaje,
         'parse_mode' => 'HTML',
     ];
-    try {
-        if (function_exists('curl_init')) {
-            $peticion = curl_init($url);
-            curl_setopt($peticion, CURLOPT_POST, true);
-            curl_setopt($peticion, CURLOPT_POSTFIELDS, http_build_query($datos));
-            curl_setopt($peticion, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($peticion, CURLOPT_TIMEOUT, 5);
-            curl_exec($peticion);
-            curl_close($peticion);
-        } elseif (ini_get('allow_url_fopen')) {
-            $contexto = stream_context_create([
-                'http' => [
-                    'method' => 'POST',
-                    'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
-                    'content' => http_build_query($datos),
-                    'timeout' => 5,
-                    'ignore_errors' => true,
-                ],
-            ]);
-            @file_get_contents($url, false, $contexto);
+    for ($intento = 1; $intento <= 2; $intento++) {
+        $respuesta = null;
+        $codigo_http = null;
+        $error_red = null;
+        try {
+            if (function_exists('curl_init')) {
+                $peticion = curl_init($url);
+                curl_setopt($peticion, CURLOPT_POST, true);
+                curl_setopt($peticion, CURLOPT_POSTFIELDS, http_build_query($datos));
+                curl_setopt($peticion, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($peticion, CURLOPT_TIMEOUT, 8);
+                $respuesta = curl_exec($peticion);
+                $codigo_http = curl_getinfo($peticion, CURLINFO_HTTP_CODE);
+                if ($respuesta === false) {
+                    $error_red = curl_error($peticion);
+                }
+                curl_close($peticion);
+            } elseif (ini_get('allow_url_fopen')) {
+                $contexto = stream_context_create([
+                    'http' => [
+                        'method' => 'POST',
+                        'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
+                        'content' => http_build_query($datos),
+                        'timeout' => 8,
+                        'ignore_errors' => true,
+                    ],
+                ]);
+                $respuesta = @file_get_contents($url, false, $contexto);
+                if ($respuesta === false) {
+                    $error_red = 'file_get_contents falló (allow_url_fopen)';
+                }
+            } else {
+                error_log('[Telegram] No hay cURL ni allow_url_fopen disponibles en este hosting; no se puede notificar.');
+                return;
+            }
+        } catch (Throwable $error) {
+            $error_red = $error->getMessage();
         }
-    } catch (Throwable $error) {
-        // Una notificación de Telegram no debe romper el flujo de reserva/pago.
+        $ok = $error_red === null
+            && ($codigo_http === null || $codigo_http === 200)
+            && is_string($respuesta) && str_contains($respuesta, '"ok":true');
+        if ($ok) {
+            return;
+        }
+        error_log(
+            '[Telegram] Intento ' . $intento . ' de 2 falló. ' .
+            'HTTP=' . ($codigo_http ?? 'sin respuesta') . ' ' .
+            'error_red=' . ($error_red ?? '-') . ' ' .
+            'respuesta=' . substr((string) $respuesta, 0, 300)
+        );
+        if ($intento === 1) {
+            usleep(500000);
+        }
     }
+    // Una notificación de Telegram no debe romper el flujo de reserva/pago,
+    // pero el fallo queda registrado en el error_log de PHP para diagnóstico.
 }
 
 function obtenerOCrearUsuarioInvitado(
