@@ -699,3 +699,16 @@ $conexion->rollback();
 throw $error;
 }
 }
+
+function marcarAsistenciasAutomaticas(mysqli $conexion): void
+{
+    $sql = "
+        UPDATE reservas r
+        INNER JOIN sesiones s ON r.id_sesion = s.id_sesion
+        SET r.asistencia = 'asistio'
+        WHERE r.estado = 'confirmada'
+          AND r.asistencia = 'pendiente'
+          AND TIMESTAMP(s.fecha, s.hora_fin) < NOW()
+    ";
+    $conexion->query($sql);
+}

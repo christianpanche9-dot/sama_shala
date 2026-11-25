@@ -2,6 +2,8 @@
 require_once "seguridad.php";
 require_once "conexion.php";
 require_once "funciones.php";
+require_once "funciones_reservas.php";
+marcarAsistenciasAutomaticas($conexion);
 $id_usuario = idUsuarioActual();
 $sql_reservas = "
 SELECT

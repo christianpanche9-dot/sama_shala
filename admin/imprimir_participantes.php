@@ -2,6 +2,8 @@
 require_once "seguridad_admin.php";
 require_once "../conexion.php";
 require_once "../funciones.php";
+require_once "../funciones_reservas.php";
+marcarAsistenciasAutomaticas($conexion);
 $id_sesion = filter_input(
 INPUT_GET,
 "id",
